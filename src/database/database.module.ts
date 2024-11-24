@@ -3,23 +3,11 @@ import { ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { User } from './entities/user.entity';
+import { UsersRepository } from './repositories/user.repository';
 
 @Module({
-  imports: [
-    TypeOrmModule.forRootAsync({
-      useFactory: (configService: ConfigService) => ({
-        type: 'postgres',
-        host: configService.getOrThrow('POSTGRES_HOST'),
-        port: configService.getOrThrow('POSTGRES_PORT'),
-        database: configService.getOrThrow('POSTGRES_DB'),
-        username: configService.getOrThrow('POSTGRES_USERNAME'),
-        password: configService.getOrThrow('POSTGRES_PASSWORD'),
-        autoLoadEntities: true,
-        synchronize: process.env.NODE_ENV === 'development',
-      }),
-      inject: [ConfigService],
-    }),
-    TypeOrmModule.forFeature([User]),
-  ],
+  imports: [TypeOrmModule.forFeature([User])],
+  providers: [UsersRepository],
+  exports: [UsersRepository],
 })
 export class DatabaseModule {}
