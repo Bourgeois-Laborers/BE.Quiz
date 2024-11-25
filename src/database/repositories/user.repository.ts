@@ -11,8 +11,8 @@ export class UsersRepository {
     private repository: Repository<User>,
   ) {}
 
-  async getById(id: string): Promise<User> {
-    return this.repository.findOneBy({ id });
+  async findOne(query: Partial<User>): Promise<User> {
+    return this.repository.findOneBy(query);
   }
 
   async create(user: User): Promise<User> {

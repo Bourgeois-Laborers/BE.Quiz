@@ -1,10 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
 import { User } from '../database/entities/user.entity';
 import { UsersRepository } from '../database/repositories/user.repository';
 
-import { SignInDto } from './dto/sign-in.dto';
+import { SignUpDto } from './dto/sign-up.dto';
 
 @Injectable()
 export class AuthService {
@@ -13,10 +13,17 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async signIn(signInDto: SignInDto): Promise<{ access_token: string }> {
-    const newUser = new User();
-    newUser.username = signInDto.username;
+  async signUp(signUpDto: SignUpDto): Promise<{ access_token: string }> {
+    const { username } = signUpDto;
 
+    const isUserExist = await this.usersRepository.findOne({ username });
+
+    if (isUserExist) {
+      throw new BadRequestException('Username already in use');
+    }
+
+    const newUser = new User();
+    newUser.username = username;
     const createdUser = await this.usersRepository.create(newUser);
 
     const payload = { sub: createdUser.id, username: createdUser.username };
