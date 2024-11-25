@@ -18,7 +18,7 @@ export class UsersService {
   }
 
   async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
-    const user = await this.usersRepository.getById(id);
+    const user = await this.usersRepository.findOne({ id });
 
     if (!user) {
       throw new Error('User not found');
