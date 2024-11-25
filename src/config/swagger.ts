@@ -9,7 +9,7 @@ const config = new DocumentBuilder()
   .build();
 
 export const swaggerSetup = (app: INestApplication) => {
-    const documentFactory = () => SwaggerModule.createDocument(app, config);
+  const documentFactory = () => SwaggerModule.createDocument(app, config);
 
-    SwaggerModule.setup('api', app, documentFactory);
-}
+  SwaggerModule.setup('api', app, documentFactory);
+};
