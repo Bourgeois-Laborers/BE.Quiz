@@ -10,7 +10,7 @@ export class AuthGuard implements CanActivate {
     const authorization = request.headers.authorization;
 
     if (!authorization) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('Authorization header is required');
     }
 
     const [, token] = authorization.split(' ');
@@ -19,7 +19,7 @@ export class AuthGuard implements CanActivate {
       const payload = this.jwtService.verify(token);
       request.user = payload;
     } catch (error) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('Invalid token');
     }
 
     return true;

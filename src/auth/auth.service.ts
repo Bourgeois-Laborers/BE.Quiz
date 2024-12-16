@@ -13,7 +13,7 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async signUp(signUpDto: SignUpDto): Promise<{ access_token: string }> {
+  async signUp(signUpDto: SignUpDto): Promise<{ accessToken: string }> {
     const { username } = signUpDto;
 
     const isUserExist = await this.usersRepository.findOne({ username });
@@ -28,7 +28,7 @@ export class AuthService {
 
     const payload = { sub: createdUser.id, username: createdUser.username };
     return {
-      access_token: await this.jwtService.signAsync(payload),
+      accessToken: await this.jwtService.signAsync(payload),
     };
   }
 }
