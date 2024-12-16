@@ -3,9 +3,10 @@ import { ConfigService } from '@nestjs/config';
 
 export function getJwtConfig(): JwtModuleAsyncOptions {
   return {
+    global: true,
     useFactory: (configService: ConfigService) => ({
-      secret: configService.getOrThrow('JWT_SECRET'),
-      signOptions: { expiresIn: configService.getOrThrow('JWT_EXPIRE_TIME') },
+      secret: configService.getOrThrow<string>('JWT_SECRET'),
+      signOptions: { expiresIn: configService.getOrThrow<string>('JWT_EXPIRATION_TIME') },
     }),
     inject: [ConfigService],
   };
