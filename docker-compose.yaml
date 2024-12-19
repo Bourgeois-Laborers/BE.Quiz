@@ -16,16 +16,16 @@ services:
       - '.env'
     networks:
       - quizNetwork
-  
+
   app_quiz:
     container_name: app
     build:
       context: .
       dockerfile: Dockerfile
     env_file:
-     - '.env'
+      - '.env'
     ports:
-     - '3000:${PORT}'
+      - '3000:3000'
     depends_on:
       postgres_quiz:
         condition: service_started
