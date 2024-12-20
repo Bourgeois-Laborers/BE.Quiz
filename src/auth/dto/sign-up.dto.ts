@@ -1,9 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 export class SignUpDto {
-  @ApiProperty({
-    type: String,
-    description: 'Unique username',
-  })
+  @ApiProperty({ type: String })
   username: string;
 }
