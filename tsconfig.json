@@ -19,7 +19,11 @@
     "noFallthroughCasesInSwitch": false,
     "paths": {
       "@config/*": ["src/config/*"],
-      "@common/*": ["src/common/*"]
+      "@common/*": ["src/common/*"],
+      "@database/*": ["src/database/*"],
+      "@auth/*": ["src/auth/*"],
+      "@session/*": ["src/session/*"],
+      "@users/*": ["src/users/*"]
     }
   },
 }
