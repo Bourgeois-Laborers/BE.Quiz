@@ -7,6 +7,7 @@ import { UsersRepository } from '../database/repositories/user.repository';
 import { SignUpDto } from './dto/sign-up.dto';
 import { SignInDto } from './dto/sign-in.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { AuthorizedUser } from '@common/interfaces/user.inteface';
 
 @Injectable()
 export class AuthService {
@@ -47,7 +48,7 @@ export class AuthService {
     const { refreshToken } = refreshTokenDto;
 
     try {
-      const payload = await this.jwtService.verifyAsync<{ sub: string; username: string }>(refreshToken);
+      const payload = await this.jwtService.verifyAsync<AuthorizedUser>(refreshToken);
       const user = await this.usersRepository.findOne({ id: payload.sub });
 
       if (!user) {
