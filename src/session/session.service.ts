@@ -21,7 +21,7 @@ export class SessionService {
   }
 
   public async joinToSession({ userId, sessionId }: JoinUserProps) {
-    const checkIsUserExists = await this.userRepository.getById(userId);
+    const checkIsUserExists = await this.userRepository.findOne({ id: userId });
 
     if (!checkIsUserExists) {
       throw new LogicException(LogicExceptionList.USER_NOT_FOUND);
