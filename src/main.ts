@@ -10,9 +10,11 @@ async function bootstrap() {
 
   swaggerSetup(app);
 
-  app.useGlobalPipes(new ValidationPipe({
-    whitelist: true
-  }));
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+    }),
+  );
   app.useGlobalFilters(new LogicExceptionFilter());
 
   await app.listen(process.env.PORT ?? 3000);
