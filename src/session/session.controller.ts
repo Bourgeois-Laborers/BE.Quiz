@@ -1,6 +1,7 @@
 import { Controller, HttpStatus, Param, Post } from '@nestjs/common';
-import { Serialize } from '@common/decorators/serialize.decorator';
 import { ApiResponse } from '@nestjs/swagger';
+
+import { Serialize } from '@common/decorators/serialize.decorator';
 import { ControllerComposeDecorator } from '@common/decorators/conroller-compose.decorator';
 
 import { SessionService } from './session.service';
@@ -10,7 +11,7 @@ import { User } from '@common/decorators/user.decorator';
 import { AuthorizedUser } from '@common/interfaces/user.inteface';
 
 @Controller('sessions')
-@ControllerComposeDecorator({ guards: ['AuthGuard']})
+@ControllerComposeDecorator({ guards: ['AuthGuard'] })
 export class SessionController {
   constructor(private readonly sessionService: SessionService) {}
 
@@ -24,7 +25,7 @@ export class SessionController {
   @Post(':sessionId/join')
   @Serialize(JoinToSessionResponseDto)
   @ApiResponse({ status: HttpStatus.CREATED, type: JoinToSessionResponseDto })
-  public join(@Param('sessionId') sessionId: string, @User() user: AuthorizedUser ) {
+  public join(@Param('sessionId') sessionId: string, @User() user: AuthorizedUser) {
     return this.sessionService.joinToSession({ sessionId, userId: user.sub });
   }
 }
