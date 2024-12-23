@@ -1,13 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
-import { User } from '../database/entities/user.entity';
-import { UsersRepository } from '../database/repositories/user.repository';
-
-import { SignUpDto } from './dto/sign-up.dto';
-import { SignInDto } from './dto/sign-in.dto';
-import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { LogicException } from '@common/exceptions/logic-exception';
+import { LogicExceptionList } from '@common/types/logic-exceptions.enum';
 import { AuthorizedUser } from '@common/interfaces/user.inteface';
+
+import { User } from '@database/entities/user.entity';
+import { UsersRepository } from '@database/repositories/user.repository';
+
+import { SignUpProps } from './interfaces/sign-up.interface';
+import { SignInProps } from './interfaces/sign-in.interface';
+import { RefreshTokenProps } from './interfaces/refresh-token.interface';
 
 @Injectable()
 export class AuthService {
@@ -16,13 +19,13 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async signUp(signUpDto: SignUpDto): Promise<{ accessToken: string; refreshToken: string }> {
+  async signUp(signUpDto: SignUpProps): Promise<{ accessToken: string; refreshToken: string }> {
     const { username } = signUpDto;
 
     const isUserExist = await this.usersRepository.findOne({ username });
 
     if (isUserExist) {
-      throw new Error('Username already in use');
+      throw new LogicException(LogicExceptionList.USER_ALREADY_EXISTS);
     }
 
     const newUser = new User();
@@ -32,19 +35,19 @@ export class AuthService {
     return this.generateTokens(createdUser);
   }
 
-  async signIn(signInDto: SignInDto): Promise<{ accessToken: string; refreshToken: string }> {
+  async signIn(signInDto: SignInProps): Promise<{ accessToken: string; refreshToken: string }> {
     const { username } = signInDto;
 
     const user = await this.usersRepository.findOne({ username });
 
     if (!user) {
-      throw new Error('User not found');
+      throw new LogicException(LogicExceptionList.USER_NOT_FOUND);
     }
 
     return this.generateTokens(user);
   }
 
-  async refreshToken(refreshTokenDto: RefreshTokenDto): Promise<{ accessToken: string; refreshToken: string }> {
+  async refreshToken(refreshTokenDto: RefreshTokenProps): Promise<{ accessToken: string; refreshToken: string }> {
     const { refreshToken } = refreshTokenDto;
 
     try {
@@ -52,12 +55,12 @@ export class AuthService {
       const user = await this.usersRepository.findOne({ id: payload.sub });
 
       if (!user) {
-        throw new Error('User not found');
+        throw new LogicException(LogicExceptionList.USER_NOT_FOUND);
       }
 
       return this.generateTokens(user);
     } catch (error) {
-      throw new Error('Invalid refresh token');
+      throw new LogicException(LogicExceptionList.AUTH_INVALID_TOKEN);
     }
   }
 

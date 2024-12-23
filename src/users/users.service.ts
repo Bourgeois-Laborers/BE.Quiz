@@ -1,27 +1,35 @@
 import { Injectable } from '@nestjs/common';
 
-import { User } from '../database/entities/user.entity';
-import { UsersRepository } from '../database/repositories/user.repository';
+import { LogicException } from '@common/exceptions/logic-exception';
+import { LogicExceptionList } from '@common/types/logic-exceptions.enum';
 
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { User } from '@database/entities/user.entity';
+import { UsersRepository } from '@database/repositories/user.repository';
+
+import { CreateUserProps } from './interfaces/create-user.interface';
+import { UpdateUserProps } from './interfaces/update-user.interface';
 
 @Injectable()
 export class UsersService {
   constructor(private usersRepository: UsersRepository) {}
 
-  async create(createUserDto: CreateUserDto): Promise<User> {
+  async create(createUserDto: CreateUserProps): Promise<User> {
     const user = new User();
     user.username = createUserDto.username;
+
+    const existingUser = await this.usersRepository.findOne({ username: createUserDto.username });
+    if (existingUser) {
+      throw new LogicException(LogicExceptionList.USER_ALREADY_EXISTS);
+    }
 
     return this.usersRepository.create(user);
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
+  async update(id: string, updateUserDto: UpdateUserProps): Promise<User> {
     const user = await this.usersRepository.findOne({ id });
 
     if (!user) {
-      throw new Error('User not found');
+      throw new LogicException(LogicExceptionList.USER_NOT_FOUND);
     }
 
     user.username = updateUserDto.username;
