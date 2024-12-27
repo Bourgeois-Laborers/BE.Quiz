@@ -10,12 +10,10 @@ export class LogicExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
-    const expInfo = Exceptions[exception.error];
-    const status = expInfo.httpStatusCode;
-    const message = expInfo.message;
+    const { httpStatusCode: statusCode, message } = Exceptions[exception.error];
 
-    response.status(status).json({
-      statusCode: status,
+    response.status(statusCode).json({
+      statusCode,
       stringCode: exception.error,
       message: message,
       timestamp: new Date().toISOString(),
