@@ -17,7 +17,9 @@ export class SessionService {
   ) {}
 
   public async create({ userId }: CreateSessionProps) {
-    return this.sessionRepository.creareSession({ userId });
+    await this.checkIsUserHasActiveSession(userId);
+
+    return this.sessionRepository.createSession({ userId });
   }
 
   public async joinToSession({ userId, sessionId }: JoinUserProps) {
@@ -27,6 +29,16 @@ export class SessionService {
       throw new LogicException(LogicExceptionList.USER_NOT_FOUND);
     }
 
+    await this.checkIsUserHasActiveSession(userId);
+
     return this.sessionToUserRepository.joinToSession({ sessionId, userId });
+  }
+
+  private async checkIsUserHasActiveSession(userId: string) {
+    const checkIsUserHasActiveSession = await this.sessionToUserRepository.checkIsUserHasActiveSession(userId);
+
+    if (checkIsUserHasActiveSession) {
+      throw new LogicException(LogicExceptionList.USER_ALREADY_HAS_ACTIVE_SESSION);
+    }
   }
 }

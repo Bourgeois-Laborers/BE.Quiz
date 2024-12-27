@@ -13,6 +13,6 @@ export class SessionToUser {
   @ManyToOne(() => User, (user) => user.sessionToUser)
   user: User;
 
-  @ManyToOne(() => Session, (session) => session.id)
+  @ManyToOne(() => Session, (session) => session.sessionToUser)
   session: Session;
 }
