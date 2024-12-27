@@ -1,80 +1,70 @@
-import { Body, Res, Controller, Post, HttpCode, HttpStatus } from '@nestjs/common';
+import { Body, Res, Controller, Post, HttpStatus } from '@nestjs/common';
 import { Response } from 'express';
 
+import { Serialize } from '@common/decorators/serialize.decorator';
+import { ApiResponse } from '@nestjs/swagger';
+import { Cookie } from '@common/decorators/cookie-parser.decorator';
+
 import { AuthService } from './auth.service';
-import { SignInDto } from './dto/sign-in.dto';
-import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { SignUpResponseDto } from './dto/sign-up.dto';
+import { SignInDto, SignInResponseDto } from './dto/sign-in.dto';
+import { RefreshTokenResponseDto } from './dto/refresh-token.dto';
 
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @HttpCode(HttpStatus.OK)
   @Post('sign-up')
-  async signUp(@Res({ passthrough: true }) response: Response): Promise<void> {
+  @Serialize(SignUpResponseDto)
+  @ApiResponse({ status: HttpStatus.OK, type: SignUpResponseDto })
+  async signUp(@Res({ passthrough: true }) response: Response): Promise<{ accessToken: string }> {
     const { accessToken, refreshToken } = await this.authService.signUp();
 
-    response.cookie('Authentication', accessToken, {
+    response.cookie('RefreshToken', refreshToken, {
       httpOnly: true,
       secure: true,
       sameSite: 'strict',
       path: '/',
     });
 
-    response.cookie('Refresh', refreshToken, {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'strict',
-      path: '/',
-    });
-
-    return;
+    return { accessToken };
   }
 
-  @HttpCode(HttpStatus.OK)
   @Post('sign-in')
-  async signIn(@Body() signInDto: SignInDto, @Res({ passthrough: true }) response: Response): Promise<void> {
+  @Serialize(SignInResponseDto)
+  @ApiResponse({ status: HttpStatus.OK, type: SignInResponseDto })
+  async signIn(
+    @Body() signInDto: SignInDto,
+    @Res({ passthrough: true }) response: Response,
+  ): Promise<{ accessToken: string }> {
     const { accessToken, refreshToken } = await this.authService.signIn(signInDto);
 
-    response.cookie('Authentication', accessToken, {
+    response.cookie('RefreshToken', refreshToken, {
       httpOnly: true,
       secure: true,
       sameSite: 'strict',
       path: '/',
     });
 
-    response.cookie('Refresh', refreshToken, {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'strict',
-      path: '/',
-    });
-
-    return;
+    return { accessToken };
   }
 
-  @HttpCode(HttpStatus.OK)
   @Post('refresh-token')
+  @Serialize(RefreshTokenResponseDto)
+  @ApiResponse({ status: HttpStatus.OK, type: RefreshTokenResponseDto })
   async refreshToken(
-    @Body() refreshTokenDto: RefreshTokenDto,
+    @Cookie('RefreshToken') refreshToken: string,
     @Res({ passthrough: true }) response: Response,
-  ): Promise<void> {
-    const { accessToken, refreshToken } = await this.authService.refreshToken(refreshTokenDto);
+  ): Promise<{ accessToken: string }> {
+    const { accessToken, refreshToken: newRefreshToken } = await this.authService.refreshToken({ refreshToken });
 
-    response.cookie('Authentication', accessToken, {
+    response.cookie('Refresh', newRefreshToken, {
       httpOnly: true,
       secure: true,
       sameSite: 'strict',
       path: '/',
     });
 
-    response.cookie('Refresh', refreshToken, {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'strict',
-      path: '/',
-    });
-
-    return;
+    return { accessToken };
   }
 }
