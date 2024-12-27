@@ -1,3 +1,3 @@
 export interface SignInProps {
-  username: string;
+  id: string;
 }

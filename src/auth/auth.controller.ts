@@ -2,7 +2,6 @@ import { Body, Res, Controller, Post, HttpCode, HttpStatus } from '@nestjs/commo
 import { Response } from 'express';
 
 import { AuthService } from './auth.service';
-import { SignUpDto } from './dto/sign-up.dto';
 import { SignInDto } from './dto/sign-in.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 
@@ -12,8 +11,8 @@ export class AuthController {
 
   @HttpCode(HttpStatus.OK)
   @Post('sign-up')
-  async signUp(@Body() signUpDto: SignUpDto, @Res({ passthrough: true }) response: Response): Promise<void> {
-    const { accessToken, refreshToken } = await this.authService.signUp(signUpDto);
+  async signUp(@Res({ passthrough: true }) response: Response): Promise<void> {
+    const { accessToken, refreshToken } = await this.authService.signUp();
 
     response.cookie('Authentication', accessToken, {
       httpOnly: true,

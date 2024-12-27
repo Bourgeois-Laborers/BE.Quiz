@@ -8,7 +8,6 @@ import { AuthorizedUser } from '@common/interfaces/user.inteface';
 import { User } from '@database/entities/user.entity';
 import { UsersRepository } from '@database/repositories/user.repository';
 
-import { SignUpProps } from './interfaces/sign-up.interface';
 import { SignInProps } from './interfaces/sign-in.interface';
 import { RefreshTokenProps } from './interfaces/refresh-token.interface';
 
@@ -19,26 +18,17 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async signUp(signUpDto: SignUpProps): Promise<{ accessToken: string; refreshToken: string }> {
-    const { username } = signUpDto;
-
-    const isUserExist = await this.usersRepository.findOne({ username });
-
-    if (isUserExist) {
-      throw new LogicException(LogicExceptionList.USER_ALREADY_EXISTS);
-    }
-
+  async signUp(): Promise<{ accessToken: string; refreshToken: string }> {
     const newUser = new User();
-    newUser.username = username;
     const createdUser = await this.usersRepository.create(newUser);
 
     return this.generateTokens(createdUser);
   }
 
   async signIn(signInDto: SignInProps): Promise<{ accessToken: string; refreshToken: string }> {
-    const { username } = signInDto;
+    const { id } = signInDto;
 
-    const user = await this.usersRepository.findOne({ username });
+    const user = await this.usersRepository.findOne({ id });
 
     if (!user) {
       throw new LogicException(LogicExceptionList.USER_NOT_FOUND);
@@ -65,7 +55,7 @@ export class AuthService {
   }
 
   private async generateTokens(user: User): Promise<{ accessToken: string; refreshToken: string }> {
-    const payload = { sub: user.id, username: user.username };
+    const payload = { sub: user.id };
     const accessToken = await this.jwtService.signAsync(payload, { expiresIn: '15m' });
     const refreshToken = await this.jwtService.signAsync(payload, { expiresIn: '1d' });
 
