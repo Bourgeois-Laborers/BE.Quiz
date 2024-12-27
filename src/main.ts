@@ -1,8 +1,12 @@
 import { NestFactory } from '@nestjs/core';
+import { ValidationPipe } from '@nestjs/common';
+
+import * as cookieParser from 'cookie-parser';
 
 import { swaggerSetup } from '@config/swagger.config';
+
 import { LogicExceptionFilter } from '@common/filters/logic-exception.filter';
-import { ValidationPipe } from '@nestjs/common';
+
 import { AppModule } from './app.module';
 
 async function bootstrap() {
@@ -16,6 +20,7 @@ async function bootstrap() {
     }),
   );
   app.useGlobalFilters(new LogicExceptionFilter());
+  app.use(cookieParser());
 
   await app.listen(process.env.PORT ?? 3000);
 }
