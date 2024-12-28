@@ -23,7 +23,8 @@
       "@database/*": ["src/database/*"],
       "@auth/*": ["src/auth/*"],
       "@session/*": ["src/session/*"],
-      "@users/*": ["src/users/*"]
+      "@users/*": ["src/users/*"],
+      "@event/*": ["src/event/*"],
     }
   },
 }
