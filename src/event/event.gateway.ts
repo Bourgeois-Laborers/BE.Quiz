@@ -16,8 +16,8 @@ import { SocketService } from '@event/event.service';
 })
 export class EventGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   private readonly logger = new Logger(EventGateway.name);
-  
-  constructor (private readonly socketService: SocketService) {}
+
+  constructor(private readonly socketService: SocketService) {}
 
   @WebSocketServer() io: Server;
 
@@ -31,7 +31,7 @@ export class EventGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
     this.socketService.handleConnection(client);
 
     this.logger.log(`Client id: ${client.id} connected`);
-    
+
     this.logger.debug(`Number of connected clients: ${sockets.size}`);
   }
 

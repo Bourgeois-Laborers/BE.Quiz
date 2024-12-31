@@ -1,8 +1,8 @@
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Expose } from 'class-transformer';
 
 import { SessionToUser } from './session-user.entity';
 import { User } from './user.entity';
-import { Expose } from 'class-transformer';
 
 @Entity({
   name: 'sessions',
