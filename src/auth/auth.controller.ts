@@ -4,6 +4,7 @@ import { Response } from 'express';
 
 import { Serialize } from '@common/decorators/serialize.decorator';
 import { Cookie } from '@common/decorators/cookie-parser.decorator';
+import { CookieName } from '@common/types/cookie-name.enum';
 
 import { AuthService } from './auth.service';
 
@@ -21,7 +22,7 @@ export class AuthController {
   async signUp(@Res({ passthrough: true }) response: Response): Promise<{ accessToken: string }> {
     const { accessToken, refreshToken } = await this.authService.signUp();
 
-    response.cookie('RefreshToken', refreshToken, {
+    response.cookie(CookieName.REFRESH_TOKEN, refreshToken, {
       httpOnly: true,
       secure: true,
       sameSite: 'strict',
@@ -40,7 +41,7 @@ export class AuthController {
   ): Promise<{ accessToken: string }> {
     const { accessToken, refreshToken } = await this.authService.signIn(signInDto);
 
-    response.cookie('RefreshToken', refreshToken, {
+    response.cookie(CookieName.REFRESH_TOKEN, refreshToken, {
       httpOnly: true,
       secure: true,
       sameSite: 'strict',
@@ -54,7 +55,7 @@ export class AuthController {
   @Serialize(RefreshTokenResponseDto)
   @ApiResponse({ status: HttpStatus.OK, type: RefreshTokenResponseDto })
   async refreshToken(
-    @Cookie('RefreshToken') refreshToken: string,
+    @Cookie(CookieName.REFRESH_TOKEN) refreshToken: string,
     @Res({ passthrough: true }) response: Response,
   ): Promise<{ accessToken: string }> {
     const { accessToken, refreshToken: newRefreshToken } = await this.authService.refreshToken({ refreshToken });
