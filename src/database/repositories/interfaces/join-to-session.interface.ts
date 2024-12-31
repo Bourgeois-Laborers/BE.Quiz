@@ -1,4 +1,4 @@
 export interface JoinToSessionProps {
-    userId: string;
-    sessionId: string;
+  userId: string;
+  sessionId: string;
 }

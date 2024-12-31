@@ -10,7 +10,7 @@ export class SessionToUserRepository {
     return this.sessionToUserRepository.save({
       isHost: false,
       session: {
-        id: sessionId,  
+        id: sessionId,
       },
       user: {
         id: userId,
@@ -18,16 +18,16 @@ export class SessionToUserRepository {
     });
   }
 
-  public async checkIsUserHasActiveSession (userId: string) {
+  public async checkIsUserHasActiveSession(userId: string) {
     return this.sessionToUserRepository.findOne({
       where: {
         user: {
-          id: userId
+          id: userId,
         },
         session: {
           isActive: true,
-        }
-      }
-    })
+        },
+      },
+    });
   }
 }
