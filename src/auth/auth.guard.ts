@@ -1,5 +1,8 @@
-import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+
+import { LogicException } from '@common/exceptions/logic-exception';
+import { LogicExceptionList } from '@common/types/logic-exceptions.enum';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -10,7 +13,7 @@ export class AuthGuard implements CanActivate {
     const authorization = request.headers.authorization;
 
     if (!authorization) {
-      throw new UnauthorizedException('Authorization header is required');
+      throw new LogicException(LogicExceptionList.AUTH_MISSING_TOKEN);
     }
 
     const [, token] = authorization.split(' ');
@@ -19,7 +22,7 @@ export class AuthGuard implements CanActivate {
       const payload = this.jwtService.verify(token);
       request.user = payload;
     } catch (error) {
-      throw new UnauthorizedException('Invalid token');
+      throw new LogicException(LogicExceptionList.AUTH_INVALID_TOKEN);
     }
 
     return true;
