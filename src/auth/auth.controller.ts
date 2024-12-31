@@ -1,11 +1,12 @@
 import { Body, Res, Controller, Post, HttpStatus } from '@nestjs/common';
+import { ApiResponse } from '@nestjs/swagger';
 import { Response } from 'express';
 
 import { Serialize } from '@common/decorators/serialize.decorator';
-import { ApiResponse } from '@nestjs/swagger';
 import { Cookie } from '@common/decorators/cookie-parser.decorator';
 
 import { AuthService } from './auth.service';
+
 import { SignUpResponseDto } from './dto/sign-up.dto';
 import { SignInDto, SignInResponseDto } from './dto/sign-in.dto';
 import { RefreshTokenResponseDto } from './dto/refresh-token.dto';
