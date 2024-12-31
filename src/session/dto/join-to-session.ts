@@ -1,8 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 
-export class RefreshTokenResponseDto {
-  @ApiProperty({ type: String })
+export class JoinToSessionResponseDto {
+  @ApiProperty({
+    example: 'ok',
+  })
   @Expose()
-  accessToken: string;
+  result: string;
 }
