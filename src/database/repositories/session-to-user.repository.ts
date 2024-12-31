@@ -8,12 +8,25 @@ export class SessionToUserRepository {
 
   public async joinToSession({ userId, sessionId }): Promise<SessionToUser> {
     return this.sessionToUserRepository.save({
-      isAdmin: false,
+      isHost: false,
       session: {
         id: sessionId,
       },
       user: {
         id: userId,
+      },
+    });
+  }
+
+  public async checkIsUserHasActiveSession(userId: string) {
+    return this.sessionToUserRepository.findOne({
+      where: {
+        user: {
+          id: userId,
+        },
+        session: {
+          isActive: true,
+        },
       },
     });
   }
