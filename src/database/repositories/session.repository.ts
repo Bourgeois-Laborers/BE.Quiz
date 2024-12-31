@@ -12,11 +12,11 @@ export class SessionRepository {
     private readonly sesstionRepository: Repository<Session>,
   ) {}
 
-  public async creareSession({ userId }: CreateSessionProps): Promise<{ id: string }> {
+  public async createSession({ userId }: CreateSessionProps): Promise<{ id: string }> {
     const { id } = await this.sesstionRepository.save({
       sessionToUser: [
         {
-          isAdmin: true,
+          isHost: true,
           user: {
             id: userId,
           },
