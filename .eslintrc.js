@@ -48,7 +48,11 @@ module.exports = {
     "import/resolver": {
       "alias": [
         ['config', './src/config'],
-        ['common', './src/common']
+        ['common', './src/common'],
+        ['auth', './src/auth'],
+        ['session', './src/session'],
+        ['users', './src/users'],
+        ['database', './database']
       ]
     }
   },  
