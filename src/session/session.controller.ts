@@ -7,8 +7,6 @@ import { User } from '@common/decorators/user.decorator';
 
 import { AuthorizedUser } from '@common/interfaces/user.inteface';
 
-import { Serialize } from '@common/decorators/serialize.decorator';
-import { User } from '@common/decorators/user.decorator';
 import { SessionService } from './session.service';
 import { CreateSessionResponseDto } from './dto/create-session.dto';
 import { JoinToSessionResponseDto } from './dto/join-to-session.dto';
