@@ -25,5 +25,5 @@
       "@session/*": ["src/session/*"],
       "@users/*": ["src/users/*"]
     }
-  },
+  }
 }
