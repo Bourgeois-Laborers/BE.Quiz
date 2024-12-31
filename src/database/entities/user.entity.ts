@@ -1,4 +1,6 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+
+import { SessionToUser } from './session-user.entity';
 
 @Entity({ name: 'users' })
 export class User {
@@ -10,4 +12,7 @@ export class User {
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
+
+  @OneToMany(() => SessionToUser, (sessionToUser) => sessionToUser.user)
+  sessionToUser: SessionToUser[];
 }
