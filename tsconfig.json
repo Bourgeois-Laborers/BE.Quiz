@@ -25,5 +25,8 @@
       "@session/*": ["src/session/*"],
       "@users/*": ["src/users/*"]
     }
+  },
+  "watchOptions": {
+    "watchFile": "fixedPollingInterval"
   }
 }
