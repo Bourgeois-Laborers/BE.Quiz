@@ -9,8 +9,8 @@ type Guards = 'AuthGuard';
 const ALLOWED_GUADS = { AuthGuard: AuthGuard };
 
 export function ControllerComposeDecorator({ guards }: { guards: Guards[] }) {
-  const includeGuards = guards.map((guard) => ALLOWED_GUADS[guard]).filter(value => value);
-  
+  const includeGuards = guards.map((guard) => ALLOWED_GUADS[guard]).filter((value) => value);
+
   if (includeGuards.length) {
     return applyDecorators(UseInterceptors(ErrorsInterceptor, ResponseInterceptor), UseGuards(...includeGuards));
   }

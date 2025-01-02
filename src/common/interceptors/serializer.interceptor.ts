@@ -10,10 +10,8 @@ export interface ClassContrustor {
 export class SerializeInterceptor implements NestInterceptor {
   constructor(private dto: ClassContrustor) {}
   intercept(context: ExecutionContext, handler: CallHandler): Observable<any> {
-
     return handler.handle().pipe(
       map((data: ClassContrustor) => {
-
         return plainToClass(this.dto, data, {
           excludeExtraneousValues: true,
           exposeUnsetFields: false,
