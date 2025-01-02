@@ -1,3 +1,3 @@
 export interface CreateSessionProps {
-    userId: string;
+  userId: string;
 }

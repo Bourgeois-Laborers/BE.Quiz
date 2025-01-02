@@ -1,9 +1,11 @@
 import { NestFactory } from '@nestjs/core';
-import { redisIOAdaperSetup } from '@config/redis-io.config';
-import { ConfigService } from '@nestjs/config';
 import { ValidationPipe } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+
+import * as cookieParser from 'cookie-parser';
 
 import { swaggerSetup } from '@config/swagger.config';
+import { redisIOAdaperSetup } from '@config/redis-io.config';
 
 import { LogicExceptionFilter } from '@common/filters/logic-exception.filter';
 
@@ -17,10 +19,13 @@ async function bootstrap() {
 
   await redisIOAdaperSetup(app, configService.getOrThrow('REDIS_URL'));
 
-  app.useGlobalPipes(new ValidationPipe({
-    whitelist: true
-  }));
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+    }),
+  );
   app.useGlobalFilters(new LogicExceptionFilter());
+  app.use(cookieParser());
 
   await app.listen(process.env.PORT ?? 3000);
 }
