@@ -12,7 +12,7 @@ export class SessionRepository {
     private readonly sesstionRepository: Repository<Session>,
   ) {}
 
-  public async createSession({ userId }: CreateSessionProps): Promise<{id: string}> {
+  public async createSession({ userId }: CreateSessionProps): Promise<{ id: string }> {
     const { id } = await this.sesstionRepository.save({
       sessionToUser: [
         {
@@ -24,6 +24,6 @@ export class SessionRepository {
       ],
     });
 
-    return { id }
+    return { id };
   }
 }
