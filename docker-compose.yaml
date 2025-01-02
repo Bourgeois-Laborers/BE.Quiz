@@ -11,6 +11,11 @@ services:
       - 5432:5432
     networks:
       - quiz_network
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U $${POSTGRES_USER}']
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   quiz_api:
     container_name: quiz_api
@@ -25,7 +30,8 @@ services:
     ports:
       - 3000:3000
     depends_on:
-      - quiz_database
+      quiz_database:
+        condition: service_healthy
     networks:
       - quiz_network
 
