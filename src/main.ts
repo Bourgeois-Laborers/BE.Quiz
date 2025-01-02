@@ -1,11 +1,13 @@
 import { NestFactory } from '@nestjs/core';
-
-import { swaggerSetup } from '@config/swagger.config';
-import { LogicExceptionFilter } from '@common/filters/logic-exception.filter';
-import { ValidationPipe } from '@nestjs/common';
-import { AppModule } from './app.module';
 import { redisIOAdaperSetup } from '@config/redis-io.config';
 import { ConfigService } from '@nestjs/config';
+import { ValidationPipe } from '@nestjs/common';
+
+import { swaggerSetup } from '@config/swagger.config';
+
+import { LogicExceptionFilter } from '@common/filters/logic-exception.filter';
+
+import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
