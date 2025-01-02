@@ -35,6 +35,19 @@ services:
     networks:
       - quiz_network
 
+  quiz_redis:
+    container_name: quiz_redis
+    image: redis:7-alpine
+    restart: always
+    ports:
+      - 6379:6379
+    logging:
+      driver: json-file
+      options:
+        max-size: 50m
+    networks:
+      - quiz_network
+
 volumes:
   quiz_database:
 
