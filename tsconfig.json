@@ -26,5 +26,8 @@
       "@users/*": ["src/users/*"],
       "@event/*": ["src/event/*"],
     }
+  },
+  "watchOptions": {
+    "watchFile": "fixedPollingInterval"
   }
 }
