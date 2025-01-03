@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { reduce } from 'rxjs/operators';
+
 import { EventGateway } from './event.gateway';
 
 describe('EventGateway', () => {
