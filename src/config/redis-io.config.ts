@@ -2,7 +2,7 @@ import { INestApplication } from '@nestjs/common';
 
 import { RedisIoAdapter } from '@common/adapters/redis-io.adapter';
 
-export const redisIOAdaperSetup = async (app: INestApplication, redisUrl: string): Promise<void> => {
+export const redisIOAdapterSetup = async (app: INestApplication, redisUrl: string): Promise<void> => {
   const redisIoAdapter = new RedisIoAdapter(app);
 
   await redisIoAdapter.connectToRedis(redisUrl);
