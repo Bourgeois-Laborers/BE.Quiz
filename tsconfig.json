@@ -24,7 +24,7 @@
       "@auth/*": ["src/auth/*"],
       "@session/*": ["src/session/*"],
       "@users/*": ["src/users/*"],
-      "@event/*": ["src/event/*"],
+      "@event/*": ["src/event/*"]
     }
   },
   "watchOptions": {
