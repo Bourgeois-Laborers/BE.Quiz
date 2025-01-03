@@ -6,6 +6,7 @@ import { LogicException } from '@common/exceptions/logic-exception';
 import { LogicExceptionList } from '@common/types/logic-exceptions.enum';
 
 import { AuthGuard } from './auth.guard';
+import { AuthorizedUser } from '@common/interfaces/user.inteface';
 
 describe('AuthGuard', () => {
   let guard: AuthGuard;
@@ -18,7 +19,7 @@ describe('AuthGuard', () => {
         {
           provide: JwtService,
           useValue: {
-            verify: jest.fn(),
+            verifyAsync: jest.fn(),
           },
         },
       ],
@@ -34,7 +35,7 @@ describe('AuthGuard', () => {
 
   describe('canActivate', () => {
     let mockContext: ExecutionContext;
-    let mockRequest: any;
+    let mockRequest: { headers: Record<string, string>; user?: AuthorizedUser };
 
     beforeEach(() => {
       mockRequest = {
@@ -55,7 +56,7 @@ describe('AuthGuard', () => {
 
     it('should throw AUTH_INVALID_TOKEN when JWT verification fails', async () => {
       mockRequest.headers.authorization = 'Bearer invalid-token';
-      jest.spyOn(jwtService, 'verify').mockImplementation(() => {
+      jest.spyOn(jwtService, 'verifyAsync').mockImplementation(() => {
         throw new Error();
       });
 
@@ -67,13 +68,13 @@ describe('AuthGuard', () => {
     it('should return true and set user in request when token is valid', async () => {
       const mockPayload = { sub: 'user-id' };
       mockRequest.headers.authorization = 'Bearer valid-token';
-      jest.spyOn(jwtService, 'verify').mockReturnValue(mockPayload);
+      jest.spyOn(jwtService, 'verifyAsync').mockResolvedValue(mockPayload);
 
       const result = await guard.canActivate(mockContext);
 
       expect(result).toBe(true);
       expect(mockRequest.user).toEqual(mockPayload);
-      expect(jwtService.verify).toHaveBeenCalledWith('valid-token');
+      expect(jwtService.verifyAsync).toHaveBeenCalledWith('valid-token');
     });
   });
 });
