@@ -6,6 +6,7 @@ import { UsersModule } from '@users/users.module';
 import { SessionModule } from '@session/session.module';
 import { AuthModule } from '@auth/auth.module';
 import { EventsModule } from '@event/event.module';
+import { HealthModule } from '@health/health.module';
 
 import { getDatabaseConfig } from '@config/database.config';
 
@@ -17,6 +18,7 @@ import { getDatabaseConfig } from '@config/database.config';
     SessionModule,
     AuthModule,
     EventsModule,
+    HealthModule,
   ],
 })
 export class AppModule {}

@@ -5,7 +5,7 @@ import { ConfigService } from '@nestjs/config';
 import * as cookieParser from 'cookie-parser';
 
 import { swaggerSetup } from '@config/swagger.config';
-import { redisIOAdaperSetup } from '@config/redis-io.config';
+import { redisIOAdapterSetup } from '@config/redis-io.config';
 
 import { LogicExceptionFilter } from '@common/filters/logic-exception.filter';
 
@@ -17,7 +17,7 @@ async function bootstrap() {
 
   swaggerSetup(app);
 
-  await redisIOAdaperSetup(app, configService.getOrThrow('REDIS_URL'));
+  await redisIOAdapterSetup(app, configService.getOrThrow('REDIS_URL'));
 
   app.useGlobalPipes(
     new ValidationPipe({
@@ -29,4 +29,5 @@ async function bootstrap() {
 
   await app.listen(process.env.PORT ?? 3000);
 }
-bootstrap();
+
+void bootstrap();

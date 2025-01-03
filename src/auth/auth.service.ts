@@ -49,7 +49,7 @@ export class AuthService {
       }
 
       return this.generateTokens(user);
-    } catch (error) {
+    } catch {
       throw new LogicException(LogicExceptionList.AUTH_INVALID_TOKEN);
     }
   }

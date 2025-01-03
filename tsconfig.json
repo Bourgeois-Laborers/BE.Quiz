@@ -25,6 +25,10 @@
       "@session/*": ["src/session/*"],
       "@users/*": ["src/users/*"],
       "@event/*": ["src/event/*"],
+      "@health/*": ["src/health/*"]
     }
+  },
+  "watchOptions": {
+    "watchFile": "fixedPollingInterval"
   }
 }

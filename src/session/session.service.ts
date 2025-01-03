@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+
 import { LogicException } from '@common/exceptions/logic-exception';
 import { LogicExceptionList } from '@common/types/logic-exceptions.enum';
 
@@ -22,7 +23,7 @@ export class SessionService {
     return this.sessionRepository.createSession({ userId });
   }
 
-  public async joinToSession({ userId, sessionId }: JoinUserProps) {
+  public async joinToSession({ userId, sessionId }: JoinUserProps): Promise<{ id: string }> {
     const checkIsUserExists = await this.userRepository.findOne({ id: userId });
 
     if (!checkIsUserExists) {
