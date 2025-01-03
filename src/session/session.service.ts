@@ -16,13 +16,13 @@ export class SessionService {
     private readonly userRepository: UsersRepository,
   ) {}
 
-  public async create({ userId }: CreateSessionProps) {
+  public async create({ userId }: CreateSessionProps): Promise<{ id: string }> {
     await this.checkIsUserHasActiveSession(userId);
 
     return this.sessionRepository.createSession({ userId });
   }
 
-  public async joinToSession({ userId, sessionId }: JoinUserProps) {
+  public async joinToSession({ userId, sessionId }: JoinUserProps): Promise<{ id: string }> {
     const checkIsUserExists = await this.userRepository.findOne({ id: userId });
 
     if (!checkIsUserExists) {
