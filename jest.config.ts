@@ -11,6 +11,7 @@ const config: Config.InitialOptions = {
     '^@session/(.*)$': '<rootDir>/modules/session/$1',
     '^@users/(.*)$': '<rootDir>/modules/users/$1',
     '^@event/(.*)$': '<rootDir>/modules/event/$1',
+    '^@health/(.*)$': '<rootDir>/health/$1',
   },
   rootDir: 'src',
   testRegex: '.*\\.spec\\.ts$',
