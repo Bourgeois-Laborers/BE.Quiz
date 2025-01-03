@@ -8,7 +8,7 @@ const config = new DocumentBuilder()
   .addTag('Quiz')
   .build();
 
-export const swaggerSetup = (app: INestApplication) => {
+export const swaggerSetup = (app: INestApplication): void => {
   const documentFactory = () => SwaggerModule.createDocument(app, config);
 
   SwaggerModule.setup('api', app, documentFactory);
