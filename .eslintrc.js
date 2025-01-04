@@ -1,47 +1,25 @@
 module.exports = {
   root: true,
   parser: '@typescript-eslint/parser',
-  plugins: ['@typescript-eslint', 'spellcheck', 'only-warn', 'import'],
+  plugins: ['@typescript-eslint', 'prettier'],
   extends: [
     'eslint:recommended',
-    'plugin:@typescript-eslint/eslint-recommended',
     'plugin:@typescript-eslint/recommended',
     'plugin:@typescript-eslint/recommended-requiring-type-checking',
+    'plugin:prettier/recommended',
   ],
   rules: {
-    'eol-last': 'warn',
     'no-extra-semi': 'off',
     'no-return-await': 'error',
+    'no-unused-vars': 'off',
     '@typescript-eslint/no-explicit-any': 'warn',
-    '@typescript-eslint/no-unused-vars': 'warn',
+    '@typescript-eslint/no-unused-vars': 'error',
     '@typescript-eslint/explicit-module-boundary-types': 'warn',
     'no-console': 'warn',
-    'prefer-const': 'warn',
-    'spellcheck/spell-checker': [
-      'warn',
-      {
-        comments: true,
-        strings: false,
-        identifiers: false,
-        lang: 'en_US',
-        skipWords: ['typescript', 'eslint', 'plugin', 'config', 'json', 'npm', 'const'],
-        skipIfMatch: ['http(s)?://[^s]*', '^#'],
-        minLength: 4,
-      },
-    ],
   },
   overrides: [
     {
       files: ['*.ts'],
-      extends: [
-        'plugin:@typescript-eslint/recommended',
-        'plugin:@typescript-eslint/recommended-requiring-type-checking',
-      ],
-      rules: {
-        'no-console': 'warn',
-        '@typescript-eslint/no-unused-vars': 'warn',
-        '@typescript-eslint/no-explicit-any': 'warn',
-      },
       parserOptions: {
         project: ['./tsconfig.json'],
       },
@@ -61,7 +39,8 @@ module.exports = {
         ['auth', './src/auth'],
         ['session', './src/session'],
         ['users', './src/users'],
-        ['database', './database'],
+        ['database', './src/database'],
+        ['health', './src/health'],
       ],
     },
   },

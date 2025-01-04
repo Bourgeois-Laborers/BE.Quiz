@@ -3,7 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 
 import { LogicException } from '@common/exceptions/logic-exception';
 import { LogicExceptionList } from '@common/types/logic-exceptions.enum';
-import { AuthorizedUser } from '@common/interfaces/user.inteface';
+import { AuthorizedUser } from '@common/interfaces/user.interface';
 
 @Injectable()
 export class AuthGuard implements CanActivate {

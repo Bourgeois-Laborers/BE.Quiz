@@ -6,7 +6,7 @@ import { LogicException } from '@common/exceptions/logic-exception';
 import { LogicExceptionList } from '@common/types/logic-exceptions.enum';
 
 import { AuthGuard } from './auth.guard';
-import { AuthorizedUser } from '@common/interfaces/user.inteface';
+import { AuthorizedUser } from '@common/interfaces/user.interface';
 
 describe('AuthGuard', () => {
   let guard: AuthGuard;
