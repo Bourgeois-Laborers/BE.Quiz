@@ -1,5 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
+
+import { SessionStatus } from '@common/types/session-status.enum';
 
 import { SessionToUser } from '../entities/session-user.entity';
 import { JoinToSessionProps } from './interfaces/join-to-session.interface';
@@ -7,9 +9,10 @@ import { JoinToSessionProps } from './interfaces/join-to-session.interface';
 export class SessionToUserRepository {
   constructor(@InjectRepository(SessionToUser) private readonly sessionToUserRepository: Repository<SessionToUser>) {}
 
-  public async joinToSession({ userId, sessionId }: JoinToSessionProps): Promise<SessionToUser> {
+  public async joinToSession({ userId, userAlias, sessionId }: JoinToSessionProps): Promise<SessionToUser> {
     return this.sessionToUserRepository.save({
       isHost: false,
+      userAlias: userAlias,
       session: {
         id: sessionId,
       },
@@ -26,7 +29,7 @@ export class SessionToUserRepository {
           id: userId,
         },
         session: {
-          isActive: true,
+          status: Not(SessionStatus.FINISHED),
         },
       },
     });

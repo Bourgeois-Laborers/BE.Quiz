@@ -16,13 +16,13 @@ export class SessionService {
     private readonly userRepository: UsersRepository,
   ) {}
 
-  public async create({ userId }: CreateSessionProps): Promise<{ id: string }> {
+  public async create({ userId, userAlias }: CreateSessionProps): Promise<{ id: string }> {
     await this.checkIsUserHasActiveSession(userId);
 
-    return this.sessionRepository.createSession({ userId });
+    return this.sessionRepository.createSession({ userId, userAlias });
   }
 
-  public async joinToSession({ userId, sessionId }: JoinUserProps): Promise<{ id: string }> {
+  public async joinToSession({ userId, userAlias, sessionId }: JoinUserProps): Promise<{ id: string }> {
     const checkIsUserExists = await this.userRepository.findOne({ id: userId });
 
     if (!checkIsUserExists) {
@@ -31,10 +31,10 @@ export class SessionService {
 
     await this.checkIsUserHasActiveSession(userId);
 
-    return this.sessionToUserRepository.joinToSession({ sessionId, userId });
+    return this.sessionToUserRepository.joinToSession({ sessionId, userId, userAlias });
   }
 
-  private async checkIsUserHasActiveSession(userId: string) {
+  private async checkIsUserHasActiveSession(userId: string): Promise<void> {
     const checkIsUserHasActiveSession = await this.sessionToUserRepository.checkIsUserHasActiveSession(userId);
 
     if (checkIsUserHasActiveSession) {

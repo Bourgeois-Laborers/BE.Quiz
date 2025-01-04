@@ -9,14 +9,15 @@ import { CreateSessionProps } from './interfaces/create-session.interface';
 export class SessionRepository {
   constructor(
     @InjectRepository(Session)
-    private readonly sesstionRepository: Repository<Session>,
+    private readonly sessionRepository: Repository<Session>,
   ) {}
 
-  public async createSession({ userId }: CreateSessionProps): Promise<{ id: string }> {
-    const { id } = await this.sesstionRepository.save({
+  public async createSession({ userId, userAlias }: CreateSessionProps): Promise<{ id: string }> {
+    const { id } = await this.sessionRepository.save({
       sessionToUser: [
         {
           isHost: true,
+          userAlias: userAlias,
           user: {
             id: userId,
           },
