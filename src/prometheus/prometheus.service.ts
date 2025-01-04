@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 
 import * as client from 'prom-client';
 
@@ -6,9 +7,9 @@ import * as client from 'prom-client';
 export class PrometheusService {
   private readonly register: client.Registry;
 
-  constructor() {
+  constructor(private readonly configService: ConfigService) {
     this.register = new client.Registry();
-    this.register.setDefaultLabels({ app: 'quiz-prometheus' });
+    this.register.setDefaultLabels({ app: this.configService.getOrThrow('PROMETHEUS_LABEL') });
     client.collectDefaultMetrics({ register: this.register });
   }
 
