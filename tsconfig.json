@@ -25,7 +25,8 @@
       "@session/*": ["src/session/*"],
       "@users/*": ["src/users/*"],
       "@event/*": ["src/event/*"],
-      "@health/*": ["src/health/*"]
+      "@health/*": ["src/health/*"],
+      "@prometheus/*": ["src/prometheus/*"]
     }
   },
   "watchOptions": {

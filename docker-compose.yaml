@@ -30,8 +30,8 @@ services:
     ports:
       - 3000:3000
     depends_on:
-      quiz_database:
-        condition: service_healthy
+      - quiz_database
+      - quiz_prometheus
     networks:
       - quiz_network
 
@@ -47,9 +47,36 @@ services:
         max-size: 50m
     networks:
       - quiz_network
+  
+  quiz_prometheus:
+    image: prom/prometheus
+    container_name: quiz_prometheus
+    ports:
+      - '9090:9090'
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - quiz_prometheus_data:/prometheus
+    networks:
+      - quiz_network
+      
+  quiz_grafana:
+    image: grafana/grafana
+    container_name: quiz_grafana
+    env_file:
+      - .env
+    ports:
+      - '3001:3000'
+    volumes:
+      - quiz_grafana_data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+    networks:
+      - quiz_network
 
 volumes:
   quiz_database:
+  quiz_grafana_data:
+  quiz_prometheus_data:
 
 networks:
   quiz_network:
