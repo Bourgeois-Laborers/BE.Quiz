@@ -9,11 +9,11 @@ import { CreateSessionProps } from './interfaces/create-session.interface';
 export class SessionRepository {
   constructor(
     @InjectRepository(Session)
-    private readonly sessionRepository: Repository<Session>,
+    private readonly repository: Repository<Session>,
   ) {}
 
   public async createSession({ userId, userAlias }: CreateSessionProps): Promise<{ id: string }> {
-    const { id } = await this.sessionRepository.save({
+    const { id } = await this.repository.save({
       sessionToUser: [
         {
           isHost: true,
@@ -26,5 +26,9 @@ export class SessionRepository {
     });
 
     return { id };
+  }
+
+  async findOne(query: Partial<Session>): Promise<Session> {
+    return this.repository.findOneBy(query);
   }
 }

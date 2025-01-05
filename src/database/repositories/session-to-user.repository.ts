@@ -22,7 +22,7 @@ export class SessionToUserRepository {
     });
   }
 
-  public async checkIsUserHasActiveSession(userId: string): Promise<SessionToUser> {
+  public async findUserActiveSession(userId: string): Promise<SessionToUser> {
     return this.sessionToUserRepository.findOne({
       where: {
         user: {
@@ -30,6 +30,23 @@ export class SessionToUserRepository {
         },
         session: {
           status: Not(SessionStatus.FINISHED),
+        },
+      },
+    });
+  }
+
+  public findUserAliasInSession({
+    sessionId,
+    userAlias,
+  }: {
+    sessionId: string;
+    userAlias: string;
+  }): Promise<SessionToUser> {
+    return this.sessionToUserRepository.findOne({
+      where: {
+        userAlias,
+        session: {
+          id: sessionId,
         },
       },
     });
