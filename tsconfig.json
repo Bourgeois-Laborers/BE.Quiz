@@ -18,14 +18,36 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "paths": {
-      "@config/*": ["src/config/*"],
-      "@common/*": ["src/common/*"],
-      "@database/*": ["src/database/*"],
-      "@auth/*": ["src/auth/*"],
-      "@session/*": ["src/session/*"],
-      "@users/*": ["src/users/*"],
-      "@event/*": ["src/event/*"],
-      "@health/*": ["src/health/*"]
+      "@config/*": [
+        "src/config/*"
+      ],
+      "@common/*": [
+        "src/common/*"
+      ],
+      "@database/*": [
+        "src/database/*"
+      ],
+      "@auth/*": [
+        "src/auth/*"
+      ],
+      "@session/*": [
+        "src/session/*"
+      ],
+      "@users/*": [
+        "src/users/*"
+      ],
+      "@event/*": [
+        "src/event/*"
+      ],
+      "@health/*": [
+        "src/health/*"
+      ],
+      "@app/gpt": [
+        "libs/gpt/src"
+      ],
+      "@app/gpt/*": [
+        "libs/gpt/src/*"
+      ]
     }
   },
   "watchOptions": {

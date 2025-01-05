@@ -10,6 +10,8 @@ import { HealthModule } from '@health/health.module';
 
 import { getDatabaseConfig } from '@config/database.config';
 
+import { GptModule } from '@app/gpt';
+
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -19,6 +21,8 @@ import { getDatabaseConfig } from '@config/database.config';
     AuthModule,
     EventsModule,
     HealthModule,
+    PrometheusModule,
+    GptModule,
   ],
 })
 export class AppModule {}
