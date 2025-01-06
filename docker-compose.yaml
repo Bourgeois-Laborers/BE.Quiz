@@ -41,13 +41,15 @@ services:
     restart: always
     ports:
       - 6379:6379
+    volumes:
+      - quiz_cache:/data
     logging:
       driver: json-file
       options:
         max-size: 50m
     networks:
       - quiz_network
-  
+
   quiz_prometheus:
     image: prom/prometheus
     container_name: quiz_prometheus
@@ -58,7 +60,7 @@ services:
       - quiz_prometheus_data:/prometheus
     networks:
       - quiz_network
-      
+
   quiz_grafana:
     image: grafana/grafana
     container_name: quiz_grafana
@@ -75,6 +77,7 @@ services:
 
 volumes:
   quiz_database:
+  quiz_cache:
   quiz_grafana_data:
   quiz_prometheus_data:
 
