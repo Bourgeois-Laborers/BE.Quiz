@@ -34,4 +34,8 @@ export const Exceptions: LogicExceptionMap = {
     httpStatusCode: 400,
     message: 'User already have active session',
   },
+  [LogicExceptionType.SESSION_USER_ALIAS_ALREADY_EXISTS]: {
+    httpStatusCode: 400,
+    message: 'User alias in session already exists',
+  },
 };

@@ -1,8 +1,9 @@
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Expose } from 'class-transformer';
 
+import { SessionStatus } from '@common/types/session-status.enum';
+
 import { SessionToUser } from './session-user.entity';
-import { User } from './user.entity';
 
 @Entity({
   name: 'sessions',
@@ -12,11 +13,8 @@ export class Session {
   @Expose()
   id: string;
 
-  @Column({ name: 'is_active', type: 'boolean' })
-  isActive: boolean;
-
-  @ManyToOne(() => User, (user) => user.id)
-  hostUserId: string;
+  @Column({ type: 'enum', enum: SessionStatus })
+  status: SessionStatus;
 
   @OneToMany(() => SessionToUser, (sessionToUser) => sessionToUser.session)
   sessionToUser: SessionToUser[];

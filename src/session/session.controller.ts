@@ -1,4 +1,4 @@
-import { Controller, HttpStatus, Param, Post } from '@nestjs/common';
+import { Body, Controller, HttpStatus, Param, Post } from '@nestjs/common';
 import { ApiResponse } from '@nestjs/swagger';
 
 import { ControllerComposeDecorator } from '@common/decorators/conroller-compose.decorator';
@@ -8,8 +8,8 @@ import { User } from '@common/decorators/user.decorator';
 import { AuthorizedUser } from '@common/interfaces/user.interface';
 
 import { SessionService } from './session.service';
-import { CreateSessionResponseDto } from './dto/create-session.dto';
-import { JoinToSessionResponseDto } from './dto/join-to-session.dto';
+import { CreateSessionDto, CreateSessionResponseDto } from './dto/create-session.dto';
+import { JoinSessionDto, JoinToSessionResponseDto } from './dto/join-to-session.dto';
 
 @Controller('sessions')
 @ControllerComposeDecorator({ guards: ['AuthGuard'] })
@@ -19,14 +19,18 @@ export class SessionController {
   @Post()
   @Serialize(CreateSessionResponseDto)
   @ApiResponse({ status: HttpStatus.CREATED, type: CreateSessionResponseDto })
-  public create(@User() user: AuthorizedUser): Promise<{ id: string }> {
-    return this.sessionService.create({ userId: user.sub });
+  public createAndJoin(@User() user: AuthorizedUser, @Body() { userAlias }: CreateSessionDto): Promise<{ id: string }> {
+    return this.sessionService.createSessionWithJoin({ userId: user.sub, userAlias });
   }
 
   @Post(':sessionId/join')
   @Serialize(JoinToSessionResponseDto)
   @ApiResponse({ status: HttpStatus.CREATED, type: JoinToSessionResponseDto })
-  public join(@Param('sessionId') sessionId: string, @User() user: AuthorizedUser): Promise<{ id: string }> {
-    return this.sessionService.joinToSession({ sessionId, userId: user.sub });
+  public join(
+    @Param('sessionId') sessionId: string,
+    @User() user: AuthorizedUser,
+    @Body() { userAlias }: JoinSessionDto,
+  ): Promise<{ id: string }> {
+    return this.sessionService.joinToSession({ sessionId, userId: user.sub, userAlias });
   }
 }
