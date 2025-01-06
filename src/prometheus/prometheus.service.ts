@@ -9,7 +9,7 @@ export class PrometheusService {
 
   constructor(private readonly configService: ConfigService) {
     this.register = new client.Registry();
-    this.register.setDefaultLabels({ app: this.configService.getOrThrow('PROMETHEUS_LABEL') });
+    this.register.setDefaultLabels({ app: this.configService.getOrThrow<string>('PROMETHEUS_LABEL') });
     client.collectDefaultMetrics({ register: this.register });
   }
 

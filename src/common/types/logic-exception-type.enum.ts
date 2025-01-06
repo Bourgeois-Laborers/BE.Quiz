@@ -1,4 +1,4 @@
-export enum LogicExceptionList {
+export enum LogicExceptionType {
   AUTH_INVALID_TOKEN = 'auth_invalid_token',
   AUTH_MISSING_TOKEN = 'auth_missing_token',
 

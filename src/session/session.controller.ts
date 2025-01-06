@@ -5,7 +5,7 @@ import { ControllerComposeDecorator } from '@common/decorators/conroller-compose
 import { Serialize } from '@common/decorators/serialize.decorator';
 import { User } from '@common/decorators/user.decorator';
 
-import { AuthorizedUser } from '@common/interfaces/user.inteface';
+import { AuthorizedUser } from '@common/interfaces/user.interface';
 
 import { SessionService } from './session.service';
 import { CreateSessionDto, CreateSessionResponseDto } from './dto/create-session.dto';

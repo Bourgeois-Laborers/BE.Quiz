@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { LogicException } from '@common/exceptions/logic-exception';
-import { LogicExceptionList } from '@common/types/logic-exceptions.enum';
+import { LogicExceptionType } from '@common/types/logic-exception-type.enum';
 
 import { SessionRepository } from '../database/repositories/session.repository';
 import { JoinUserProps } from './interfaces/join-user.interface';
@@ -17,7 +17,7 @@ export class SessionService {
   public async create({ userId, userAlias }: CreateSessionProps): Promise<{ id: string }> {
     const isUserHasActiveSession = await this.sessionToUserRepository.findUserActiveSession(userId);
     if (isUserHasActiveSession) {
-      throw new LogicException(LogicExceptionList.USER_ALREADY_HAS_ACTIVE_SESSION);
+      throw new LogicException(LogicExceptionType.USER_ALREADY_HAS_ACTIVE_SESSION);
     }
 
     return this.sessionRepository.createSession({ userId, userAlias });
@@ -26,17 +26,17 @@ export class SessionService {
   public async joinToSession({ userId, userAlias, sessionId }: JoinUserProps): Promise<{ id: string }> {
     const isSessionExists = await this.sessionRepository.findOne({ id: sessionId });
     if (!isSessionExists) {
-      throw new LogicException(LogicExceptionList.SESSION_NOT_FOUND);
+      throw new LogicException(LogicExceptionType.SESSION_NOT_FOUND);
     }
 
     const isUserHasActiveSession = await this.sessionToUserRepository.findUserActiveSession(userId);
     if (isUserHasActiveSession) {
-      throw new LogicException(LogicExceptionList.USER_ALREADY_HAS_ACTIVE_SESSION);
+      throw new LogicException(LogicExceptionType.USER_ALREADY_HAS_ACTIVE_SESSION);
     }
 
     const isUserAliasAvailable = await this.sessionToUserRepository.findUserAliasInSession({ sessionId, userAlias });
     if (isUserAliasAvailable) {
-      throw new LogicException(LogicExceptionList.SESSION_USER_ALIAS_ALREADY_EXISTS);
+      throw new LogicException(LogicExceptionType.SESSION_USER_ALIAS_ALREADY_EXISTS);
     }
 
     return this.sessionToUserRepository.joinToSession({ sessionId, userId, userAlias });

@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
 import { LogicException } from '@common/exceptions/logic-exception';
-import { LogicExceptionList } from '@common/types/logic-exceptions.enum';
-import { AuthorizedUser } from '@common/interfaces/user.inteface';
+import { LogicExceptionType } from '@common/types/logic-exception-type.enum';
+import { AuthorizedUser } from '@common/interfaces/user.interface';
 
 import { User } from '@database/entities/user.entity';
 import { UsersRepository } from '@database/repositories/user.repository';
@@ -31,7 +31,7 @@ export class AuthService {
     const user = await this.usersRepository.findOne({ id });
 
     if (!user) {
-      throw new LogicException(LogicExceptionList.USER_NOT_FOUND);
+      throw new LogicException(LogicExceptionType.USER_NOT_FOUND);
     }
 
     return this.generateTokens(user);
@@ -45,12 +45,12 @@ export class AuthService {
       const user = await this.usersRepository.findOne({ id: payload.sub });
 
       if (!user) {
-        throw new LogicException(LogicExceptionList.USER_NOT_FOUND);
+        throw new LogicException(LogicExceptionType.USER_NOT_FOUND);
       }
 
       return this.generateTokens(user);
     } catch {
-      throw new LogicException(LogicExceptionList.AUTH_INVALID_TOKEN);
+      throw new LogicException(LogicExceptionType.AUTH_INVALID_TOKEN);
     }
   }
 
