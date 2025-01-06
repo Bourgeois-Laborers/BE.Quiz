@@ -3,7 +3,7 @@ import { ExecutionContext } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
 import { LogicException } from '@common/exceptions/logic-exception';
-import { LogicExceptionList } from '@common/types/logic-exceptions.enum';
+import { LogicExceptionType } from '@common/types/logic-exception-type.enum';
 
 import { AuthGuard } from './auth.guard';
 import { AuthorizedUser } from '@common/interfaces/user.interface';
@@ -50,7 +50,7 @@ describe('AuthGuard', () => {
 
     it('should throw AUTH_MISSING_TOKEN when no authorization header', async () => {
       await expect(guard.canActivate(mockContext)).rejects.toThrow(
-        new LogicException(LogicExceptionList.AUTH_MISSING_TOKEN),
+        new LogicException(LogicExceptionType.AUTH_MISSING_TOKEN),
       );
     });
 
@@ -61,7 +61,7 @@ describe('AuthGuard', () => {
       });
 
       await expect(guard.canActivate(mockContext)).rejects.toThrow(
-        new LogicException(LogicExceptionList.AUTH_INVALID_TOKEN),
+        new LogicException(LogicExceptionType.AUTH_INVALID_TOKEN),
       );
     });
 
