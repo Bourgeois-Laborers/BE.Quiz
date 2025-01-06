@@ -36,7 +36,7 @@ export class SessionService {
 
     const isUserAliasAvailable = await this.sessionToUserRepository.findUserAliasInSession({ sessionId, userAlias });
     if (isUserAliasAvailable) {
-      throw new LogicException(LogicExceptionList.USER_ALIAS_ALREADY_EXISTS);
+      throw new LogicException(LogicExceptionList.SESSION_USER_ALIAS_ALREADY_EXISTS);
     }
 
     return this.sessionToUserRepository.joinToSession({ sessionId, userId, userAlias });
