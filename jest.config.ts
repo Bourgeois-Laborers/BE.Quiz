@@ -13,7 +13,7 @@ const config: Config.InitialOptions = {
     '^@event/(.*)$': '<rootDir>/event/$1',
     '^@health/(.*)$': '<rootDir>/health/$1',
     '^@prometheus/(.*)$': '<rootDir>/prometheus/$1',
-    '^@gpt/(.*)$': '<rootDir>/../libs/gpt/$1',
+    '^@libs/gpt/(.*)$': '<rootDir>/../libs/gpt/$1',
   },
   rootDir: 'src',
   testRegex: '.*\\.spec\\.ts$',
