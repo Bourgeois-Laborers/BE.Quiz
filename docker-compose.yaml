@@ -73,10 +73,28 @@ services:
     networks:
       - quiz_network
 
+  pgadmin:
+    image: 'docker.io/dpage/pgadmin4:latest'
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: 'admin@gmail.com'
+      PGADMIN_DEFAULT_PASSWORD: 'password'
+    ports:
+      - 15080:80
+    volumes:
+      - quiz_pgadmin_data:/var/lib/pgadmin/
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '50m'
+    networks:
+      - quiz_network
+
 volumes:
   quiz_database:
   quiz_grafana_data:
   quiz_prometheus_data:
+  quiz_pgadmin_data:
 
 networks:
   quiz_network:

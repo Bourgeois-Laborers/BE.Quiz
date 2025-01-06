@@ -1,15 +1,13 @@
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { Expose } from 'class-transformer';
 
-import { SessionToUser } from './session-user.entity';
-import { User } from './user.entity';
+import { SessionToUser } from '@database/entities/session-user.entity';
+import { User } from '@database/entities/user.entity';
 
 @Entity({
   name: 'sessions',
 })
 export class Session {
   @PrimaryGeneratedColumn('uuid')
-  @Expose()
   id: string;
 
   @Column({ name: 'is_active', type: 'boolean' })
