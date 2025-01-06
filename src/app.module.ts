@@ -11,6 +11,8 @@ import { PrometheusModule } from '@prometheus/prometheus.module';
 
 import { getDatabaseConfig } from '@config/database.config';
 
+import { GptModule } from '@libs/gpt';
+
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -21,6 +23,7 @@ import { getDatabaseConfig } from '@config/database.config';
     EventsModule,
     HealthModule,
     PrometheusModule,
+    GptModule,
   ],
 })
 export class AppModule {}

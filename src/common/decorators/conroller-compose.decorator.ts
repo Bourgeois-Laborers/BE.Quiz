@@ -2,6 +2,7 @@ import { applyDecorators, UseGuards, UseInterceptors } from '@nestjs/common';
 
 import { ErrorsInterceptor } from '@common/interceptors/errors.interceptor';
 import { ResponseInterceptor } from '@common/interceptors/response.interceptor';
+
 import { AuthGuard } from '@auth/auth.guard';
 
 type Guards = 'AuthGuard';
@@ -22,6 +23,5 @@ export function ControllerComposeDecorator({
   if (includeGuards.length) {
     return applyDecorators(UseInterceptors(ErrorsInterceptor, ResponseInterceptor), UseGuards(...includeGuards));
   }
-
   return applyDecorators(UseInterceptors(ErrorsInterceptor, ResponseInterceptor));
 }
