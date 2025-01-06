@@ -12,7 +12,7 @@ export class SessionToUserRepository {
   public async joinToSession({ userId, userAlias, sessionId }: JoinToSessionProps): Promise<SessionToUser> {
     return this.sessionToUserRepository.save({
       isHost: false,
-      userAlias: userAlias,
+      userAlias,
       session: {
         id: sessionId,
       },

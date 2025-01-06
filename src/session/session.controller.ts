@@ -19,8 +19,8 @@ export class SessionController {
   @Post()
   @Serialize(CreateSessionResponseDto)
   @ApiResponse({ status: HttpStatus.CREATED, type: CreateSessionResponseDto })
-  public create(@User() user: AuthorizedUser, @Body() createSessionDto: CreateSessionDto): Promise<{ id: string }> {
-    return this.sessionService.create({ userId: user.sub, userAlias: createSessionDto.userAlias });
+  public create(@User() user: AuthorizedUser, @Body() { userAlias }: CreateSessionDto): Promise<{ id: string }> {
+    return this.sessionService.create({ userId: user.sub, userAlias });
   }
 
   @Post(':sessionId/join')
@@ -29,8 +29,8 @@ export class SessionController {
   public join(
     @Param('sessionId') sessionId: string,
     @User() user: AuthorizedUser,
-    @Body() joinSessionDto: JoinSessionDto,
+    @Body() { userAlias }: JoinSessionDto,
   ): Promise<{ id: string }> {
-    return this.sessionService.joinToSession({ sessionId, userId: user.sub, userAlias: joinSessionDto.userAlias });
+    return this.sessionService.joinToSession({ sessionId, userId: user.sub, userAlias });
   }
 }
