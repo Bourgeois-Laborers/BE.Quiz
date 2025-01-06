@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { LogicException } from '@common/exceptions/logic-exception';
-import { LogicExceptionList } from '@common/types/logic-exceptions.enum';
+import { LogicExceptionType } from '@common/types/logic-exception-type.enum';
 
 import { SessionRepository } from '../database/repositories/session.repository';
 import { JoinUserProps } from './interfaces/join-user.interface';
@@ -26,7 +26,7 @@ export class SessionService {
     const checkIsUserExists = await this.userRepository.findOne({ id: userId });
 
     if (!checkIsUserExists) {
-      throw new LogicException(LogicExceptionList.USER_NOT_FOUND);
+      throw new LogicException(LogicExceptionType.USER_NOT_FOUND);
     }
 
     await this.checkIsUserHasActiveSession(userId);
@@ -38,7 +38,7 @@ export class SessionService {
     const checkIsUserHasActiveSession = await this.sessionToUserRepository.checkIsUserHasActiveSession(userId);
 
     if (checkIsUserHasActiveSession) {
-      throw new LogicException(LogicExceptionList.USER_ALREADY_HAS_ACTIVE_SESSION);
+      throw new LogicException(LogicExceptionType.USER_ALREADY_HAS_ACTIVE_SESSION);
     }
   }
 }
