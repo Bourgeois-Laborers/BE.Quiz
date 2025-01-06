@@ -44,7 +44,7 @@ module.exports = {
         ['health', './src/health'],
         ['database', './database'],
         ['prometheus', './src/prometheus'],
-        ['gpt', './libs/gpt']
+        ['libs/gpt', './libs/gpt']
       ],
     },
   },
