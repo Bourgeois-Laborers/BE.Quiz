@@ -26,7 +26,9 @@
       "@users/*": ["src/users/*"],
       "@event/*": ["src/event/*"],
       "@health/*": ["src/health/*"],
-      "@prometheus/*": ["src/prometheus/*"]
+      "@prometheus/*": ["src/prometheus/*"],
+      "@libs/gpt": ["libs/gpt/src"],
+      "@libs/gpt/*": ["libs/gpt/src/*"]
     }
   },
   "watchOptions": {

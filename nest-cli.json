@@ -3,6 +3,18 @@
   "collection": "@nestjs/schematics",
   "sourceRoot": "src",
   "compilerOptions": {
-    "deleteOutDir": true
+    "deleteOutDir": true,
+    "webpack": true
+  },
+  "projects": {
+    "gpt": {
+      "type": "library",
+      "root": "libs/gpt",
+      "entryFile": "index",
+      "sourceRoot": "libs/gpt/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/gpt/tsconfig.lib.json"
+      }
+    }
   }
 }
