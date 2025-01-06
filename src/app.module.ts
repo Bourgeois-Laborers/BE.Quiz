@@ -7,6 +7,7 @@ import { SessionModule } from '@session/session.module';
 import { AuthModule } from '@auth/auth.module';
 import { EventsModule } from '@event/event.module';
 import { HealthModule } from '@health/health.module';
+import { PrometheusModule } from '@prometheus/prometheus.module';
 
 import { getDatabaseConfig } from '@config/database.config';
 

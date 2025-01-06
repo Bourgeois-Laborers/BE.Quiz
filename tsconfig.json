@@ -42,6 +42,9 @@
       "@health/*": [
         "src/health/*"
       ],
+      "@prometheus/*": [
+        "src/prometheus/*"
+      ],
       "@app/gpt": [
         "libs/gpt/src"
       ],

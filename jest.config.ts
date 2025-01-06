@@ -12,6 +12,7 @@ const config: Config.InitialOptions = {
     '^@users/(.*)$': '<rootDir>/users/$1',
     '^@event/(.*)$': '<rootDir>/event/$1',
     '^@health/(.*)$': '<rootDir>/health/$1',
+    '^@prometheus/(.*)$': '<rootDir>/prometheus/$1',
   },
   rootDir: 'src',
   testRegex: '.*\\.spec\\.ts$',

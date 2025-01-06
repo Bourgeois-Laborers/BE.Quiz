@@ -62,6 +62,7 @@ module.exports = {
         ['session', './src/session'],
         ['users', './src/users'],
         ['database', './database'],
+        ['prometheus', './src/prometheus'],
       ],
     },
   },

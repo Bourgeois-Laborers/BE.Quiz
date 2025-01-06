@@ -9,7 +9,15 @@ type Guards = 'AuthGuard';
 
 const ALLOWED_GUARDS = { AuthGuard: AuthGuard };
 
-export function ControllerComposeDecorator({ guards }: { guards: Guards[] }): MethodDecorator {
+export function ControllerComposeDecorator({
+  guards,
+}: {
+  guards: Guards[];
+}): <TFunction extends (...args: never) => unknown, Y>(
+  target: TFunction | object,
+  propertyKey?: string | symbol,
+  descriptor?: TypedPropertyDescriptor<Y>,
+) => void {
   const includeGuards = guards.map((guard) => ALLOWED_GUARDS[guard]).filter((value) => value);
 
   if (includeGuards.length) {
