@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { JwtService } from '@nestjs/jwt';
 
 import { LogicException } from '@common/exceptions/logic-exception';
-import { LogicExceptionList } from '@common/types/logic-exceptions.enum';
+import { LogicExceptionType } from '@common/types/logic-exception-type.enum';
 
 import { User } from '@database/entities/user.entity';
 import { UsersRepository } from '@database/repositories/user.repository';
@@ -79,7 +79,7 @@ describe('AuthService', () => {
       jest.spyOn(usersRepository, 'findOne').mockResolvedValue(null);
 
       await expect(service.signIn({ id: 'test-id' })).rejects.toThrow(
-        new LogicException(LogicExceptionList.USER_NOT_FOUND),
+        new LogicException(LogicExceptionType.USER_NOT_FOUND),
       );
     });
   });
@@ -108,7 +108,7 @@ describe('AuthService', () => {
       jest.spyOn(jwtService, 'verifyAsync').mockRejectedValue(new Error());
 
       await expect(service.refreshToken({ refreshToken: 'invalid' })).rejects.toThrow(
-        new LogicException(LogicExceptionList.AUTH_INVALID_TOKEN),
+        new LogicException(LogicExceptionType.AUTH_INVALID_TOKEN),
       );
     });
 
@@ -119,7 +119,7 @@ describe('AuthService', () => {
       jest.spyOn(usersRepository, 'findOne').mockResolvedValue(null);
 
       await expect(service.refreshToken({ refreshToken: 'valid' })).rejects.toThrow(
-        new LogicException(LogicExceptionList.AUTH_INVALID_TOKEN),
+        new LogicException(LogicExceptionType.AUTH_INVALID_TOKEN),
       );
     });
   });

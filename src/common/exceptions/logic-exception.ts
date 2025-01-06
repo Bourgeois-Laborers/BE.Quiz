@@ -1,7 +1,7 @@
-import { LogicExceptionList } from '../types/logic-exceptions.enum';
+import { LogicExceptionType } from '../types/logic-exception-type.enum';
 
 export class LogicException extends Error {
-  constructor(public error: LogicExceptionList) {
+  constructor(public error: LogicExceptionType) {
     super(error);
   }
 }
