@@ -9,7 +9,7 @@ import { JoinToSessionProps } from './interfaces/join-to-session.interface';
 export class SessionToUserRepository {
   constructor(@InjectRepository(SessionToUser) private readonly sessionToUserRepository: Repository<SessionToUser>) {}
 
-  public async joinToSession({ userId, userAlias, sessionId }: JoinToSessionProps): Promise<SessionToUser> {
+  public async createSessionToUser({ userId, userAlias, sessionId }: JoinToSessionProps): Promise<SessionToUser> {
     return this.sessionToUserRepository.save({
       isHost: false,
       userAlias,

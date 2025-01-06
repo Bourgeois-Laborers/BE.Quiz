@@ -14,13 +14,13 @@ export class SessionService {
     private readonly sessionToUserRepository: SessionToUserRepository,
   ) {}
 
-  public async create({ userId, userAlias }: CreateSessionProps): Promise<{ id: string }> {
+  public async createSessionWithJoin({ userId, userAlias }: CreateSessionProps): Promise<{ id: string }> {
     const isUserHasActiveSession = await this.sessionToUserRepository.findUserActiveSession(userId);
     if (isUserHasActiveSession) {
       throw new LogicException(LogicExceptionType.USER_ALREADY_HAS_ACTIVE_SESSION);
     }
 
-    return this.sessionRepository.createSession({ userId, userAlias });
+    return this.sessionRepository.createSessionAndSessionToUser({ userId, userAlias });
   }
 
   public async joinToSession({ userId, userAlias, sessionId }: JoinUserProps): Promise<{ id: string }> {
@@ -39,6 +39,6 @@ export class SessionService {
       throw new LogicException(LogicExceptionType.SESSION_USER_ALIAS_ALREADY_EXISTS);
     }
 
-    return this.sessionToUserRepository.joinToSession({ sessionId, userId, userAlias });
+    return this.sessionToUserRepository.createSessionToUser({ sessionId, userId, userAlias });
   }
 }

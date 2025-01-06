@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
+import { SessionStatus } from '@common/types/session-status.enum';
+
 import { Session } from '../entities/session.entity';
 import { CreateSessionProps } from './interfaces/create-session.interface';
 
@@ -12,12 +14,13 @@ export class SessionRepository {
     private readonly repository: Repository<Session>,
   ) {}
 
-  public async createSession({ userId, userAlias }: CreateSessionProps): Promise<{ id: string }> {
+  public async createSessionAndSessionToUser({ userId, userAlias }: CreateSessionProps): Promise<{ id: string }> {
     const { id } = await this.repository.save({
+      status: SessionStatus.PENDING,
       sessionToUser: [
         {
           isHost: true,
-          userAlias: userAlias,
+          userAlias,
           user: {
             id: userId,
           },
