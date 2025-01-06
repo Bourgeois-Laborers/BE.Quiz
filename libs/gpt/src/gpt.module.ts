@@ -1,12 +1,13 @@
 import OpenAI from 'openai';
 
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigService } from '@nestjs/config';
 
 import { GptService } from './gpt.service';
 
+import { GPT_CLIENT_PROVIDER } from './constants';
+
 @Module({
-  imports: [ConfigModule],
   providers: [
     GptService,
     {
@@ -19,8 +20,8 @@ import { GptService } from './gpt.service';
 
         return openai;
       },
-      inject: [ConfigModule],
-      provide: 'GPT_CLIENT',
+      inject: [ConfigService],
+      provide: GPT_CLIENT_PROVIDER,
     },
   ],
   exports: [GptService],

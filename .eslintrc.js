@@ -63,6 +63,7 @@ module.exports = {
         ['users', './src/users'],
         ['database', './database'],
         ['prometheus', './src/prometheus'],
+        ['gpt', './libs/gpt']
       ],
     },
   },

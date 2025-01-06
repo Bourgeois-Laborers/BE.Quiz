@@ -18,39 +18,17 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "paths": {
-      "@config/*": [
-        "src/config/*"
-      ],
-      "@common/*": [
-        "src/common/*"
-      ],
-      "@database/*": [
-        "src/database/*"
-      ],
-      "@auth/*": [
-        "src/auth/*"
-      ],
-      "@session/*": [
-        "src/session/*"
-      ],
-      "@users/*": [
-        "src/users/*"
-      ],
-      "@event/*": [
-        "src/event/*"
-      ],
-      "@health/*": [
-        "src/health/*"
-      ],
-      "@prometheus/*": [
-        "src/prometheus/*"
-      ],
-      "@app/gpt": [
-        "libs/gpt/src"
-      ],
-      "@app/gpt/*": [
-        "libs/gpt/src/*"
-      ]
+      "@config/*": ["src/config/*"],
+      "@common/*": ["src/common/*"],
+      "@database/*": ["src/database/*"],
+      "@auth/*": ["src/auth/*"],
+      "@session/*": ["src/session/*"],
+      "@users/*": ["src/users/*"],
+      "@event/*": ["src/event/*"],
+      "@health/*": ["src/health/*"],
+      "@prometheus/*": ["src/prometheus/*"],
+      "@libs/gpt": ["libs/gpt/src"],
+      "@libs/gpt/*": ["libs/gpt/src/*"]
     }
   },
   "watchOptions": {

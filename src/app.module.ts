@@ -11,7 +11,7 @@ import { PrometheusModule } from '@prometheus/prometheus.module';
 
 import { getDatabaseConfig } from '@config/database.config';
 
-import { GptModule } from '@app/gpt';
+import { GptModule } from '@libs/gpt';
 
 @Module({
   imports: [
