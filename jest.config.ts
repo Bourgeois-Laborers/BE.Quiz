@@ -10,7 +10,6 @@ const config: Config.InitialOptions = {
     '^@auth/(.*)$': '<rootDir>/auth/$1',
     '^@session/(.*)$': '<rootDir>/session/$1',
     '^@users/(.*)$': '<rootDir>/users/$1',
-    '^@event/(.*)$': '<rootDir>/event/$1',
     '^@health/(.*)$': '<rootDir>/health/$1',
     '^@prometheus/(.*)$': '<rootDir>/prometheus/$1',
     '^@libs/gpt/(.*)$': '<rootDir>/../libs/gpt/$1',
