@@ -7,15 +7,24 @@ import { Session } from '@database/entities/session.entity';
 import { SessionToUser } from '@database/entities/session-user.entity';
 import { SessionRepository } from '@database/repositories/session.repository';
 import { SessionToUserRepository } from '@database/repositories/session-to-user.repository';
-import { QuizExec } from '@database/entities/quiz-exec.entity';
-import { QuizConfig } from '@database/entities/quiz-config.entity';
-import { QuizExecResult } from '@database/entities/quiz-exec-result.entity';
+import { QuizExecution } from '@database/entities/quiz-execution.entity';
+import { QuizConfig } from '@database/entities/quiz-configuration.entity';
+import { QuizExecutionResult } from '@database/entities/quiz-execution-result.entity';
 import { Answer } from '@database/entities/answer.entity';
 import { Question } from '@database/entities/question.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Session, SessionToUser, QuizExec, QuizConfig, QuizExecResult, Answer, Question]),
+    TypeOrmModule.forFeature([
+      User,
+      Session,
+      SessionToUser,
+      QuizExecution,
+      QuizConfig,
+      QuizExecutionResult,
+      Answer,
+      Question,
+    ]),
   ],
   providers: [UsersRepository, SessionRepository, SessionToUserRepository],
   exports: [UsersRepository, SessionRepository, SessionToUserRepository],

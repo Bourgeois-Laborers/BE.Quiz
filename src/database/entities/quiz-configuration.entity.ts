@@ -1,9 +1,9 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
-import { QuizExec } from '@database/entities/quiz-exec.entity';
+import { QuizExecution } from '@database/entities/quiz-execution.entity';
 import { Question } from '@database/entities/question.entity';
 
-@Entity('quizzes_config')
+@Entity('quiz_configurations')
 export class QuizConfig {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -17,12 +17,12 @@ export class QuizConfig {
   @Column({ name: 'questions_count', type: 'smallint' })
   questionsCount: number;
 
-  @OneToMany(() => QuizExec, (quizExec) => quizExec.quizConfig, {
+  @OneToMany(() => QuizExecution, (quizExecution) => quizExecution.quizConfig, {
     onDelete: 'CASCADE',
     onUpdate: 'NO ACTION',
     nullable: true,
   })
-  quizzesExec: QuizExec[];
+  quizExecutions: QuizExecution[];
 
   @OneToMany(() => Question, (question) => question.quizConfig, { onDelete: 'NO ACTION', onUpdate: 'NO ACTION' })
   questions: Question[];

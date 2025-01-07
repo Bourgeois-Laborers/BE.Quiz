@@ -1,7 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 
 import { SessionToUser } from '@database/entities/session-user.entity';
-import { QuizExecResult } from '@database/entities/quiz-exec-result.entity';
+import { QuizExecutionResult } from '@database/entities/quiz-execution-result.entity';
 
 @Entity({ name: 'users' })
 export class User {
@@ -14,6 +14,6 @@ export class User {
   @OneToMany(() => SessionToUser, (sessionToUser) => sessionToUser.user)
   sessionToUser: SessionToUser[];
 
-  @OneToMany(() => QuizExecResult, (quizExecResult) => quizExecResult.user)
-  quizExecResult: QuizExecResult[];
+  @OneToMany(() => QuizExecutionResult, (quizExecutionResult) => quizExecutionResult.user)
+  quizExecutionResults: QuizExecutionResult[];
 }

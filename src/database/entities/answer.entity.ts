@@ -1,7 +1,7 @@
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 import { Question } from '@database/entities/question.entity';
-import { QuizExecResult } from '@database/entities/quiz-exec-result.entity';
+import { QuizExecutionResult } from '@database/entities/quiz-execution-result.entity';
 
 @Entity('answers')
 export class Answer {
@@ -17,9 +17,9 @@ export class Answer {
   @ManyToOne(() => Question, (question) => question.answers, { onDelete: 'CASCADE', onUpdate: 'NO ACTION' })
   question: Question;
 
-  @OneToMany(() => QuizExecResult, (quizExecResult) => quizExecResult.answer, {
+  @OneToMany(() => QuizExecutionResult, (quizExecutionResult) => quizExecutionResult.answer, {
     onDelete: 'NO ACTION',
     onUpdate: 'NO ACTION',
   })
-  quizExecResult: QuizExecResult[];
+  quizExecutionResults: QuizExecutionResult[];
 }

@@ -2,9 +2,9 @@ import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'ty
 
 import { NumericTransformer } from '@common/utils/numeric-transformer';
 
-import { QuizConfig } from '@database/entities/quiz-config.entity';
+import { QuizConfig } from '@database/entities/quiz-configuration.entity';
 import { Answer } from '@database/entities/answer.entity';
-import { QuizExecResult } from '@database/entities/quiz-exec-result.entity';
+import { QuizExecutionResult } from '@database/entities/quiz-execution-result.entity';
 
 @Entity('questions')
 export class Question {
@@ -17,15 +17,18 @@ export class Question {
   @Column({ name: 'text', type: 'varchar' })
   text: string;
 
-  @ManyToOne(() => QuizConfig, (quizConfig) => quizConfig.quizzesExec, { onDelete: 'NO ACTION', onUpdate: 'NO ACTION' })
+  @ManyToOne(() => QuizConfig, (quizConfig) => quizConfig.quizExecutions, {
+    onDelete: 'NO ACTION',
+    onUpdate: 'NO ACTION',
+  })
   quizConfig: QuizConfig;
 
   @OneToMany(() => Answer, (answer) => answer.question, { onDelete: 'NO ACTION', onUpdate: 'NO ACTION' })
   answers: Answer[];
 
-  @OneToMany(() => QuizExecResult, (quizExecResult) => quizExecResult.question, {
+  @OneToMany(() => QuizExecutionResult, (quizExecutionResult) => quizExecutionResult.question, {
     onDelete: 'NO ACTION',
     onUpdate: 'NO ACTION',
   })
-  quizExecResult: QuizExecResult[];
+  quizExecutionResults: QuizExecutionResult[];
 }
