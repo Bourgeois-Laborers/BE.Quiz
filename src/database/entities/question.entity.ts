@@ -2,7 +2,7 @@ import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'ty
 
 import { NumericTransformer } from '@common/utils/numeric-transformer';
 
-import { QuizConfig } from '@database/entities/quiz-configuration.entity';
+import { QuizConfiguration } from '@database/entities/quiz-configuration.entity';
 import { Answer } from '@database/entities/answer.entity';
 import { QuizExecutionResult } from '@database/entities/quiz-execution-result.entity';
 
@@ -17,11 +17,11 @@ export class Question {
   @Column({ name: 'text', type: 'varchar' })
   text: string;
 
-  @ManyToOne(() => QuizConfig, (quizConfig) => quizConfig.quizExecutions, {
+  @ManyToOne(() => QuizConfiguration, (quizConfiguration) => quizConfiguration.quizExecutions, {
     onDelete: 'NO ACTION',
     onUpdate: 'NO ACTION',
   })
-  quizConfig: QuizConfig;
+  quizConfiguration: QuizConfiguration;
 
   @OneToMany(() => Answer, (answer) => answer.question, { onDelete: 'NO ACTION', onUpdate: 'NO ACTION' })
   answers: Answer[];

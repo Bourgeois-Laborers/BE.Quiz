@@ -4,7 +4,7 @@ import { QuizExecution } from '@database/entities/quiz-execution.entity';
 import { Question } from '@database/entities/question.entity';
 
 @Entity('quiz_configurations')
-export class QuizConfig {
+export class QuizConfiguration {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -17,13 +17,13 @@ export class QuizConfig {
   @Column({ name: 'questions_count', type: 'smallint' })
   questionsCount: number;
 
-  @OneToMany(() => QuizExecution, (quizExecution) => quizExecution.quizConfig, {
+  @OneToMany(() => QuizExecution, (quizExecution) => quizExecution.quizConfiguration, {
     onDelete: 'CASCADE',
     onUpdate: 'NO ACTION',
     nullable: true,
   })
   quizExecutions: QuizExecution[];
 
-  @OneToMany(() => Question, (question) => question.quizConfig, { onDelete: 'NO ACTION', onUpdate: 'NO ACTION' })
+  @OneToMany(() => Question, (question) => question.quizConfiguration, { onDelete: 'NO ACTION', onUpdate: 'NO ACTION' })
   questions: Question[];
 }

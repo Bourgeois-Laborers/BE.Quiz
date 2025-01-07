@@ -8,7 +8,7 @@ import { SessionToUser } from '@database/entities/session-user.entity';
 import { SessionRepository } from '@database/repositories/session.repository';
 import { SessionToUserRepository } from '@database/repositories/session-to-user.repository';
 import { QuizExecution } from '@database/entities/quiz-execution.entity';
-import { QuizConfig } from '@database/entities/quiz-configuration.entity';
+import { QuizConfiguration } from '@database/entities/quiz-configuration.entity';
 import { QuizExecutionResult } from '@database/entities/quiz-execution-result.entity';
 import { Answer } from '@database/entities/answer.entity';
 import { Question } from '@database/entities/question.entity';
@@ -20,7 +20,7 @@ import { Question } from '@database/entities/question.entity';
       Session,
       SessionToUser,
       QuizExecution,
-      QuizConfig,
+      QuizConfiguration,
       QuizExecutionResult,
       Answer,
       Question,

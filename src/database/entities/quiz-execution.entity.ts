@@ -1,6 +1,6 @@
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
-import { QuizConfig } from '@database/entities/quiz-configuration.entity';
+import { QuizConfiguration } from '@database/entities/quiz-configuration.entity';
 import { QuizExecutionResult } from '@database/entities/quiz-execution-result.entity';
 
 @Entity('quiz_executions')
@@ -14,11 +14,11 @@ export class QuizExecution {
   @Column({ name: 'share_answers', type: 'boolean' })
   shareAnswers: boolean;
 
-  @ManyToOne(() => QuizConfig, (quizConfig) => quizConfig.quizExecutions, {
+  @ManyToOne(() => QuizConfiguration, (quizConfiguration) => quizConfiguration.quizExecutions, {
     onDelete: 'NO ACTION',
     onUpdate: 'NO ACTION',
   })
-  quizConfig: QuizConfig;
+  quizConfiguration: QuizConfiguration;
 
   @OneToMany(() => QuizExecutionResult, (quizExecutionResult) => quizExecutionResult.quizExecution)
   quizExecutionResults: QuizExecutionResult[];
