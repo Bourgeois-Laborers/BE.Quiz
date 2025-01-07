@@ -1,10 +1,12 @@
 import { Injectable } from '@nestjs/common';
+
 import { LogicException } from '@common/exceptions/logic-exception';
 import { LogicExceptionType } from '@common/types/logic-exception-type.enum';
 
-import { SessionRepository } from '../database/repositories/session.repository';
+import { SessionRepository } from '@database/repositories/session.repository';
+import { SessionToUserRepository } from '@database/repositories/session-to-user.repository';
+
 import { JoinUserProps } from './interfaces/join-user.interface';
-import { SessionToUserRepository } from '../database/repositories/session-to-user.repository';
 import { CreateSessionProps } from './interfaces/create-session.interface';
 
 @Injectable()
