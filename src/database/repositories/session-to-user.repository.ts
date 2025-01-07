@@ -22,6 +22,30 @@ export class SessionToUserRepository {
     });
   }
 
+  public async deleteSessionToUser({ userId, sessionId }: { userId: string; sessionId: string }): Promise<void> {
+    await this.sessionToUserRepository.delete({
+      user: {
+        id: userId,
+      },
+      session: {
+        id: sessionId,
+      },
+    });
+  }
+
+  public async findUserInSession({ userId, sessionId }: { userId: string; sessionId: string }): Promise<SessionToUser> {
+    return this.sessionToUserRepository.findOne({
+      where: {
+        user: {
+          id: userId,
+        },
+        session: {
+          id: sessionId,
+        },
+      },
+    });
+  }
+
   public async findUserActiveSession(userId: string): Promise<SessionToUser> {
     return this.sessionToUserRepository.findOne({
       where: {

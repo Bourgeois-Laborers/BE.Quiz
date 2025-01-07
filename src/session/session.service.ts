@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { LogicException } from '@common/exceptions/logic-exception';
 import { LogicExceptionType } from '@common/types/logic-exception-type.enum';
+import { SessionStatus } from '@common/types/session-status.enum';
 
 import { SessionRepository } from '@database/repositories/session.repository';
 import { SessionToUserRepository } from '@database/repositories/session-to-user.repository';
@@ -42,5 +43,18 @@ export class SessionService {
     }
 
     return this.sessionToUserRepository.createSessionToUser({ sessionId, userId, userAlias });
+  }
+
+  public async leaveFromSession({ userId, sessionId }: { userId: string; sessionId: string }): Promise<void> {
+    const sessionToUser = await this.sessionToUserRepository.findUserInSession({ sessionId, userId });
+    if (!sessionToUser) {
+      throw new LogicException(LogicExceptionType.SESSION_NOT_FOUND);
+    }
+
+    if (sessionToUser.isHost) {
+      await this.sessionRepository.updateSessionStatus(sessionId, SessionStatus.CANCELED);
+    } else {
+      await this.sessionToUserRepository.deleteSessionToUser({ sessionId, userId });
+    }
   }
 }

@@ -31,6 +31,12 @@ export class SessionRepository {
     return { id };
   }
 
+  public async updateSessionStatus(sessionId: string, status: SessionStatus): Promise<{ id: string }> {
+    await this.repository.update(sessionId, { status });
+
+    return { id: sessionId };
+  }
+
   async findOne(query: Partial<Session>): Promise<Session> {
     return this.repository.findOneBy(query);
   }

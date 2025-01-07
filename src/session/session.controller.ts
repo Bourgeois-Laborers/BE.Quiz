@@ -1,4 +1,4 @@
-import { Body, Controller, HttpStatus, Param, Post } from '@nestjs/common';
+import { Body, Controller, HttpStatus, Param, Post, Delete } from '@nestjs/common';
 import { ApiResponse } from '@nestjs/swagger';
 
 import { ControllerComposeDecorator } from '@common/decorators/conroller-compose.decorator';
@@ -10,6 +10,7 @@ import { AuthorizedUser } from '@common/interfaces/user.interface';
 import { SessionService } from './session.service';
 import { CreateSessionDto, CreateSessionResponseDto } from './dto/create-session.dto';
 import { JoinSessionDto, JoinToSessionResponseDto } from './dto/join-to-session.dto';
+import { LeaveFromSessionResponseDto } from './dto/leave-from-session.dto';
 
 @Controller('sessions')
 @ControllerComposeDecorator({ guards: ['AuthGuard'] })
@@ -32,5 +33,12 @@ export class SessionController {
     @Body() { userAlias }: JoinSessionDto,
   ): Promise<{ id: string }> {
     return this.sessionService.joinToSession({ sessionId, userId: user.sub, userAlias });
+  }
+
+  @Delete(':sessionId/leave')
+  @Serialize(LeaveFromSessionResponseDto)
+  @ApiResponse({ status: HttpStatus.ACCEPTED, type: LeaveFromSessionResponseDto })
+  public leave(@Param('sessionId') sessionId: string, @User() user: AuthorizedUser): Promise<void> {
+    return this.sessionService.leaveFromSession({ sessionId, userId: user.sub });
   }
 }
