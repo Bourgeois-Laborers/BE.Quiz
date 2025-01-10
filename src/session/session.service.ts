@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { LogicException } from '@common/exceptions/logic-exception';
 import { LogicExceptionType } from '@common/types/logic-exception-type.enum';
 import { SessionStatus } from '@common/types/session-status.enum';
+import { EventName } from '@common/types/event-name.enum';
 
 import { SessionRepository } from '@database/repositories/session.repository';
 import { SessionToUserRepository } from '@database/repositories/session-to-user.repository';
@@ -27,7 +28,7 @@ export class SessionService {
     }
 
     const { id } = await this.sessionRepository.createSessionAndSessionToUser({ userId, userAlias });
-    await this.sessionGateway.handleSessionJoin({ sessionId: id, userId, userAlias });
+    this.sessionGateway.serverBroadcast(EventName.SESSION_JOINED, id, { userId, userAlias });
     return { id };
   }
 
@@ -48,7 +49,7 @@ export class SessionService {
     }
 
     const { id } = await this.sessionToUserRepository.createSessionToUser({ sessionId, userId, userAlias });
-    await this.sessionGateway.handleSessionJoin({ sessionId, userId, userAlias });
+    this.sessionGateway.serverBroadcast(EventName.SESSION_JOINED, sessionId, { userId, userAlias });
     return { id };
   }
 
@@ -62,7 +63,10 @@ export class SessionService {
       await this.sessionRepository.updateSessionStatus(sessionId, SessionStatus.CANCELED);
     } else {
       await this.sessionToUserRepository.deleteSessionToUser({ sessionId, userId });
-      await this.sessionGateway.handleSessionLeave({ sessionId, userId, userAlias: sessionToUser.userAlias });
+      this.sessionGateway.serverBroadcast(EventName.SESSION_LEAVED, sessionId, {
+        userId,
+        userAlias: sessionToUser.userAlias,
+      });
     }
   }
 }

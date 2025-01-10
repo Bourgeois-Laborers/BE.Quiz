@@ -1,7 +1,7 @@
 import { Body, Controller, HttpStatus, Param, Post, Delete } from '@nestjs/common';
 import { ApiResponse } from '@nestjs/swagger';
 
-import { ControllerComposeDecorator } from '@common/decorators/conroller-compose.decorator';
+import { ControllerComposeDecorator } from '@common/decorators/controller-compose.decorator';
 import { Serialize } from '@common/decorators/serialize.decorator';
 import { User } from '@common/decorators/user.decorator';
 

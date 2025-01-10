@@ -8,6 +8,6 @@ import { SessionGateway } from './session.gateway';
 @Module({
   imports: [DatabaseModule],
   controllers: [SessionController],
-  providers: [SessionService, SessionGateway],
+  providers: [SessionGateway, SessionService],
 })
 export class SessionModule {}

@@ -2,6 +2,7 @@ import { Body, Res, Controller, Post, HttpStatus } from '@nestjs/common';
 import { ApiResponse } from '@nestjs/swagger';
 import { Response } from 'express';
 
+import { ControllerComposeDecorator } from '@common/decorators/controller-compose.decorator';
 import { Serialize } from '@common/decorators/serialize.decorator';
 import { Cookie } from '@common/decorators/cookie-parser.decorator';
 import { CookieName } from '@common/types/cookie-name.enum';
@@ -13,6 +14,7 @@ import { SignInDto, SignInResponseDto } from './dto/sign-in.dto';
 import { RefreshTokenResponseDto } from './dto/refresh-token.dto';
 
 @Controller('auth')
+@ControllerComposeDecorator()
 export class AuthController {
   constructor(private authService: AuthService) {}
 
