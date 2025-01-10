@@ -14,7 +14,7 @@ import { SignInDto, SignInResponseDto } from './dto/sign-in.dto';
 import { RefreshTokenResponseDto } from './dto/refresh-token.dto';
 
 @Controller('auth')
-@ControllerComposeDecorator()
+@ControllerComposeDecorator({ guards: [] })
 export class AuthController {
   constructor(private authService: AuthService) {}
 
