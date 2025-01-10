@@ -17,7 +17,7 @@ async function bootstrap() {
 
   swaggerSetup(app);
 
-  await redisIOAdapterSetup(app, configService.getOrThrow('REDIS_URL'));
+  await redisIOAdapterSetup(app, configService.getOrThrow<string>('REDIS_URL'));
 
   app.useGlobalPipes(
     new ValidationPipe({
@@ -26,6 +26,14 @@ async function bootstrap() {
   );
   app.useGlobalFilters(new LogicExceptionFilter());
   app.use(cookieParser());
+
+  const allowedOrigins: string[] = configService.getOrThrow<string>('CORS_ORIGINS').split(',');
+  app.enableCors({
+    origin: allowedOrigins,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    credentials: true,
+    allowedHeaders: 'Content-Type, Accept',
+  });
 
   await app.listen(process.env.PORT ?? 3000);
 }

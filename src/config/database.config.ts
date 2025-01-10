@@ -1,3 +1,5 @@
+import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
+
 import { TypeOrmModuleAsyncOptions } from '@nestjs/typeorm';
 import { ConfigService } from '@nestjs/config';
 
@@ -12,6 +14,7 @@ export function getDatabaseConfig(): TypeOrmModuleAsyncOptions {
       password: configService.getOrThrow<string>('POSTGRES_PASSWORD'),
       autoLoadEntities: true,
       synchronize: process.env.NODE_ENV === 'development',
+      namingStrategy: new SnakeNamingStrategy(),
     }),
     inject: [ConfigService],
   };
