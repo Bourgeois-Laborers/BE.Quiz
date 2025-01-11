@@ -12,6 +12,9 @@ import { QuizConfiguration } from '@database/entities/quiz-configuration.entity'
 import { QuizExecutionResult } from '@database/entities/quiz-execution-result.entity';
 import { Answer } from '@database/entities/answer.entity';
 import { Question } from '@database/entities/question.entity';
+import { QuizConfigurationRepository } from '@database/repositories/quiz-configuration.repository';
+import { QuestionRepository } from '@database/repositories/question.repository';
+import { AnswerRepository } from '@database/repositories/answer.repository';
 
 @Module({
   imports: [
@@ -26,7 +29,21 @@ import { Question } from '@database/entities/question.entity';
       Question,
     ]),
   ],
-  providers: [UsersRepository, SessionRepository, SessionToUserRepository],
-  exports: [UsersRepository, SessionRepository, SessionToUserRepository],
+  providers: [
+    UsersRepository,
+    SessionRepository,
+    SessionToUserRepository,
+    QuizConfigurationRepository,
+    QuestionRepository,
+    AnswerRepository,
+  ],
+  exports: [
+    UsersRepository,
+    SessionRepository,
+    SessionToUserRepository,
+    QuizConfigurationRepository,
+    QuestionRepository,
+    AnswerRepository,
+  ],
 })
 export class DatabaseModule {}

@@ -6,6 +6,7 @@ const config = new DocumentBuilder()
   .setDescription('Quiz API description')
   .setVersion('0.0.0')
   .addTag('Quiz')
+  .addBearerAuth()
   .build();
 
 export const swaggerSetup = (app: INestApplication): void => {

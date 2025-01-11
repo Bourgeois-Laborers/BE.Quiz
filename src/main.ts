@@ -1,5 +1,5 @@
 import { NestFactory } from '@nestjs/core';
-import { ValidationPipe } from '@nestjs/common';
+import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 import * as cookieParser from 'cookie-parser';
@@ -26,6 +26,10 @@ async function bootstrap() {
   );
   app.useGlobalFilters(new LogicExceptionFilter());
   app.use(cookieParser());
+  app.enableVersioning({
+    type: VersioningType.URI,
+    defaultVersion: '1',
+  });
 
   await app.listen(process.env.PORT ?? 3000);
 }

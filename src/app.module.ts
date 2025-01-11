@@ -8,6 +8,8 @@ import { AuthModule } from '@auth/auth.module';
 import { EventsModule } from '@event/event.module';
 import { HealthModule } from '@health/health.module';
 import { PrometheusModule } from '@prometheus/prometheus.module';
+import { QuizConfigurationModule } from '@quiz-configuration/quiz-configuration.module';
+import { QuizExecutionModule } from '@quiz-execution/quiz-execution.module';
 
 import { getDatabaseConfig } from '@config/database.config';
 
@@ -24,6 +26,8 @@ import { GptModule } from '@libs/gpt';
     HealthModule,
     PrometheusModule,
     GptModule,
+    QuizConfigurationModule,
+    QuizExecutionModule,
   ],
 })
 export class AppModule {}
