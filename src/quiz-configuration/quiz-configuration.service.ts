@@ -8,8 +8,11 @@ import { QuizConfigurationRepository } from '@database/repositories/quiz-configu
 import { QuestionRepository } from '@database/repositories/question.repository';
 import { AnswerRepository } from '@database/repositories/answer.repository';
 import { InsertAnswer } from '@database/repositories/interfaces/create-answers.interface';
+import { Privacy, QuizConfiguration } from '@database/entities/quiz-configuration.entity';
 
 import { GptService } from '@libs/gpt';
+
+import { FindAllQuizConfigurationProps } from './interface/find-all-quiz-configuration.interface';
 
 @Injectable()
 export class QuizConfigurationService {
@@ -27,6 +30,7 @@ export class QuizConfigurationService {
       ...body,
       userId,
     });
+
     const questions = generatedQuiz.map((question) => ({
       id: uuidv4(),
       complexity: String(question.complexity),
@@ -55,8 +59,13 @@ export class QuizConfigurationService {
     };
   }
 
-  findAll() {
-    return `This action returns all quizConfiguration`;
+  findAll({
+    privacy = Privacy.Private,
+    page,
+    take,
+    userId,
+  }: FindAllQuizConfigurationProps): Promise<QuizConfiguration[]> {
+    return this.quizConfigurationRepository.findAll({ page, take, privacy, userId });
   }
 
   findOne(id: number) {
