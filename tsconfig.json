@@ -24,7 +24,6 @@
       "@auth/*": ["src/auth/*"],
       "@session/*": ["src/session/*"],
       "@users/*": ["src/users/*"],
-      "@event/*": ["src/event/*"],
       "@health/*": ["src/health/*"],
       "@prometheus/*": ["src/prometheus/*"],
       "@libs/gpt": ["libs/gpt/src"],

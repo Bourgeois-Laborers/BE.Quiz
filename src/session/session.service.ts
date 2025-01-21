@@ -1,10 +1,16 @@
 import { Injectable } from '@nestjs/common';
+
 import { LogicException } from '@common/exceptions/logic-exception';
 import { LogicExceptionType } from '@common/types/logic-exception-type.enum';
+import { SessionStatus } from '@common/types/session-status.enum';
+import { EventName } from '@common/types/event-name.enum';
 
-import { SessionRepository } from '../database/repositories/session.repository';
+import { SessionRepository } from '@database/repositories/session.repository';
+import { SessionToUserRepository } from '@database/repositories/session-to-user.repository';
+
+import { SessionGateway } from './session.gateway';
+
 import { JoinUserProps } from './interfaces/join-user.interface';
-import { SessionToUserRepository } from '../database/repositories/session-to-user.repository';
 import { CreateSessionProps } from './interfaces/create-session.interface';
 
 @Injectable()
@@ -12,6 +18,7 @@ export class SessionService {
   constructor(
     private readonly sessionRepository: SessionRepository,
     private readonly sessionToUserRepository: SessionToUserRepository,
+    private readonly sessionGateway: SessionGateway,
   ) {}
 
   public async createSessionWithJoin({ userId, userAlias }: CreateSessionProps): Promise<{ id: string }> {
@@ -20,7 +27,9 @@ export class SessionService {
       throw new LogicException(LogicExceptionType.USER_ALREADY_HAS_ACTIVE_SESSION);
     }
 
-    return this.sessionRepository.createSessionAndSessionToUser({ userId, userAlias });
+    const { id } = await this.sessionRepository.createSessionAndSessionToUser({ userId, userAlias });
+    this.sessionGateway.serverBroadcast(EventName.SESSION_JOINED, id, { userId, userAlias });
+    return { id };
   }
 
   public async joinToSession({ userId, userAlias, sessionId }: JoinUserProps): Promise<{ id: string }> {
@@ -39,6 +48,25 @@ export class SessionService {
       throw new LogicException(LogicExceptionType.SESSION_USER_ALIAS_ALREADY_EXISTS);
     }
 
-    return this.sessionToUserRepository.createSessionToUser({ sessionId, userId, userAlias });
+    const { id } = await this.sessionToUserRepository.createSessionToUser({ sessionId, userId, userAlias });
+    this.sessionGateway.serverBroadcast(EventName.SESSION_JOINED, sessionId, { userId, userAlias });
+    return { id };
+  }
+
+  public async leaveFromSession({ userId, sessionId }: { userId: string; sessionId: string }): Promise<void> {
+    const sessionToUser = await this.sessionToUserRepository.findUserInSession({ sessionId, userId });
+    if (!sessionToUser) {
+      throw new LogicException(LogicExceptionType.SESSION_NOT_FOUND);
+    }
+
+    if (sessionToUser.isHost) {
+      await this.sessionRepository.updateSessionStatus(sessionId, SessionStatus.CANCELED);
+    } else {
+      await this.sessionToUserRepository.deleteSessionToUser({ sessionId, userId });
+      this.sessionGateway.serverBroadcast(EventName.SESSION_LEAVED, sessionId, {
+        userId,
+        userAlias: sessionToUser.userAlias,
+      });
+    }
   }
 }
