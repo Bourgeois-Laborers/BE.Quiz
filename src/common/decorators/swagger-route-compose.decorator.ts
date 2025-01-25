@@ -47,8 +47,15 @@ export function SwaggerRouteComposeDecorator({
         type: response.type,
       });
       break;
+    case 'OK':
+      responseDecorator = ApiOkResponse({
+        type: response.type,
+      });
+      break;
     default:
-      responseDecorator = ApiOkResponse();
+      responseDecorator = ApiOkResponse({
+        type: response.type,
+      });
   }
 
   return applyDecorators(...errorResponseDecorators, responseDecorator);

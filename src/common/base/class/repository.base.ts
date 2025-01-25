@@ -10,7 +10,7 @@ export abstract class RepositoryBase<T> {
   constructor(private readonly repositoryBase: Repository<T>) {}
 
   public async paginate({ page, take, where }: PaginateProps<T>): Promise<T[]> {
-    const skip = (page || 1 - 1) * take;
+    const skip = ((page || 1) - 1) * take;
 
     return this.repositoryBase.find({ where, skip, take });
   }

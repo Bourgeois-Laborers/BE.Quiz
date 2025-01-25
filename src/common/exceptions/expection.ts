@@ -38,4 +38,12 @@ export const Exceptions: LogicExceptionMap = {
     httpStatusCode: 400,
     message: 'User alias in session already exists',
   },
+  [LogicExceptionType.QUIZ_CONFIGURATION_NOT_FOUND]: {
+    httpStatusCode: 404,
+    message: 'Quiz configuration not found',
+  },
+  [LogicExceptionType.QUIZ_CONFIGURATION_ALREADY_EXISTS]: {
+    httpStatusCode: 400,
+    message: 'Quiz configuration already exists',
+  },
 };

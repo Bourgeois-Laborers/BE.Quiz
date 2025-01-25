@@ -43,4 +43,23 @@ export class QuizConfigurationRepository extends RepositoryBase<QuizConfiguratio
 
     return this.paginate({ page, take, where });
   }
+
+  public async findOne(quizConfigurationId: string, userId: string): Promise<QuizConfiguration> {
+    const where: FindOptionsWhere<QuizConfiguration>[] = [
+      { createdBy: { id: userId }, id: quizConfigurationId },
+      { privacy: Privacy.Public, id: quizConfigurationId },
+    ];
+
+    return this.repository.findOne({ where, relations: ['createdBy'] });
+  }
+
+  public async remove(quizConfigurationId: string, userId: string): Promise<boolean> {
+    const result = await this.repository.delete({ id: quizConfigurationId, createdBy: { id: userId } });
+
+    if (!result.affected) {
+      return false;
+    }
+
+    return true;
+  }
 }

@@ -13,6 +13,8 @@ import { Privacy, QuizConfiguration } from '@database/entities/quiz-configuratio
 import { GptService } from '@libs/gpt';
 
 import { FindAllQuizConfigurationProps } from './interface/find-all-quiz-configuration.interface';
+import { LogicException } from '@common/exceptions/logic-exception';
+import { LogicExceptionType } from '@common/types/logic-exception-type.enum';
 
 @Injectable()
 export class QuizConfigurationService {
@@ -68,11 +70,25 @@ export class QuizConfigurationService {
     return this.quizConfigurationRepository.findAll({ page, take, privacy, userId });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} quizConfiguration`;
+  async findOne(id: string, userId: string): Promise<QuizConfiguration> {
+    const quizConfiguration = await this.quizConfigurationRepository.findOne(id, userId);
+
+    if (!quizConfiguration) {
+      throw new LogicException(LogicExceptionType.QUIZ_CONFIGURATION_NOT_FOUND);
+    }
+
+    return quizConfiguration;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} quizConfiguration`;
+  async remove(id: string, userId: string): Promise<{ result: boolean }> {
+    const result = await this.quizConfigurationRepository.remove(id, userId);
+
+    if (!result) {
+      throw new LogicException(LogicExceptionType.QUIZ_CONFIGURATION_NOT_FOUND);
+    }
+
+    return {
+      result,
+    };
   }
 }
