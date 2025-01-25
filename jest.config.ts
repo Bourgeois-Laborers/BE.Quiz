@@ -14,6 +14,8 @@ const config: Config.InitialOptions = {
     '^@health/(.*)$': '<rootDir>/health/$1',
     '^@prometheus/(.*)$': '<rootDir>/prometheus/$1',
     '^@libs/gpt/(.*)$': '<rootDir>/../libs/gpt/$1',
+    '^@quiz-execution/(.*)$': '<rootDir>/quiz-execution/$1',
+    '^@quiz-configuration/(.*)$': '<rootDir>/quiz-configuration/$1',
   },
   rootDir: 'src',
   testRegex: '.*\\.spec\\.ts$',

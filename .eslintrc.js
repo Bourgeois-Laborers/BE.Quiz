@@ -44,7 +44,9 @@ module.exports = {
         ['health', './src/health'],
         ['database', './database'],
         ['prometheus', './src/prometheus'],
-        ['libs/gpt', './libs/gpt']
+        ['libs/gpt', './libs/gpt'],
+        ['quiz-configuration', './src/quiz-configuration'],
+        ['quiz-execution', './src/quiz-execution']
       ],
     },
   },

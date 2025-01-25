@@ -4,6 +4,7 @@ import { ErrorsInterceptor } from '@common/interceptors/errors.interceptor';
 import { ResponseInterceptor } from '@common/interceptors/response.interceptor';
 
 import { AuthGuard } from '@auth/auth.guard';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 type Guards = 'AuthGuard';
 
@@ -21,7 +22,11 @@ export function ControllerComposeDecorator({
   const includeGuards = guards.map((guard) => ALLOWED_GUARDS[guard]).filter((value) => value);
 
   if (includeGuards.length) {
-    return applyDecorators(UseInterceptors(ErrorsInterceptor, ResponseInterceptor), UseGuards(...includeGuards));
+    return applyDecorators(
+      UseInterceptors(ErrorsInterceptor, ResponseInterceptor),
+      UseGuards(...includeGuards),
+      ApiBearerAuth(),
+    );
   }
   return applyDecorators(UseInterceptors(ErrorsInterceptor, ResponseInterceptor));
 }

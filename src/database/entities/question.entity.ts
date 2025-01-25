@@ -11,14 +11,14 @@ export class Question {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ name: 'complexity', type: 'numeric', precision: 3, scale: 3, transformer: new NumericTransformer() })
+  @Column({ name: 'complexity', type: 'float', transformer: new NumericTransformer() })
   complexity: string;
 
   @Column({ name: 'text', type: 'varchar' })
   text: string;
 
   @ManyToOne(() => QuizConfiguration, (quizConfiguration) => quizConfiguration.quizExecutions, {
-    onDelete: 'NO ACTION',
+    onDelete: 'CASCADE',
     onUpdate: 'NO ACTION',
   })
   quizConfiguration: QuizConfiguration;

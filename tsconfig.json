@@ -28,10 +28,13 @@
       "@health/*": ["src/health/*"],
       "@prometheus/*": ["src/prometheus/*"],
       "@libs/gpt": ["libs/gpt/src"],
-      "@libs/gpt/*": ["libs/gpt/src/*"]
+      "@libs/gpt/*": ["libs/gpt/src/*"],
+      "@quiz-configuration/*": ["src/quiz-configuration/*"],
+      "@quiz-execution/*": ["src/quiz-execution/*"]
     }
   },
   "watchOptions": {
-    "watchFile": "fixedPollingInterval"
+    "watchFile": "fixedPollingInterval",
+    "watchDirectory": "fixedPollingInterval",
   }
 }
