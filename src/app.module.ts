@@ -14,6 +14,7 @@ import { QuizExecutionModule } from '@quiz-execution/quiz-execution.module';
 import { getDatabaseConfig } from '@config/database.config';
 
 import { GptModule } from '@libs/gpt';
+import { QuizExecutionModule } from './quiz-execution/quiz-execution.module';
 
 @Module({
   imports: [
