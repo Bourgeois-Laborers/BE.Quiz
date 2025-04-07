@@ -1,12 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { Response } from 'express';
-
-import { CookieName } from '@common/types/cookie-name.enum';
-
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-
 import { SignInDto } from './dto/sign-in.dto';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
 
 describe('AuthController', () => {
   let authController: AuthController;
@@ -36,56 +32,40 @@ describe('AuthController', () => {
   });
 
   describe('signUp', () => {
-    it('should return accessToken and set refreshToken cookie', async () => {
-      const mockResponse = {
-        cookie: jest.fn(),
-      } as unknown as Response;
-      const result = { accessToken: 'testAccessToken', refreshToken: 'testRefreshToken' };
-      jest.spyOn(authService, 'signUp').mockResolvedValue(result);
+    it('should call AuthService.signUp and return tokens', async () => {
+      const mockResponse = { accessToken: 'access-token', refreshToken: 'refresh-token' };
+      jest.spyOn(authService, 'signUp').mockResolvedValue(mockResponse);
 
-      const response = await authController.signUp(mockResponse);
+      const result = await authController.signUp();
 
-      expect(response).toEqual({ accessToken: 'testAccessToken' });
-      expect(mockResponse.cookie).toHaveBeenCalledWith(
-        CookieName.REFRESH_TOKEN,
-        'testRefreshToken',
-        expect.any(Object),
-      );
+      expect(authService.signUp).toHaveBeenCalled();
+      expect(result).toEqual(mockResponse);
     });
   });
 
   describe('signIn', () => {
-    it('should return accessToken and set refreshToken cookie', async () => {
-      const mockResponse = {
-        cookie: jest.fn(),
-      } as unknown as Response;
-      const signInDto: SignInDto = { id: 'test' };
-      const result = { accessToken: 'testAccessToken', refreshToken: 'testRefreshToken' };
-      jest.spyOn(authService, 'signIn').mockResolvedValue(result);
+    it('should call AuthService.signIn with SignInDto and return tokens', async () => {
+      const mockSignInDto: SignInDto = { id: 'test' };
+      const mockResponse = { accessToken: 'access-token', refreshToken: 'refresh-token' };
+      jest.spyOn(authService, 'signIn').mockResolvedValue(mockResponse);
 
-      const response = await authController.signIn(signInDto, mockResponse);
+      const result = await authController.signIn(mockSignInDto);
 
-      expect(response).toEqual({ accessToken: 'testAccessToken' });
-      expect(mockResponse.cookie).toHaveBeenCalledWith(
-        CookieName.REFRESH_TOKEN,
-        'testRefreshToken',
-        expect.any(Object),
-      );
+      expect(authService.signIn).toHaveBeenCalledWith(mockSignInDto);
+      expect(result).toEqual(mockResponse);
     });
   });
 
   describe('refreshToken', () => {
-    it('should return accessToken and set new refreshToken cookie', async () => {
-      const mockResponse = {
-        cookie: jest.fn(),
-      } as unknown as Response;
-      const result = { accessToken: 'testAccessToken', refreshToken: 'newTestRefreshToken' };
-      jest.spyOn(authService, 'refreshToken').mockResolvedValue(result);
+    it('should call AuthService.refreshToken with RefreshTokenDto and return tokens', async () => {
+      const mockRefreshTokenDto: RefreshTokenDto = { refreshToken: 'refresh-token' };
+      const mockResponse = { accessToken: 'access-token', refreshToken: 'new-refresh-token' };
+      jest.spyOn(authService, 'refreshToken').mockResolvedValue(mockResponse);
 
-      const response = await authController.refreshToken('testRefreshToken', mockResponse);
+      const result = await authController.refreshToken(mockRefreshTokenDto);
 
-      expect(response).toEqual({ accessToken: 'testAccessToken' });
-      expect(mockResponse.cookie).toHaveBeenCalledWith('Refresh', 'newTestRefreshToken', expect.any(Object));
+      expect(authService.refreshToken).toHaveBeenCalledWith(mockRefreshTokenDto);
+      expect(result).toEqual(mockResponse);
     });
   });
 });

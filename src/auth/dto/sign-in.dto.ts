@@ -12,4 +12,8 @@ export class SignInResponseDto {
   @ApiProperty({ type: String })
   @Expose()
   accessToken: string;
+
+  @ApiProperty({ type: String })
+  @Expose()
+  refreshToken: string;
 }
