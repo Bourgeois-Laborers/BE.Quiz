@@ -1,29 +1,16 @@
 import { Module } from '@nestjs/common';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
-
-import { UsersModule } from '@users/users.module';
-import { SessionModule } from '@session/session.module';
-import { AuthModule } from '@auth/auth.module';
-import { EventsModule } from '@event/event.module';
-import { HealthModule } from '@health/health.module';
-import { PrometheusModule } from '@prometheus/prometheus.module';
-
-import { getDatabaseConfig } from '@config/database.config';
-
-import { GptModule } from '@libs/gpt';
+import { appConfig } from './config/app.config';
+import { QuizModule } from './quiz/quiz.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
-    TypeOrmModule.forRootAsync(getDatabaseConfig()),
-    UsersModule,
-    SessionModule,
-    AuthModule,
-    EventsModule,
-    HealthModule,
-    PrometheusModule,
-    GptModule,
+    ConfigModule.forRoot({ load: [appConfig], isGlobal: true }),
+    QuizModule,
   ],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}

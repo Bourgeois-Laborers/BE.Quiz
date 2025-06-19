@@ -1,3 +1,0 @@
-{
-  "*.ts": ["prettier --write \"src/**/*.ts\" \"libs/**/*.ts\"", "eslint \"{src,apps,libs,test}/**/*.ts\" --fix"]
-}

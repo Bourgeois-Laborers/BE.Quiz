@@ -1,0 +1,121 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "./prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       String          @id @default(uuid())
+  sessions SessionToUser[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  QuizExecutionResult QuizExecutionResult[]
+}
+
+model Session {
+  id        String          @id @default(uuid())
+  status    String
+  sessions  SessionToUser[]
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+}
+
+model QuizConfiguration {
+  id             String @id @default(uuid())
+  name           String
+  prompt         String
+  questionsCount Int
+
+  questions     QuizQuestion[]
+  QuizExecution QuizExecution[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model QuizAnswer {
+  id     String @id @default(uuid())
+  answer String
+  score  Float
+
+  question   QuizQuestion @relation(fields: [questionId], references: [id])
+  questionId String
+
+  QuizExecutionResult QuizExecutionResult[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model QuizQuestion {
+  id         String @id @default(uuid())
+  complexity String
+  question   String
+
+  quizConfiguration   QuizConfiguration @relation(fields: [quizConfigurationId], references: [id])
+  quizConfigurationId String
+
+  answers             QuizAnswer[]
+  QuizExecutionResult QuizExecutionResult[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SessionToUser {
+  id String @id @default(uuid())
+
+  session   Session @relation(fields: [sessionId], references: [id])
+  sessionId String
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model QuizExecution {
+  id              String  @id @default(uuid())
+  timePerQuestion Int
+  shareAnswers    Boolean
+
+  quizConfiguration   QuizConfiguration @relation(fields: [quizConfigurationId], references: [id])
+  quizConfigurationId String
+
+  QuizExecutionResult QuizExecutionResult[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model QuizExecutionResult {
+  id String @id @default(uuid())
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  answer   QuizAnswer @relation(fields: [answerId], references: [id])
+  answerId String
+
+  question   QuizQuestion @relation(fields: [questionId], references: [id])
+  questionId String
+
+  quizExecution   QuizExecution @relation(fields: [quizExecutionId], references: [id])
+  quizExecutionId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
