@@ -7,6 +7,15 @@
     "webpack": true
   },
   "projects": {
+    "gpt": {
+      "type": "library",
+      "root": "libs/gpt",
+      "entryFile": "index",
+      "sourceRoot": "libs/gpt/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/gpt/tsconfig.lib.json"
+      }
+    },
     "prisma": {
       "type": "library",
       "root": "libs/prisma",

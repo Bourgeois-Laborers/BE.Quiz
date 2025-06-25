@@ -8,5 +8,6 @@ import { UserController } from './controllers/user.controller';
   imports: [PrismaModule],
   controllers: [UserController],
   providers: [UserRepository, UserService],
+  exports: [UserService],
 })
 export class UserModule {}

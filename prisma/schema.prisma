@@ -15,107 +15,96 @@ datasource db {
 }
 
 model User {
-  id       String          @id @default(uuid())
-  sessions SessionToUser[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  QuizExecutionResult QuizExecutionResult[]
+  id                   String                @id @default(uuid())
+  sessions             SessionToUser[]
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
+  QuizExecutionResults QuizExecutionResult[]
+  QuizConfigurations   QuizConfiguration[]
 }
 
 model Session {
-  id        String          @id @default(uuid())
-  status    String
-  sessions  SessionToUser[]
-  createdAt DateTime        @default(now())
-  updatedAt DateTime        @updatedAt
+  id             String          @id @default(uuid())
+  status         String
+  sessionUsers   SessionToUser[]
+  quizExecutions QuizExecution[]
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
 }
 
 model QuizConfiguration {
-  id             String @id @default(uuid())
+  id             String          @id @default(uuid())
   name           String
   prompt         String
   questionsCount Int
-
-  questions     QuizQuestion[]
-  QuizExecution QuizExecution[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  questions      QuizQuestion[]
+  quizExecution  QuizExecution[]
+  user           User            @relation(fields: [userId], references: [id])
+  userId         String
+  isPrivate      Boolean         @default(true)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
 }
 
 model QuizAnswer {
-  id     String @id @default(uuid())
-  answer String
-  score  Float
-
-  question   QuizQuestion @relation(fields: [questionId], references: [id])
-  questionId String
-
-  QuizExecutionResult QuizExecutionResult[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                  String                @id @default(uuid())
+  answer              String
+  score               Float
+  question            QuizQuestion          @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  questionId          String
+  quizExecutionResult QuizExecutionResult[]
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
 }
 
 model QuizQuestion {
-  id         String @id @default(uuid())
-  complexity String
-  question   String
-
-  quizConfiguration   QuizConfiguration @relation(fields: [quizConfigurationId], references: [id])
+  id                  String                @id @default(uuid())
+  complexity          String
+  question            String
+  quizConfiguration   QuizConfiguration     @relation(fields: [quizConfigurationId], references: [id])
   quizConfigurationId String
-
   answers             QuizAnswer[]
   QuizExecutionResult QuizExecutionResult[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  order               Int                   @default(0)
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
 }
 
 model SessionToUser {
-  id String @id @default(uuid())
-
-  session   Session @relation(fields: [sessionId], references: [id])
+  id        String   @id @default(uuid())
+  session   Session  @relation(fields: [sessionId], references: [id])
   sessionId String
-
-  user   User   @relation(fields: [userId], references: [id])
-  userId String
-
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  userAlias String
+  isHost    Boolean
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model QuizExecution {
-  id              String  @id @default(uuid())
-  timePerQuestion Int
-  shareAnswers    Boolean
-
-  quizConfiguration   QuizConfiguration @relation(fields: [quizConfigurationId], references: [id])
+  id                  String                @id @default(uuid())
+  timePerQuestion     Int
+  shareAnswers        Boolean
+  quizConfiguration   QuizConfiguration     @relation(fields: [quizConfigurationId], references: [id])
   quizConfigurationId String
-
-  QuizExecutionResult QuizExecutionResult[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  session             Session               @relation(fields: [sessionId], references: [id])
+  sessionId           String
+  quizExecutionResult QuizExecutionResult[]
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
 }
 
 model QuizExecutionResult {
-  id String @id @default(uuid())
-
-  user   User   @relation(fields: [userId], references: [id])
-  userId String
-
-  answer   QuizAnswer @relation(fields: [answerId], references: [id])
-  answerId String
-
-  question   QuizQuestion @relation(fields: [questionId], references: [id])
-  questionId String
-
+  id              String        @id @default(uuid())
+  user            User          @relation(fields: [userId], references: [id])
+  userId          String
+  answer          QuizAnswer    @relation(fields: [answerId], references: [id])
+  answerId        String
+  question        QuizQuestion  @relation(fields: [questionId], references: [id])
+  questionId      String
   quizExecution   QuizExecution @relation(fields: [quizExecutionId], references: [id])
   quizExecutionId String
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
 }

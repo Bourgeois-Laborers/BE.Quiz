@@ -19,4 +19,12 @@ export class UserRepository implements IUserRepository {
 
     return { id: sessionId };
   }
+
+  async get(id: string) {
+    const user = await this.prismaService.userTable.findFirst({
+      where: { id },
+    });
+
+    return user;
+  }
 }

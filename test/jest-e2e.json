@@ -11,6 +11,8 @@
     "^.+\\.(t|j)s$": "ts-jest"
   },
   "moduleNameMapper": {
+    "@app/gpt": "<rootDir>/../libs/gpt/src",
+    "@app/gpt/(.*)": "<rootDir>/../libs/gpt/src/$1",
     "@app/prisma": "<rootDir>/../libs/prisma/src",
     "@app/prisma/(.*)": "<rootDir>/../libs/prisma/src/$1"
   }

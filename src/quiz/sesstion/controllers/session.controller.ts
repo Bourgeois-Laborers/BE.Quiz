@@ -1,14 +1,94 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Put,
+  UseGuards,
+} from '@nestjs/common';
 import { SessionService } from '../services/session.service';
-import { ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+import { AuthGuard } from 'src/auth/auth.guard';
+import { ITokenUser } from 'src/auth/interfaces/auth.interface';
+import { User } from 'src/common/decorators/user.decorator';
+import {
+  CreateSessionDto,
+  CreateSessionResponseDto,
+} from '../dtos/create-session.dto';
 
 @Controller('session')
 @ApiTags('Sessions')
+@ApiBearerAuth()
 export class SessionController {
   constructor(private readonly sessionService: SessionService) {}
 
   @Post()
-  async create(@Body() dto) {
-    return this.sessionService.create(dto);
+  @UseGuards(AuthGuard)
+  @ApiOperation({ summary: 'Create a new session' })
+  @ApiResponse({
+    status: 201,
+    description: 'The session has been successfully created.',
+    type: CreateSessionResponseDto,
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  async create(
+    @Body() { userAlias }: CreateSessionDto,
+    @User() user: ITokenUser,
+  ): Promise<CreateSessionResponseDto> {
+    return this.sessionService.create({ userAlias, userId: user.id });
+  }
+
+  @Put(':sessionId/start')
+  @ApiOperation({ summary: 'Start a session' })
+  @ApiResponse({
+    status: 200,
+    description: 'The session has been successfully started.',
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @ApiResponse({ status: 404, description: 'Session not found.' })
+  async start(@Param('sessionId') sessionId: string, @User() user: ITokenUser) {
+    return this.sessionService.start(sessionId, user.id);
+  }
+
+  @Put(':sessionId/pause')
+  @ApiOperation({ summary: 'Pause a session' })
+  @ApiResponse({
+    status: 200,
+    description: 'The session has been successfully paused.',
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @ApiResponse({ status: 404, description: 'Session not found.' })
+  async pause(@Param('sessionId') sessionId: string, @User() user: ITokenUser) {
+    return this.sessionService.pause(sessionId, user.id);
+  }
+
+  @Put(':sessionId/finish')
+  @ApiOperation({ summary: 'Finish a session' })
+  @ApiResponse({
+    status: 200,
+    description: 'The session has been successfully finished.',
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @ApiResponse({ status: 404, description: 'Session not found.' })
+  async finish(
+    @Param('sessionId') sessionId: string,
+    @User() user: ITokenUser,
+  ) {
+    return this.sessionService.finish(sessionId, user.id);
+  }
+
+  @Get(':sessionId')
+  @ApiOperation({ summary: 'Get session details' })
+  @ApiResponse({ status: 200, description: 'Return session details.' })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @ApiResponse({ status: 404, description: 'Session not found.' })
+  async get(@Param('sessionId') sessionId: string, @User() user: ITokenUser) {
+    return this.sessionService.get(sessionId, user.id);
   }
 }

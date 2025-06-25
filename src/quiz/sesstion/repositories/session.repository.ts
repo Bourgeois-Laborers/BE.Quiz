@@ -18,7 +18,41 @@ export class SessionRepository implements ISessionRepository {
       data: {
         id: sessionId,
         status: Status.New,
-        sessions: { create: { user: { connect: { id: props.userId } } } },
+        sessionUsers: {
+          create: {
+            user: { connect: { id: props.userId } },
+            isHost: true,
+            userAlias: props.userAlias,
+          },
+        },
+      },
+    });
+
+    return session;
+  }
+
+  async updateStatus(sessionId: string, status: Status) {
+    const updatedResult = await this.prismaService.sessionTable.update({
+      data: {
+        status,
+      },
+      where: {
+        id: sessionId,
+      },
+    });
+
+    return updatedResult;
+  }
+
+  async get(sessionId: string, userId: string) {
+    const session = await this.prismaService.sessionTable.findFirst({
+      where: {
+        id: sessionId,
+        sessionUsers: {
+          some: {
+            id: userId,
+          },
+        },
       },
     });
 

@@ -18,6 +18,15 @@
     "strictBindCallApply": false,
     "noFallthroughCasesInSwitch": false,
     "paths": {
+      "@config/*": ["src/config/*"],
+      "@quiz/*": ["src/quiz/*"],
+      "@auth/*": ["src/auth/*"],
+      "@app/gpt": [
+        "libs/gpt/src"
+      ],
+      "@app/gpt/*": [
+        "libs/gpt/src/*"
+      ],
       "@app/prisma": [
         "libs/prisma/src"
       ],

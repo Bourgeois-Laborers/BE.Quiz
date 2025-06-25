@@ -6,9 +6,10 @@ import { SessionService } from './services/session.service';
 import { SessionToUserService } from './services/session-to-user.service';
 import { SessionController } from './controllers/session.controller';
 import { SessionToUserController } from './controllers/session-to-user.controller';
+import { UserModule } from '../user/user.module';
 
 @Module({
-  imports: [PrismaModule],
+  imports: [PrismaModule, UserModule],
   controllers: [SessionController, SessionToUserController],
   providers: [
     SessionRepository,
