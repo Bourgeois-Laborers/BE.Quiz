@@ -1,15 +1,13 @@
 export enum Status {
-  New = 'New',
-  Active = 'Active',
-  Paused = 'Paused',
-  Finished = 'Finished',
+  Open = 'Open',
+  Live = 'Live',
+  Closed = 'Closed',
 }
 
 export const availableNextStatuses = {
-  [Status.New]: [Status.Active],
-  [Status.Active]: [Status.Paused, Status.Finished],
-  [Status.Paused]: [Status.Active, Status.Finished],
-  [Status.Finished]: [],
+  [Status.Open]: [Status.Live, Status.Closed],
+  [Status.Live]: [Status.Closed],
+  [Status.Closed]: [],
 };
 
 export const getAvailableNextStatuses = (status: Status): Status[] => {

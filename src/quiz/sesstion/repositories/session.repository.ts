@@ -17,7 +17,7 @@ export class SessionRepository implements ISessionRepository {
     const session = await this.prismaService.sessionTable.create({
       data: {
         id: sessionId,
-        status: Status.New,
+        status: Status.Open,
         sessionUsers: {
           create: {
             user: { connect: { id: props.userId } },

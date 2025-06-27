@@ -39,7 +39,7 @@ export class SessionToUserRepository implements ISessionToUserRepository {
       user: { id: userId },
       session: {
         status: {
-          not: Status.Finished,
+          not: Status.Closed,
         },
       },
     };

@@ -13,6 +13,5 @@ export interface ICreateSession {
 export interface ISessionService {
   create(props: ICreateSession): Promise<ISession>;
   start(sessionId: string, userId: string): Promise<ISession>;
-  pause(sessionId: string, userId: string): Promise<ISession>;
-  finish(sessionId: string, userId: string): Promise<ISession>;
+  close(sessionId: string, userId: string): Promise<ISession>;
 }

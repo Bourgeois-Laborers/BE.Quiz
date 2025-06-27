@@ -22,27 +22,6 @@ export class SessionService implements ISessionService {
     private readonly userService: UserService,
   ) {}
 
-  async start(sessionId: string, userId: string): Promise<ISession> {
-    await this._validateUserAndPermissions(sessionId, userId, {
-      requiresHost: true,
-    });
-
-    const session = await this.sessionRepository.get(sessionId, userId);
-
-    if (!session) {
-      throw new NotFoundException('Session not found');
-    }
-
-    this._checkIsChangeStatusAllowed(session.status as Status);
-
-    const startedSession = await this.sessionRepository.updateStatus(
-      sessionId,
-      Status.Active,
-    );
-
-    return startedSession;
-  }
-
   async create({ userAlias, userId }: ICreateSession): Promise<ISession> {
     const user = await this.userService.get(userId);
 
@@ -62,7 +41,7 @@ export class SessionService implements ISessionService {
     return session;
   }
 
-  async pause(sessionId: string, userId: string) {
+  async start(sessionId: string, userId: string): Promise<ISession> {
     await this._validateUserAndPermissions(sessionId, userId, {
       requiresHost: true,
     });
@@ -75,15 +54,15 @@ export class SessionService implements ISessionService {
 
     this._checkIsChangeStatusAllowed(session.status as Status);
 
-    const updatedSession = await this.sessionRepository.updateStatus(
+    const startedSession = await this.sessionRepository.updateStatus(
       sessionId,
-      Status.Paused,
+      Status.Live,
     );
 
-    return updatedSession;
+    return startedSession;
   }
 
-  async finish(sessionId: string, userId: string) {
+  async close(sessionId: string, userId: string) {
     await this._validateUserAndPermissions(sessionId, userId, {
       requiresHost: true,
     });
@@ -98,7 +77,7 @@ export class SessionService implements ISessionService {
 
     const updatedSession = await this.sessionRepository.updateStatus(
       sessionId,
-      Status.Finished,
+      Status.Closed,
     );
 
     return updatedSession;

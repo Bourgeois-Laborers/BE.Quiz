@@ -14,5 +14,5 @@ export class QuizExecutionController {
   async finishAnswer() {}
 
   @Put('finish-quiz')
-  async finishQuiz () {}
+  async finishQuiz() {}
 }
