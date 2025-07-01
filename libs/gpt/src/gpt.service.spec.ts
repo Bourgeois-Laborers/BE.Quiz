@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+
 import { GptService } from './gpt.service';
 
 describe('GptService', () => {

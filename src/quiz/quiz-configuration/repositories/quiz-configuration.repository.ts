@@ -1,5 +1,6 @@
 import { PrismaService } from '@app/prisma';
 import { Injectable } from '@nestjs/common';
+
 import {
   ICreateQuizConfiguration,
   IQuizConfigiration,

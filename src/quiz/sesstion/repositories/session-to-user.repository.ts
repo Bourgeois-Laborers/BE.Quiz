@@ -1,13 +1,14 @@
 import { PrismaService } from '@app/prisma';
 import { Inject, Injectable } from '@nestjs/common';
+import { ConfigType } from '@nestjs/config';
+import { Prisma } from 'prisma/prisma';
+
 import {
   ICheckIsUserAlreadyJoined,
   IJoinSession,
   ISessionToUser,
   ISessionToUserRepository,
 } from './interfaces/session-to-user.repository.interface';
-import { Prisma } from 'prisma/prisma';
-import { ConfigType } from '@nestjs/config';
 import { appConfig } from '../../../../src/config/app.config';
 import { Status } from '../types/status.type';
 

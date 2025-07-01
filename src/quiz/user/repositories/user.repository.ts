@@ -1,6 +1,7 @@
 import { PrismaService } from '@app/prisma';
 import { Injectable } from '@nestjs/common';
 import { uuidv7 } from 'uuidv7';
+
 import {
   ICreateUser,
   IUserRepository,

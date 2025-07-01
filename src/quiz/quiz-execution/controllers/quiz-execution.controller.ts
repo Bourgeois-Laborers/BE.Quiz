@@ -1,8 +1,9 @@
-import { Body, Controller, Param, Post, Put } from '@nestjs/common';
-import { QuizExecutionService } from '../services/quiz-execution.service';
-import { StartQuizDto } from '../dtos/start-quiz.dto';
 import { ITokenUser } from '@auth/interfaces/auth.interface';
+import { Body, Controller, Param, Post, Put } from '@nestjs/common';
 import { User } from 'src/common/decorators/user.decorator';
+
+import { StartQuizDto } from '../dtos/start-quiz.dto';
+import { QuizExecutionService } from '../services/quiz-execution.service';
 
 @Controller()
 export class QuizExecutionController {

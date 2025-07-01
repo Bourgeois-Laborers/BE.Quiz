@@ -1,12 +1,13 @@
+import { GptService } from '@app/gpt';
 import { Injectable } from '@nestjs/common';
+import { QuizConfigurationService } from 'src/quiz/quiz-configuration/services/quiz-configuration.service';
+
 import { QuizQuestionRepository } from '../repositories/quiz-question.repository';
 import {
   IInsertQuestion,
   IQuestionService,
 } from './interfaces/question.service.interface';
 import { IQuestion } from '../repositories/interfaces/question.repository.interface';
-import { GptService } from '@app/gpt';
-import { QuizConfigurationService } from 'src/quiz/quiz-configuration/services/quiz-configuration.service';
 
 @Injectable()
 export class QuizQuestionService implements IQuestionService {

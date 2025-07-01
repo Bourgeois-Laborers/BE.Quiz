@@ -1,15 +1,16 @@
+import { AuthGuard } from '@auth/auth.guard';
 import { Body, Controller, Param, Post, UseGuards } from '@nestjs/common';
-import { QuizQuestionService } from '../services/quiz-question.service';
 import {
   ApiBearerAuth,
   ApiOperation,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { User } from 'src/common/decorators/user.decorator';
 import { ITokenUser } from 'src/auth/interfaces/auth.interface';
+import { User } from 'src/common/decorators/user.decorator';
+
 import { InsertQuestionDto } from '../dtos/insert-question.dto';
-import { AuthGuard } from '@auth/auth.guard';
+import { QuizQuestionService } from '../services/quiz-question.service';
 
 @Controller('quiz-configuration')
 @ApiTags('Quiz configuration')

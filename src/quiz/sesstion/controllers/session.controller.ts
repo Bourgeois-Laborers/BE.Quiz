@@ -7,7 +7,6 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common';
-import { SessionService } from '../services/session.service';
 import {
   ApiBearerAuth,
   ApiOperation,
@@ -17,10 +16,12 @@ import {
 import { AuthGuard } from 'src/auth/auth.guard';
 import { ITokenUser } from 'src/auth/interfaces/auth.interface';
 import { User } from 'src/common/decorators/user.decorator';
+
 import {
   CreateSessionDto,
   CreateSessionResponseDto,
 } from '../dtos/create-session.dto';
+import { SessionService } from '../services/session.service';
 
 @Controller('session')
 @ApiTags('Sessions')

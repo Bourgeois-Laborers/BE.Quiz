@@ -1,7 +1,8 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+
 import { cacheProvider } from './cache.provider';
 import { INJECT_CACHE, INJECT_CACHE_CLIENT } from './cache.types';
-import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [ConfigModule],

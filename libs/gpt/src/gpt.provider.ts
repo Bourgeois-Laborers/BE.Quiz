@@ -1,5 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import OpenAI from 'openai';
+
 import { GPT_CLIENT_PROVIDER } from './constants/gpt.constants';
 
 export const gptProvider = {

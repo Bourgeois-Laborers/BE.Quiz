@@ -1,11 +1,12 @@
 import { PrismaModule } from '@app/prisma';
 import { Module } from '@nestjs/common';
-import { SessionRepository } from './repositories/session.repository';
-import { SessionToUserRepository } from './repositories/session-to-user.repository';
-import { SessionService } from './services/session.service';
-import { SessionToUserService } from './services/session-to-user.service';
-import { SessionController } from './controllers/session.controller';
+
 import { SessionToUserController } from './controllers/session-to-user.controller';
+import { SessionController } from './controllers/session.controller';
+import { SessionToUserRepository } from './repositories/session-to-user.repository';
+import { SessionRepository } from './repositories/session.repository';
+import { SessionToUserService } from './services/session-to-user.service';
+import { SessionService } from './services/session.service';
 import { UserModule } from '../user/user.module';
 
 @Module({

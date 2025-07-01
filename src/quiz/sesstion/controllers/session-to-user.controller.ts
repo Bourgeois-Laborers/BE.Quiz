@@ -1,15 +1,16 @@
 import { Body, Controller, Param, Post, UseGuards } from '@nestjs/common';
-import { SessionToUserService } from '../services/session-to-user.service';
 import {
   ApiBearerAuth,
   ApiOperation,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { AuthGuard } from '../../../auth/auth.guard';
-import { User } from 'src/common/decorators/user.decorator';
 import { ITokenUser } from 'src/auth/interfaces/auth.interface';
+import { User } from 'src/common/decorators/user.decorator';
+
+import { AuthGuard } from '../../../auth/auth.guard';
 import { JoinSessionDto } from '../dtos/join-session.dto';
+import { SessionToUserService } from '../services/session-to-user.service';
 
 @Controller('session')
 @ApiTags('Sessions')

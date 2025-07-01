@@ -4,14 +4,15 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { UserService } from 'src/quiz/user/services/user.service';
+
 import {
   ICreateSession,
   ISession,
   ISessionService,
 } from './interfaces/session.service.interface';
-import { SessionRepository } from '../repositories/session.repository';
 import { SessionToUserService } from './session-to-user.service';
-import { UserService } from 'src/quiz/user/services/user.service';
+import { SessionRepository } from '../repositories/session.repository';
 import { getAvailableNextStatuses, Status } from '../types/status.type';
 
 @Injectable()

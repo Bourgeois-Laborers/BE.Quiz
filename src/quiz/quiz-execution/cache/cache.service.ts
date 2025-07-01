@@ -1,4 +1,7 @@
+import { INJECT_CACHE } from '@app/cache/cache.types';
 import { Inject, Injectable } from '@nestjs/common';
+import { RedisClientType } from 'redis';
+
 import {
   IQuizExecutionCacheServiceCacheService,
   IFinishQuestion,
@@ -6,8 +9,6 @@ import {
   ISetupQuizExecution,
   IStartQuestion,
 } from './cache.interface';
-import { RedisClientType } from 'redis';
-import { INJECT_CACHE } from '@app/cache/cache.types';
 
 @Injectable()
 export class QuizExecutionCacheService

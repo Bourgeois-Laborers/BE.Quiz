@@ -1,7 +1,8 @@
 import { PrismaService } from '@app/prisma';
 import { Injectable } from '@nestjs/common';
-import { IInsertQuestion } from './interfaces/question.repository.interface';
 import { Prisma } from 'prisma/prisma';
+
+import { IInsertQuestion } from './interfaces/question.repository.interface';
 
 @Injectable()
 export class QuizQuestionRepository {

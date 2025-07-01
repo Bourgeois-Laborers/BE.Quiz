@@ -1,10 +1,11 @@
 import { PrismaService } from '@app/prisma';
 import { Injectable } from '@nestjs/common';
+import { uuidv7 } from 'uuidv7';
+
 import {
   ICreateSession,
   ISessionRepository,
 } from './interfaces/session.repository.interface';
-import { uuidv7 } from 'uuidv7';
 import { Status } from '../types/status.type';
 
 @Injectable()

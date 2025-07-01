@@ -1,11 +1,12 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigType } from '@nestjs/config';
+import { JwtModule } from '@nestjs/jwt';
+
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ConfigModule, ConfigType } from '@nestjs/config';
 import { appConfig } from './config/app.config';
-import { QuizModule } from './quiz/quiz.module';
 import { jwtConfig } from './config/jwt.config';
-import { JwtModule } from '@nestjs/jwt';
+import { QuizModule } from './quiz/quiz.module';
 
 @Module({
   imports: [

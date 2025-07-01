@@ -1,8 +1,9 @@
 import { PrismaModule } from '@app/prisma';
 import { Module } from '@nestjs/common';
+
+import { QuizConfigurationController } from './controllers/quiz-configuration.controller';
 import { QuizConfigurationRepository } from './repositories/quiz-configuration.repository';
 import { QuizConfigurationService } from './services/quiz-configuration.service';
-import { QuizConfigurationController } from './controllers/quiz-configuration.controller';
 
 @Module({
   imports: [PrismaModule],

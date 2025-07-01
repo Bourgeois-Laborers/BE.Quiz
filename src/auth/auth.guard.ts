@@ -5,10 +5,11 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
+import { ConfigType } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { jwtConfig } from 'src/config/jwt.config';
-import { ConfigType } from '@nestjs/config';
+
 import { ITokenUser } from './interfaces/auth.interface';
 
 @Injectable()
