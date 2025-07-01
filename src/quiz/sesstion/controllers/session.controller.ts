@@ -56,31 +56,16 @@ export class SessionController {
     return this.sessionService.start(sessionId, user.id);
   }
 
-  @Put(':sessionId/pause')
-  @ApiOperation({ summary: 'Pause a session' })
+  @Put(':sessionId/cloase')
+  @ApiOperation({ summary: 'Close a session' })
   @ApiResponse({
     status: 200,
-    description: 'The session has been successfully paused.',
+    description: 'The session has been successfully closed.',
   })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @ApiResponse({ status: 404, description: 'Session not found.' })
-  async pause(@Param('sessionId') sessionId: string, @User() user: ITokenUser) {
-    return this.sessionService.pause(sessionId, user.id);
-  }
-
-  @Put(':sessionId/finish')
-  @ApiOperation({ summary: 'Finish a session' })
-  @ApiResponse({
-    status: 200,
-    description: 'The session has been successfully finished.',
-  })
-  @ApiResponse({ status: 401, description: 'Unauthorized.' })
-  @ApiResponse({ status: 404, description: 'Session not found.' })
-  async finish(
-    @Param('sessionId') sessionId: string,
-    @User() user: ITokenUser,
-  ) {
-    return this.sessionService.finish(sessionId, user.id);
+  async close(@Param('sessionId') sessionId: string, @User() user: ITokenUser) {
+    return this.sessionService.close(sessionId, user.id);
   }
 
   @Get(':sessionId')

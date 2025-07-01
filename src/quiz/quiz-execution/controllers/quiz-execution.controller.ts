@@ -23,10 +23,9 @@ export class QuizExecutionController {
     });
   }
 
-  @Post(':quizExecutionId/start-question/:questionId')
+  @Post(':quizExecutionId/start-question')
   async startQuestion(
     @Param('quizExecutionId') quizExecutionId: string,
-    @Param('questionId') questionId: string,
     @User() { id: userId, sessionId }: ITokenUser,
   ) {
     return this.quizExecutionService.startQuestion({
