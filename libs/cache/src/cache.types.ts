@@ -1,0 +1,2 @@
+export const INJECT_CACHE = 'INJECT_CACHE';
+export const INJECT_CACHE_CLIENT = 'INJECT_CACHE_CLIENT';

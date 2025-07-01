@@ -1,3 +1,5 @@
+import { IQuestion } from '@quiz/quiz-question/repositories/interfaces/question.repository.interface';
+
 export interface IStart {
   sessionId: string;
   quizConfigurationId: string;
@@ -6,13 +8,33 @@ export interface IStart {
   timePerQuestion: number;
 }
 
+export interface IStartQuestion {
+  sessionId: string;
+  quizExecutionId: string;
+  userId: string;
+}
+
+export interface IStartQuestionResult {
+  startedAt: Date;
+  finishedAt: Date;
+  question: IQuestion;
+}
+
+export interface IFinishQuestion {
+  sessionId: string;
+  quizExecutionId: string;
+  userId: string;
+}
+
 export interface IQuizExecutionService {
   start(props: IStart): Promise<void>;
   setAnswer(
     sessionId: string,
     questionId: string,
-    answer: string,
+    answerId: string,
+    userId: string,
+    quizExecutionId: string,
   ): Promise<void>;
-  finishAnswer(sessionId: string, questionId: string): Promise<void>;
-  finishQuiz(sessionId: string): Promise<void>;
+  startQuestion(props: IStartQuestion): Promise<IStartQuestionResult>;
+  finishQuiz(props: IFinishQuestion): Promise<{ status: string }>;
 }

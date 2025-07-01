@@ -1,15 +1,29 @@
-import { Injectable } from '@nestjs/common';
 import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
+import {
+  IFinishQuestion,
   IQuizExecutionService,
   IStart,
+  IStartQuestion,
+  IStartQuestionResult,
 } from './interfaces/quiz-execution.service.interface';
-import { QuizConfigurationRepository } from '@quiz/quiz-configuration/repositories/quiz-configuration.repository';
 import { QuizExecutionRepository } from '../repositories/quiz-execution.repository';
+import { SessionToUserService } from '@quiz/sesstion/services/session-to-user.service';
+import { QuizExecutionCacheService } from '../cache/cache.service';
+import { Status } from '../types/status.types';
+import { QuizQuestionService } from '@quiz/quiz-question/services/quiz-question.service';
 
 @Injectable()
 export class QuizExecutionService implements IQuizExecutionService {
   constructor(
     private readonly quizExecutionRepository: QuizExecutionRepository,
+    private readonly sessionToUserService: SessionToUserService,
+    private readonly cacheService: QuizExecutionCacheService,
+    private readonly quizQuestionService: QuizQuestionService,
   ) {}
 
   async start({
@@ -19,28 +33,160 @@ export class QuizExecutionService implements IQuizExecutionService {
     shareAnswers,
     timePerQuestion,
   }: IStart) {
-    const quizConfiguration = await this.quizExecutionRepository.startQuiz({
+    const isUserHost = await this.sessionToUserService.checkIsUserAlreadyJoined(
+      { userId, sessionId, isHost: true },
+    );
+
+    if (!isUserHost) {
+      throw new ForbiddenException('User have no rules to start session');
+    }
+
+    const quizExecution = await this.quizExecutionRepository.startQuiz({
       sessionId,
       quizConfigurationId,
       shareAnswers,
       timePerQuestion,
     });
+
+    await this.cacheService.setupQuizExecution({
+      quizExecutionId: quizExecution.id,
+      sessionId,
+      shareAnswers,
+      timePerQuestion,
+    });
+  }
+
+  async startQuestion({
+    quizExecutionId,
+    sessionId,
+    userId,
+  }: IStartQuestion): Promise<IStartQuestionResult> {
+    const isUserHost = await this.sessionToUserService.checkIsUserAlreadyJoined(
+      { userId, sessionId, isHost: true },
+    );
+
+    if (!isUserHost) {
+      throw new ForbiddenException('User have no rules to start session');
+    }
+
+    const getQuizExecutionState = await this.cacheService.getQuizExecution(
+      sessionId,
+      quizExecutionId,
+    );
+
+    if (!getQuizExecutionState) {
+      throw new BadRequestException(
+        'Quiz execution state not found, first start quiz',
+      );
+    }
+
+    const quizExecution =
+      await this.quizExecutionRepository.getQuizExecution(quizExecutionId);
+
+    if (!quizExecution) {
+      throw new BadRequestException('Quiz session not found');
+    }
+
+    const quizQuestions = await this.quizQuestionService.getQuestions(
+      quizExecution.quizConfigurationId,
+    );
+
+    const questionsToStart = quizQuestions.filter(
+      (question) =>
+        !getQuizExecutionState.questionsState[question.id] ||
+        !getQuizExecutionState.questionsState[question.id].finishedAt,
+    );
+
+    const randomQuestionIndex = Math.floor(
+      Math.random() * questionsToStart.length,
+    );
+
+    const randomQuestion = questionsToStart[randomQuestionIndex];
+
+    await this.cacheService.startQuestion({
+      questionId: randomQuestion.id,
+      quizExecutionId,
+      sessionId,
+      startedAt: new Date(),
+    });
+
+    const finishedAt = new Date(
+      new Date().getTime() + getQuizExecutionState.timePerQuestion * 1000,
+    );
+
+    setTimeout(() => {
+      void (async () => {
+        await this.cacheService.finishQuestion({
+          questionId: randomQuestion.id,
+          quizExecutionId,
+          sessionId,
+          finishedAt,
+        });
+      })();
+    }, getQuizExecutionState.timePerQuestion * 1000);
+
+    return {
+      question: randomQuestion,
+      finishedAt: finishedAt,
+      startedAt: new Date(),
+    };
   }
 
   async setAnswer(
-    quizId: string,
+    quizExecutionId: string,
     questionId: string,
-    answer: string,
+    answerId: string,
     userId: string,
+    sessionId: string,
   ) {
-    // Logic to set the answer for a question in the quiz
+    const isUserJoined =
+      await this.sessionToUserService.checkIsUserAlreadyJoined({
+        userId,
+        sessionId,
+      });
+
+    if (!isUserJoined) {
+      throw new ForbiddenException('User not joined to this session');
+    }
+
+    const checkIsUserAnswered =
+      await this.quizExecutionRepository.checkIsUserAnswered({
+        questionId,
+        quizExecutionId,
+        userId,
+      });
+
+    if (checkIsUserAnswered) {
+      throw new BadRequestException('User already answered on this question');
+    }
+
+    const answer = await this.quizExecutionRepository.setAnswer({
+      userId,
+      answerId,
+      questionId,
+      quizExecutionId,
+    });
+
+    if (!answer) {
+      throw new InternalServerErrorException(
+        'Answer cannot be created, please, try again',
+      );
+    }
   }
 
-  async finishAnswer(quizId: string, questionId: string, userId: string) {
-    // Logic to finish answering a question in the quiz
-  }
+  async finishQuiz({ quizExecutionId, sessionId, userId }: IFinishQuestion) {
+    const isUserHost = await this.sessionToUserService.checkIsUserAlreadyJoined(
+      { userId, sessionId, isHost: true },
+    );
 
-  async finishQuiz(quizId: string, userId: string) {
-    // Logic to finish the quiz for the user
+    if (!isUserHost) {
+      throw new ForbiddenException('User have no rules to finish quiz');
+    }
+
+    await this.quizExecutionRepository.finishQuiz(quizExecutionId);
+
+    await this.cacheService.finishQuiz(sessionId, quizExecutionId);
+
+    return { status: Status.COMPLETED };
   }
 }

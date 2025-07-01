@@ -40,4 +40,8 @@ export class QuizQuestionService implements IQuestionService {
       ),
     });
   }
+
+  async getQuestions(quizConfigurationId: string): Promise<IQuestion[]> {
+    return this.questionRepository.getQuestions(quizConfigurationId);
+  }
 }

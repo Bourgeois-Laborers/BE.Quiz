@@ -11,6 +11,8 @@
     "^.+\\.(t|j)s$": "ts-jest"
   },
   "moduleNameMapper": {
+    "@app/cache": "<rootDir>/../libs/cache/src",
+    "@app/cache/(.*)": "<rootDir>/../libs/cache/src/$1",
     "@app/gpt": "<rootDir>/../libs/gpt/src",
     "@app/gpt/(.*)": "<rootDir>/../libs/gpt/src/$1",
     "@app/prisma": "<rootDir>/../libs/prisma/src",

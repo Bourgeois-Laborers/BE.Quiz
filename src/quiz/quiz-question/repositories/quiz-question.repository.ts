@@ -44,4 +44,18 @@ export class QuizQuestionRepository {
       ),
     );
   }
+
+  async getQuestions(quizConfigurationId: string) {
+    return this.prismaService.quizQuestionTable.findMany({
+      where: {
+        quizConfiguration: { id: quizConfigurationId },
+      },
+      include: {
+        answers: true,
+      },
+      orderBy: {
+        order: 'asc',
+      },
+    });
+  }
 }

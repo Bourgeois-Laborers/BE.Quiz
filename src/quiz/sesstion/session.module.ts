@@ -17,5 +17,6 @@ import { UserModule } from '../user/user.module';
     SessionService,
     SessionToUserService,
   ],
+  exports: [SessionService, SessionToUserService],
 })
 export class SessionModule {}

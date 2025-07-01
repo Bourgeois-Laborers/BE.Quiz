@@ -10,5 +10,6 @@ import { QuizConfigurationModule } from '../quiz-configuration/quiz-configuratio
   imports: [GptModule, PrismaModule, QuizConfigurationModule],
   controllers: [QuizQuestionController],
   providers: [QuizQuestionRepository, QuizQuestionService],
+  exports: [QuizQuestionService],
 })
 export class QuizQuestionModule {}
