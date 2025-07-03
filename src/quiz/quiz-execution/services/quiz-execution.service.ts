@@ -9,6 +9,7 @@ import { SessionToUserService } from '@quiz/sesstion/services/session-to-user.se
 
 import {
   IFinishQuestion,
+  IGetCurrentQuestion,
   IQuizExecutionService,
   IStart,
   IStartQuestion,
@@ -189,5 +190,59 @@ export class QuizExecutionService implements IQuizExecutionService {
     await this.cacheService.finishQuiz(sessionId, quizExecutionId);
 
     return { status: Status.COMPLETED };
+  }
+
+  async getCurrentQuestion({
+    quizExecutionId,
+    userId,
+    sessionId,
+  }: IGetCurrentQuestion) {
+    const isUserJoined =
+      await this.sessionToUserService.checkIsUserAlreadyJoined({
+        userId,
+        sessionId,
+      });
+
+    if (!isUserJoined) {
+      throw new ForbiddenException('User not joined to this session');
+    }
+
+    const quizExecutionState = await this.cacheService.getQuizExecution(
+      sessionId,
+      quizExecutionId,
+    );
+
+    if (!quizExecutionState) {
+      throw new BadRequestException('Quiz execution state not found');
+    }
+
+    const currentQuestion = Object.entries(
+      quizExecutionState.questionsState,
+    ).find(([, question]) => !question.finishedAt);
+
+    if (!currentQuestion) {
+      throw new BadRequestException('Current question not found');
+    }
+
+    const [questionId, currentQuestionState] = currentQuestion;
+
+    const estimatedFinishedAt = new Date(
+      new Date().getTime() + quizExecutionState.timePerQuestion * 1000,
+    );
+
+    const question = await this.quizQuestionService.getQuestion(
+      quizExecutionState.quizConfigurationId,
+      questionId,
+    );
+
+    if (!question) {
+      throw new InternalServerErrorException('Question not found');
+    }
+
+    return {
+      question,
+      startedAt: currentQuestionState.startedAt,
+      finishedAt: estimatedFinishedAt ?? currentQuestionState.finishedAt,
+    };
   }
 }

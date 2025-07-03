@@ -1,7 +1,9 @@
+import { SortOrder } from '@common/types/sort-order.enum';
 import { ForbiddenException, Injectable } from '@nestjs/common';
 
 import {
   ICreateQuizConfiguration,
+  IGetQuizConfigurations,
   IQuizConfigurationResvice,
 } from './interfaces/quiz-configuration.service.interface';
 import { IQuizConfigiration } from '../repositories/interfaces/quiz-configuration.repository.interface';
@@ -33,5 +35,20 @@ export class QuizConfigurationService implements IQuizConfigurationResvice {
     }
 
     return isUserOwner;
+  }
+
+  async getQuizConfigurations(
+    props: IGetQuizConfigurations,
+  ): Promise<{ configs: IQuizConfigiration[]; totalPage: number }> {
+    const { userId, sortOrder, page, pageSize, search, sortBy } = props;
+
+    return this.quizConfigurationRepository.getQuizConfigurations({
+      userId,
+      sortOrder: sortOrder || SortOrder.ASC,
+      page: page || 1,
+      pageSize: pageSize || 10,
+      search,
+      sortBy: sortBy || 'id',
+    });
   }
 }

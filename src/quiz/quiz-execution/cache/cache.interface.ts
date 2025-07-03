@@ -10,6 +10,7 @@ export interface IQuizExecutionState {
   quizExecutionId: string;
   shareAnswers: boolean;
   timePerQuestion: number;
+  quizConfigurationId: string;
   questionsState: {
     [questionId: string]: {
       startedAt: Date;

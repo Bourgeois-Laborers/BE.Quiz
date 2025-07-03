@@ -1,5 +1,5 @@
 import { GptService } from '@app/gpt';
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { QuizConfigurationService } from 'src/quiz/quiz-configuration/services/quiz-configuration.service';
 
 import { QuizQuestionRepository } from '../repositories/quiz-question.repository';
@@ -7,6 +7,8 @@ import {
   IInsertQuestion,
   IQuestionService,
 } from './interfaces/question.service.interface';
+import { IQuizExecutionCacheServiceCacheService } from '../cache/cache.interface';
+import { QuizQuestionCacheService } from '../cache/cache.service';
 import { IQuestion } from '../repositories/interfaces/question.repository.interface';
 
 @Injectable()
@@ -15,6 +17,8 @@ export class QuizQuestionService implements IQuestionService {
     private readonly questionRepository: QuizQuestionRepository,
     private readonly gptService: GptService,
     private readonly quizConfigurationService: QuizConfigurationService,
+    @Inject(IQuizExecutionCacheServiceCacheService)
+    private readonly cacheService: IQuizExecutionCacheServiceCacheService,
   ) {}
 
   async insertQuestions({
@@ -43,6 +47,29 @@ export class QuizQuestionService implements IQuestionService {
   }
 
   async getQuestions(quizConfigurationId: string): Promise<IQuestion[]> {
+    const cachedQuestions =
+      await this.cacheService.getQuestions(quizConfigurationId);
+
+    if (cachedQuestions.length > 0) {
+      return cachedQuestions;
+    }
+
     return this.questionRepository.getQuestions(quizConfigurationId);
+  }
+
+  async getQuestion(
+    quizConfigurationId: string,
+    questionId: string,
+  ): Promise<IQuestion | null> {
+    const cachedQuestion = await this.cacheService.getQuestion(
+      quizConfigurationId,
+      questionId,
+    );
+
+    if (cachedQuestion) {
+      return cachedQuestion;
+    }
+
+    return this.questionRepository.getQuestion(quizConfigurationId, questionId);
   }
 }

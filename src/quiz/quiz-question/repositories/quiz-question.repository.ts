@@ -59,4 +59,16 @@ export class QuizQuestionRepository {
       },
     });
   }
+
+  async getQuestion(quizConfigurationId: string, questionId: string) {
+    return this.prismaService.quizQuestionTable.findFirst({
+      where: {
+        id: questionId,
+        quizConfiguration: { id: quizConfigurationId },
+      },
+      include: {
+        answers: true,
+      },
+    });
+  }
 }

@@ -13,7 +13,13 @@ import { QuizExecutionResultService } from './services/quiz-execution-result.ser
 import { QuizExecutionService } from './services/quiz-execution.service';
 
 @Module({
-  imports: [CacheModule, SessionModule, QuizQuestionModule, PrismaModule],
+  imports: [
+    CacheModule,
+    SessionModule,
+    QuizQuestionModule,
+    PrismaModule,
+    QuizQuestionModule,
+  ],
   providers: [
     QuizExecutionResultService,
     QuizExecutionService,

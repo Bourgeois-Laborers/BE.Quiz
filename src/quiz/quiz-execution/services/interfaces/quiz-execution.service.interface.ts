@@ -26,6 +26,12 @@ export interface IFinishQuestion {
   userId: string;
 }
 
+export interface IGetCurrentQuestion {
+  sessionId: string;
+  quizExecutionId: string;
+  userId: string;
+}
+
 export interface IQuizExecutionService {
   start(props: IStart): Promise<void>;
   setAnswer(
@@ -37,4 +43,7 @@ export interface IQuizExecutionService {
   ): Promise<void>;
   startQuestion(props: IStartQuestion): Promise<IStartQuestionResult>;
   finishQuiz(props: IFinishQuestion): Promise<{ status: string }>;
+  getCurrentQuestion(
+    props: IGetCurrentQuestion,
+  ): Promise<{ question: IQuestion; startedAt: Date; finishedAt: Date }>;
 }

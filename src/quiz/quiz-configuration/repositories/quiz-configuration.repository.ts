@@ -1,8 +1,10 @@
 import { PrismaService } from '@app/prisma';
 import { Injectable } from '@nestjs/common';
+import { Prisma } from 'prisma/prisma';
 
 import {
   ICreateQuizConfiguration,
+  IGetQuizConfigurations,
   IQuizConfigiration,
   IQuizConfigurationRepository,
 } from './interfaces/quiz-configuration.repository.interface';
@@ -42,5 +44,54 @@ export class QuizConfigurationRepository
       });
 
     return !!quizConfiguration;
+  }
+
+  async getQuizConfigurations(
+    dto: IGetQuizConfigurations,
+  ): Promise<{ configs: IQuizConfigiration[]; totalPage: number }> {
+    const { page, pageSize, search, sortBy, sortOrder, userId } = dto;
+
+    const searchCondition: Prisma.QuizConfigurationWhereInput = {
+      ...(search && {
+        name: {
+          contains: search,
+          mode: 'insensitive',
+        },
+      }),
+    };
+
+    const where: Prisma.QuizConfigurationWhereInput = {
+      OR: [
+        {
+          ...searchCondition,
+          isPrivate: false,
+        },
+        {
+          ...searchCondition,
+          user: {
+            id: userId,
+          },
+        },
+      ],
+    };
+
+    const [result, count] = await Promise.all([
+      this.prismaService.quizConfigurationTable.findMany({
+        where,
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+        orderBy: {
+          [sortBy]: sortOrder,
+        },
+      }),
+      this.prismaService.quizConfigurationTable.count({
+        where,
+      }),
+    ]);
+
+    return {
+      configs: result,
+      totalPage: Math.ceil(count / pageSize),
+    };
   }
 }

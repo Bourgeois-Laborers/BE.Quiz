@@ -8,4 +8,9 @@ export interface IInsertQuestion {
 
 export interface IQuestionService {
   insertQuestions(props: IInsertQuestion): Promise<IQuestion[]>;
+  getQuestions(quizConfigurationId: string): Promise<IQuestion[]>;
+  getQuestion(
+    quizConfigurationId: string,
+    questionId: string,
+  ): Promise<IQuestion | null>;
 }
