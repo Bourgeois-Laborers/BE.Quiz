@@ -9,6 +9,7 @@ import {
   ISetupQuizExecution,
   IStartQuestion,
 } from './cache.interface';
+import { Status } from '../types/status.types';
 
 @Injectable()
 export class QuizExecutionCacheService
@@ -23,6 +24,7 @@ export class QuizExecutionCacheService
     sessionId,
     shareAnswers,
     timePerQuestion,
+    status,
   }: ISetupQuizExecution): Promise<void> {
     await this.cacheManager.json.set(
       this.buildKey(sessionId, quizExecutionId),
@@ -33,6 +35,7 @@ export class QuizExecutionCacheService
         sessionId,
         shareAnswers,
         timePerQuestion,
+        status,
       },
     );
   }
@@ -73,14 +76,22 @@ export class QuizExecutionCacheService
     sessionId,
   }: IFinishQuestion): Promise<void> {
     const key = this.buildKey(sessionId, quizExecutionId);
+
     await this.cacheManager.json.set(
       key,
       '$.questionsState.' + questionId + '.finishedAt',
-      finishedAt.toISOString(),
+      finishedAt,
     );
-    console.log('AAAAAAAAAAA', this.cacheManager);
+  }
 
-    console.log(79, await this.cacheManager.json.get(key), questionId);
+  async updateQuestionStatus(
+    sessionId: string,
+    quizExecutionId: string,
+    status: Status,
+  ): Promise<void> {
+    const key = this.buildKey(sessionId, quizExecutionId);
+
+    await this.cacheManager.json.set(key, '$.status', status);
   }
 
   async finishQuiz(sessionId: string, quizExecutionId: string): Promise<void> {

@@ -1,11 +1,13 @@
 import { PrismaService } from '@app/prisma';
 import { Injectable } from '@nestjs/common';
+import { Prisma } from 'prisma/prisma';
 
 import {
   ICheckIsUserAnswered,
   ISetAnswer,
   IStart,
 } from './interfaces/quiz-execution.repository.interface';
+import { Status } from '../types/status.types';
 
 @Injectable()
 export class QuizExecutionRepository {
@@ -26,6 +28,7 @@ export class QuizExecutionRepository {
             id: sessionId,
           },
         },
+        status: Status.EXECUTING,
         quizConfiguration: {
           connect: {
             id: quizConfigurationId,
@@ -90,23 +93,38 @@ export class QuizExecutionRepository {
     });
   }
 
-  async finishQuiz(quizExecutionId: string) {
+  async updateQuizExecutionStatus(quizExecutionId: string, status: Status) {
     return this.prismaService.quizExecutionTable.update({
       where: {
         id: quizExecutionId,
       },
       data: {
         finishedAt: new Date(),
-        status: 'COMPLETED',
+        status,
       },
     });
   }
 
-  async getQuizExecution(quizExecutionId: string) {
+  async getQuizExecution(quizExecutionId: string, userId?: string) {
+    const where: Prisma.QuizExecutionWhereUniqueInput = {
+      id: quizExecutionId,
+    };
+
+    if (userId) {
+      where.session = {
+        sessionUsers: {
+          some: {
+            user: {
+              id: userId,
+            },
+            isHost: true,
+          },
+        },
+      };
+    }
+
     return this.prismaService.quizExecutionTable.findUnique({
-      where: {
-        id: quizExecutionId,
-      },
+      where,
       include: {
         quizConfiguration: true,
         session: true,

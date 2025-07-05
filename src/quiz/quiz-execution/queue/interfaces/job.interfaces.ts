@@ -2,5 +2,6 @@ export interface IFinishQuestionJob {
   questionId: string;
   quizExecutionId: string;
   sessionId: string;
-  finishedAt: Date;
+  finishedAt: string;
+  isLast: boolean;
 }

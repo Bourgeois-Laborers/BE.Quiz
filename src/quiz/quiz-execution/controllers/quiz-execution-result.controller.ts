@@ -1,5 +1,6 @@
+import { AuthGuard } from '@auth/auth.guard';
 import { ITokenUser } from '@auth/interfaces/auth.interface';
-import { Body, Controller, Param, Put } from '@nestjs/common';
+import { Body, Controller, Param, Put, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { User } from 'src/common/decorators/user.decorator';
 
@@ -15,6 +16,7 @@ export class QuizExecutionResultController {
   ) {}
 
   @Put(':quizExecutionId/answer')
+  @UseGuards(AuthGuard)
   async setAnswer(
     @Param('quizExecutionId') quizExecutionId: string,
     @Param('sessionId') sessionId: string,
