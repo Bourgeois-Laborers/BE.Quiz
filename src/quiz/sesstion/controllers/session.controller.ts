@@ -1,8 +1,8 @@
 import {
   Body,
   Controller,
-  Get,
   Param,
+  Get,
   Post,
   Put,
   UseGuards,
@@ -13,21 +13,44 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { AuthGuard } from 'src/auth/auth.guard';
-import { ITokenUser } from 'src/auth/interfaces/auth.interface';
-import { User } from 'src/common/decorators/user.decorator';
 
 import {
   CreateSessionDto,
   CreateSessionResponseDto,
 } from '../dtos/create-session.dto';
+import { SessionDto } from '../dtos/session.dto';
+import {
+  UpdateSessionDto,
+  UpdateSessionResponseDto,
+} from '../dtos/update-session.dto';
 import { SessionService } from '../services/session.service';
+
+import { AuthGuard } from '~/auth/auth.guard';
+import { ITokenUser } from '~/auth/interfaces/auth.interface';
+import { User } from '~/common/decorators/user.decorator';
 
 @Controller('session')
 @ApiTags('Sessions')
 @ApiBearerAuth()
 export class SessionController {
   constructor(private readonly sessionService: SessionService) {}
+
+  @Get(':sessionId')
+  @UseGuards(AuthGuard)
+  @ApiOperation({ summary: 'Get session details' })
+  @ApiResponse({
+    status: 200,
+    description: 'Successfully retrieved session details.',
+    type: SessionDto,
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @ApiResponse({ status: 404, description: 'Session not found.' })
+  async getSession(
+    @Param('sessionId') sessionId: string,
+    @User() { id: userId }: ITokenUser,
+  ): Promise<SessionDto> {
+    return this.sessionService.get(sessionId, userId);
+  }
 
   @Post()
   @UseGuards(AuthGuard)
@@ -40,41 +63,25 @@ export class SessionController {
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   async create(
     @Body() { userAlias }: CreateSessionDto,
-    @User() user: ITokenUser,
+    @User() { id: userId }: ITokenUser,
   ): Promise<CreateSessionResponseDto> {
-    return this.sessionService.create({ userAlias, userId: user.id });
+    return this.sessionService.create(userId, { userAlias });
   }
 
-  @Put(':sessionId/start')
-  @ApiOperation({ summary: 'Start a session' })
+  @Put(':sessionId')
+  @UseGuards(AuthGuard)
+  @ApiOperation({ summary: 'Update session details' })
   @ApiResponse({
     status: 200,
-    description: 'The session has been successfully started.',
+    description: 'The session has been successfully updated.',
   })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @ApiResponse({ status: 404, description: 'Session not found.' })
-  async start(@Param('sessionId') sessionId: string, @User() user: ITokenUser) {
-    return this.sessionService.start(sessionId, user.id);
-  }
-
-  @Put(':sessionId/cloase')
-  @ApiOperation({ summary: 'Close a session' })
-  @ApiResponse({
-    status: 200,
-    description: 'The session has been successfully closed.',
-  })
-  @ApiResponse({ status: 401, description: 'Unauthorized.' })
-  @ApiResponse({ status: 404, description: 'Session not found.' })
-  async close(@Param('sessionId') sessionId: string, @User() user: ITokenUser) {
-    return this.sessionService.close(sessionId, user.id);
-  }
-
-  @Get(':sessionId')
-  @ApiOperation({ summary: 'Get session details' })
-  @ApiResponse({ status: 200, description: 'Return session details.' })
-  @ApiResponse({ status: 401, description: 'Unauthorized.' })
-  @ApiResponse({ status: 404, description: 'Session not found.' })
-  async get(@Param('sessionId') sessionId: string, @User() user: ITokenUser) {
-    return this.sessionService.get(sessionId, user.id);
+  async update(
+    @Param('sessionId') sessionId: string,
+    @Body() updateSessionDto: UpdateSessionDto,
+    @User() { id: userId }: ITokenUser,
+  ): Promise<UpdateSessionResponseDto> {
+    return this.sessionService.update(sessionId, userId, updateSessionDto);
   }
 }

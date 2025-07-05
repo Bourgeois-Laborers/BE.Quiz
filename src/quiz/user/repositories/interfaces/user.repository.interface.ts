@@ -4,11 +4,7 @@ export interface IUser {
   updatedAt: Date;
 }
 
-export interface ICreateUser {
-  id: string;
-}
-
 export interface IUserRepository {
-  create(): Promise<ICreateUser>;
+  create(): Promise<IUser>;
   get(id: string): Promise<IUser | null>;
 }

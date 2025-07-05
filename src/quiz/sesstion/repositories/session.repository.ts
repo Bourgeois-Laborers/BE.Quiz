@@ -3,49 +3,18 @@ import { Injectable } from '@nestjs/common';
 import { uuidv7 } from 'uuidv7';
 
 import {
+  ISession,
   ICreateSession,
+  IUpdateSession,
   ISessionRepository,
 } from './interfaces/session.repository.interface';
-import { Status } from '../types/status.type';
+import { SessionStatus } from '../types/session-status.type';
 
 @Injectable()
 export class SessionRepository implements ISessionRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async create(props: ICreateSession) {
-    const sessionId = uuidv7();
-
-    const session = await this.prismaService.sessionTable.create({
-      data: {
-        id: sessionId,
-        status: Status.Open,
-        sessionUsers: {
-          create: {
-            user: { connect: { id: props.userId } },
-            isHost: true,
-            userAlias: props.userAlias,
-          },
-        },
-      },
-    });
-
-    return session;
-  }
-
-  async updateStatus(sessionId: string, status: Status) {
-    const updatedResult = await this.prismaService.sessionTable.update({
-      data: {
-        status,
-      },
-      where: {
-        id: sessionId,
-      },
-    });
-
-    return updatedResult;
-  }
-
-  async get(sessionId: string, userId: string) {
+  async get(sessionId: string, userId: string): Promise<ISession | null> {
     const session = await this.prismaService.sessionTable.findFirst({
       where: {
         id: sessionId,
@@ -58,5 +27,48 @@ export class SessionRepository implements ISessionRepository {
     });
 
     return session;
+  }
+
+  async create(userId: string, props: ICreateSession): Promise<ISession> {
+    const sessionId = uuidv7();
+
+    const session = await this.prismaService.sessionTable.create({
+      data: {
+        id: sessionId,
+        status: SessionStatus.OPEN,
+        sessionUsers: {
+          create: {
+            user: { connect: { id: userId } },
+            isHost: true,
+            userAlias: props.userAlias,
+          },
+        },
+      },
+    });
+
+    return session;
+  }
+
+  async update(
+    sessionId: string,
+    userId: string,
+    props: IUpdateSession,
+  ): Promise<ISession> {
+    const updatedResult = await this.prismaService.sessionTable.update({
+      data: {
+        ...props,
+      },
+      where: {
+        id: sessionId,
+        sessionUsers: {
+          some: {
+            id: userId,
+            isHost: true,
+          },
+        },
+      },
+    });
+
+    return updatedResult;
   }
 }

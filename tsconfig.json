@@ -18,36 +18,17 @@
     "strictBindCallApply": false,
     "noFallthroughCasesInSwitch": false,
     "paths": {
-      "@app/cache": [
-        "libs/cache/src"
-      ],
-      "@app/cache/*": [
-        "libs/cache/src/*"
-      ],
-      "@app/gpt": [
-        "libs/gpt/src"
-      ],
-      "@app/gpt/*": [
-        "libs/gpt/src/*"
-      ],
-      "@app/prisma": [
-        "libs/prisma/src"
-      ],
-      "@app/prisma/*": [
-        "libs/prisma/src/*"
-      ],
-      "@auth/*": [
-        "src/auth/*"
-      ],
-      "@config/*": [
-        "src/config/*"
-      ],
-      "@quiz/*": [
-        "src/quiz/*"
-      ],
-      "@common/*": [
-        "src/common/*"
-      ]
+      "@app/cache": ["libs/cache/src"],
+      "@app/cache/*": ["libs/cache/src/*"],
+      "@app/gpt": ["libs/gpt/src"],
+      "@app/gpt/*": ["libs/gpt/src/*"],
+      "@app/prisma": ["libs/prisma/src"],
+      "@app/prisma/*": ["libs/prisma/src/*"],
+      "@auth/*": ["src/auth/*"],
+      "@config/*": ["src/config/*"],
+      "@quiz/*": ["src/quiz/*"],
+      "@common/*": ["src/common/*"],
+      "~*": ["src/*"]
     }
   }
 }
