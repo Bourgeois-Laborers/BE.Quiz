@@ -7,6 +7,7 @@ export interface ICreateQuizConfiguration {
   prompt: string;
   questionsCount: number;
   userId: string;
+  isPrivate: boolean;
 }
 
 export interface IGetQuizConfigurations {

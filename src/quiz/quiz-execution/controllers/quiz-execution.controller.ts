@@ -1,9 +1,21 @@
+import { AuthGuard } from '@auth/auth.guard';
 import { ITokenUser } from '@auth/interfaces/auth.interface';
-import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import {
+  Body,
+  ClassSerializerInterceptor,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Put,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
+import { ApiBearerAuth, ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
 import { User } from 'src/common/decorators/user.decorator';
 
-import { StartQuizDto } from '../dtos/start-quiz.dto';
+import { StartQuestionResultDto } from '../dtos/start-question.dto';
+import { StartQuizDto, StartQuizResultDto } from '../dtos/start-quiz.dto';
 import { QuizExecutionService } from '../services/quiz-execution.service';
 
 @Controller('session/:sessionId/quiz-execution')
@@ -13,12 +25,17 @@ export class QuizExecutionController {
   constructor(private readonly quizExecutionService: QuizExecutionService) {}
 
   @Post(':quizConfigurationId/start-quiz')
+  @UseGuards(AuthGuard)
+  @ApiCreatedResponse({
+    description: 'Quiz started successfully.',
+    type: StartQuizResultDto,
+  })
   async startQuiz(
     @Param('quizConfigurationId') quizConfigurationId: string,
     @Param('sessionId') sessionId: string,
     @User() { id: userId }: ITokenUser,
     @Body() { shareAnswers, timePerQuestion }: StartQuizDto,
-  ) {
+  ): Promise<StartQuizResultDto> {
     return this.quizExecutionService.start({
       userId,
       sessionId,
@@ -29,11 +46,17 @@ export class QuizExecutionController {
   }
 
   @Post(':quizExecutionId/start-question')
+  @UseInterceptors(ClassSerializerInterceptor)
+  @UseGuards(AuthGuard)
+  @ApiCreatedResponse({
+    description: 'Question started successfully.',
+    type: StartQuestionResultDto,
+  })
   async startQuestion(
     @Param('quizExecutionId') quizExecutionId: string,
     @Param('sessionId') sessionId: string,
     @User() { id: userId }: ITokenUser,
-  ) {
+  ): Promise<StartQuestionResultDto> {
     return this.quizExecutionService.startQuestion({
       quizExecutionId,
       userId,
@@ -41,7 +64,8 @@ export class QuizExecutionController {
     });
   }
 
-  @Put(':quizExecutionId/finish-quiz')
+  @Put(':quizExecutionId/finish')
+  @UseGuards(AuthGuard)
   async finishQuiz(
     @Param('quizExecutionId') quizExecutionId: string,
     @Param('sessionId') sessionId: string,
@@ -54,7 +78,8 @@ export class QuizExecutionController {
     });
   }
 
-  @Get(':quizExecutionId/current-question')
+  @Get(':quizExecutionId/question')
+  @UseGuards(AuthGuard)
   async getCurrentQuestion(
     @Param('quizExecutionId') quizExecutionId: string,
     @Param('sessionId') sessionId: string,

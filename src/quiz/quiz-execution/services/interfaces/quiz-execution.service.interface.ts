@@ -1,9 +1,17 @@
+import { Status } from '@quiz/quiz-execution/types/status.types';
 import { IQuestion } from '@quiz/quiz-question/repositories/interfaces/question.repository.interface';
 
 export interface IStart {
   sessionId: string;
   quizConfigurationId: string;
   userId: string;
+  shareAnswers: boolean;
+  timePerQuestion: number;
+}
+
+export interface IStartResult {
+  quizExecutionId: string;
+  status: Status;
   shareAnswers: boolean;
   timePerQuestion: number;
 }
@@ -33,7 +41,7 @@ export interface IGetCurrentQuestion {
 }
 
 export interface IQuizExecutionService {
-  start(props: IStart): Promise<void>;
+  start(props: IStart): Promise<IStartResult>;
   setAnswer(
     sessionId: string,
     questionId: string,

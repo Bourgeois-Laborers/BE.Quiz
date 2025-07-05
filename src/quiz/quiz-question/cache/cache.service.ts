@@ -1,4 +1,4 @@
-import { INJECT_CACHE } from '@app/cache/cache.types';
+import { INJECT_CACHE_CLIENT } from '@app/cache/cache.types';
 import { Inject, Injectable } from '@nestjs/common';
 import { RedisClientType } from 'redis';
 
@@ -9,37 +9,43 @@ import { IQuestion } from '../repositories/interfaces/question.repository.interf
 export class QuizQuestionCacheService
   implements IQuizExecutionCacheServiceCacheService
 {
-  constructor(@Inject(INJECT_CACHE) private cacheManager: RedisClientType) {}
+  constructor(
+    @Inject(INJECT_CACHE_CLIENT) private cacheManager: RedisClientType,
+  ) {}
 
   async getQuestions(quizConfigurationId: string): Promise<IQuestion[]> {
-    const questions = await this.cacheManager.json.get(
+    const questions = await this.cacheManager.get(
       this.buildKey(quizConfigurationId),
     );
 
-    return questions ? (JSON.parse(questions as string) as IQuestion[]) : [];
+    return questions ? (JSON.parse(questions) as IQuestion[]) : [];
   }
 
   async getQuestion(
     quizConfigurationId: string,
     questionId: string,
   ): Promise<IQuestion | null> {
-    const question = await this.cacheManager.json.get(
+    const questions = await this.cacheManager.get(
       this.buildKey(quizConfigurationId),
-      {
-        path: '$.[' + questionId + ']',
-      },
     );
 
-    return question ? (JSON.parse(question as string) as IQuestion) : null;
+    if (!questions) {
+      return null;
+    }
+
+    const parsedQuestions = JSON.parse(questions) as IQuestion[];
+
+    return (
+      parsedQuestions.find((question) => question.id === questionId) || null
+    );
   }
 
   async setQuestions(
     quizConfigurationId: string,
     questions: IQuestion[],
   ): Promise<void> {
-    await this.cacheManager.json.set(
+    await this.cacheManager.set(
       this.buildKey(quizConfigurationId),
-      '$',
       JSON.stringify(questions),
     );
   }

@@ -16,13 +16,14 @@ export class QuizConfigurationRepository
   constructor(private readonly prismaService: PrismaService) {}
 
   async create(props: ICreateQuizConfiguration): Promise<IQuizConfigiration> {
-    const { name, prompt, questionsCount } = props;
+    const { name, prompt, questionsCount, isPrivate } = props;
 
     return this.prismaService.quizConfigurationTable.create({
       data: {
         name,
         prompt,
         questionsCount,
+        isPrivate,
         user: {
           connect: {
             id: props.userId,

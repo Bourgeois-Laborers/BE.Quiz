@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNumber, IsString } from 'class-validator';
+import { IsBoolean, IsNumber, IsString } from 'class-validator';
 
 export class CreateQuizConfigurationDto {
   @ApiProperty()
@@ -13,6 +13,13 @@ export class CreateQuizConfigurationDto {
   @ApiProperty()
   @IsNumber()
   questionsCount: number;
+
+  @ApiProperty({
+    description: 'Whether the quiz is private',
+    default: false,
+  })
+  @IsBoolean()
+  isPrivate: boolean;
 }
 
 export class CreateQuizConfigurationResponseDto {

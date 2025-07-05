@@ -1,3 +1,4 @@
+import { BullModule } from '@nestjs/bullmq';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigType } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
@@ -21,6 +22,14 @@ import { QuizModule } from './quiz/quiz.module';
         };
       },
       inject: [jwtConfig.KEY],
+    }),
+    BullModule.forRootAsync({
+      useFactory: (config: ConfigType<typeof appConfig>) => ({
+        connection: {
+          url: config.redisUrl,
+        },
+      }),
+      inject: [appConfig.KEY],
     }),
   ],
   controllers: [AppController],

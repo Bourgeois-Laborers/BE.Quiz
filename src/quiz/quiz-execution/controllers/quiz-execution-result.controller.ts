@@ -14,7 +14,7 @@ export class QuizExecutionResultController {
     private readonly quizExecutionResultService: QuizExecutionResultService,
   ) {}
 
-  @Put(':quizExecutionId/set-answer')
+  @Put(':quizExecutionId/answer')
   async setAnswer(
     @Param('quizExecutionId') quizExecutionId: string,
     @Param('sessionId') sessionId: string,

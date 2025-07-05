@@ -50,7 +50,9 @@ export class SessionToUserRepository implements ISessionToUserRepository {
     }
 
     if (typeof sessionId === 'string') {
-      where.id = sessionId;
+      where.session = {
+        id: sessionId,
+      };
     }
 
     const session = await this.prismaService.sessionToUserTable.count({

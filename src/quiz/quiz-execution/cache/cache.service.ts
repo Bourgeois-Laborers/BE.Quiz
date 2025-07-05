@@ -1,4 +1,4 @@
-import { INJECT_CACHE } from '@app/cache/cache.types';
+import { INJECT_CACHE_CLIENT } from '@app/cache/cache.types';
 import { Inject, Injectable } from '@nestjs/common';
 import { RedisClientType } from 'redis';
 
@@ -14,7 +14,9 @@ import {
 export class QuizExecutionCacheService
   implements IQuizExecutionCacheServiceCacheService
 {
-  constructor(@Inject(INJECT_CACHE) private cacheManager: RedisClientType) {}
+  constructor(
+    @Inject(INJECT_CACHE_CLIENT) private cacheManager: RedisClientType,
+  ) {}
 
   async setupQuizExecution({
     quizExecutionId,
@@ -25,13 +27,13 @@ export class QuizExecutionCacheService
     await this.cacheManager.json.set(
       this.buildKey(sessionId, quizExecutionId),
       '$',
-      JSON.stringify({
+      {
         questionsState: {},
         quizExecutionId,
         sessionId,
         shareAnswers,
         timePerQuestion,
-      } as IQuizExecutionState),
+      },
     );
   }
 
@@ -40,9 +42,13 @@ export class QuizExecutionCacheService
     quizExecutionId: string,
   ): Promise<IQuizExecutionState | null> {
     const key = this.buildKey(sessionId, quizExecutionId);
-    const value = await this.cacheManager.json.get(key, { path: '$' });
+    const value = await this.cacheManager.json.get(key);
 
-    return value ? (JSON.parse(value as string) as IQuizExecutionState) : null;
+    if (!value) {
+      return null;
+    }
+
+    return value as unknown as IQuizExecutionState;
   }
 
   async startQuestion({
@@ -52,15 +58,12 @@ export class QuizExecutionCacheService
     startedAt,
   }: IStartQuestion): Promise<void> {
     const key = this.buildKey(sessionId, quizExecutionId);
-    await this.cacheManager.json.set(
-      key,
-      '$.questionsState.' + questionId,
-      JSON.stringify({
-        questionId,
-        startedAt: startedAt.toISOString(),
-        finishedAt: null,
-      }),
-    );
+
+    await this.cacheManager.json.set(key, `$.questionsState.${questionId}`, {
+      questionId,
+      startedAt: startedAt.toISOString(),
+      finishedAt: null,
+    });
   }
 
   async finishQuestion({
@@ -75,6 +78,9 @@ export class QuizExecutionCacheService
       '$.questionsState.' + questionId + '.finishedAt',
       finishedAt.toISOString(),
     );
+    console.log('AAAAAAAAAAA', this.cacheManager);
+
+    console.log(79, await this.cacheManager.json.get(key), questionId);
   }
 
   async finishQuiz(sessionId: string, quizExecutionId: string): Promise<void> {

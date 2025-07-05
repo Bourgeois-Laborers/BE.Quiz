@@ -8,7 +8,6 @@ import {
   IQuestionService,
 } from './interfaces/question.service.interface';
 import { IQuizExecutionCacheServiceCacheService } from '../cache/cache.interface';
-import { QuizQuestionCacheService } from '../cache/cache.service';
 import { IQuestion } from '../repositories/interfaces/question.repository.interface';
 
 @Injectable()
@@ -54,7 +53,12 @@ export class QuizQuestionService implements IQuestionService {
       return cachedQuestions;
     }
 
-    return this.questionRepository.getQuestions(quizConfigurationId);
+    const questions =
+      await this.questionRepository.getQuestions(quizConfigurationId);
+
+    await this.cacheService.setQuestions(quizConfigurationId, questions);
+
+    return questions;
   }
 
   async getQuestion(

@@ -1,3 +1,4 @@
+import { InjectQueue } from '@nestjs/bullmq';
 import {
   BadRequestException,
   ForbiddenException,
@@ -6,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { QuizQuestionService } from '@quiz/quiz-question/services/quiz-question.service';
 import { SessionToUserService } from '@quiz/sesstion/services/session-to-user.service';
+import { Queue } from 'bullmq';
 
 import {
   IFinishQuestion,
@@ -17,6 +19,7 @@ import {
 } from './interfaces/quiz-execution.service.interface';
 import { QuizExecutionCacheService } from '../cache/cache.service';
 import { QuizExecutionRepository } from '../repositories/quiz-execution.repository';
+import { QueueNames, QuizExecutionJobNames } from '../types/queue.types';
 import { Status } from '../types/status.types';
 
 @Injectable()
@@ -26,6 +29,8 @@ export class QuizExecutionService implements IQuizExecutionService {
     private readonly sessionToUserService: SessionToUserService,
     private readonly cacheService: QuizExecutionCacheService,
     private readonly quizQuestionService: QuizQuestionService,
+    @InjectQueue(QueueNames.QUIZ_EXECUTION)
+    private readonly quizExecutionQueue: Queue, // Replace 'any' with the actual type if available
   ) {}
 
   async start({
@@ -56,6 +61,13 @@ export class QuizExecutionService implements IQuizExecutionService {
       shareAnswers,
       timePerQuestion,
     });
+
+    return {
+      quizExecutionId: quizExecution.id,
+      status: Status.EXECUTING,
+      shareAnswers: quizExecution.shareAnswers,
+      timePerQuestion: quizExecution.timePerQuestion,
+    };
   }
 
   async startQuestion({
@@ -116,16 +128,20 @@ export class QuizExecutionService implements IQuizExecutionService {
       new Date().getTime() + getQuizExecutionState.timePerQuestion * 1000,
     );
 
-    setTimeout(() => {
-      void (async () => {
-        await this.cacheService.finishQuestion({
-          questionId: randomQuestion.id,
-          quizExecutionId,
-          sessionId,
-          finishedAt,
-        });
-      })();
-    }, getQuizExecutionState.timePerQuestion * 1000);
+    await this.quizExecutionQueue.add(
+      QuizExecutionJobNames.FINISH_QUESTION,
+      {
+        questionId: randomQuestion.id,
+        quizExecutionId,
+        sessionId,
+        finishedAt,
+      },
+      {
+        delay: getQuizExecutionState.timePerQuestion * 1000,
+        removeOnComplete: true,
+        removeOnFail: true,
+      },
+    );
 
     return {
       question: randomQuestion,
@@ -216,6 +232,8 @@ export class QuizExecutionService implements IQuizExecutionService {
       throw new BadRequestException('Quiz execution state not found');
     }
 
+    console.log('quizExecutionState', quizExecutionState);
+
     const currentQuestion = Object.entries(
       quizExecutionState.questionsState,
     ).find(([, question]) => !question.finishedAt);
@@ -227,7 +245,8 @@ export class QuizExecutionService implements IQuizExecutionService {
     const [questionId, currentQuestionState] = currentQuestion;
 
     const estimatedFinishedAt = new Date(
-      new Date().getTime() + quizExecutionState.timePerQuestion * 1000,
+      new Date(currentQuestionState.startedAt).getTime() +
+        quizExecutionState.timePerQuestion * 1000,
     );
 
     const question = await this.quizQuestionService.getQuestion(
