@@ -1,24 +1,23 @@
-import { Injectable } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
+import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { UserRepository } from '../repositories/user.repository';
-import { IUserService } from './interfaces/user.service.interface';
+import { IUser, IUserService } from './interfaces/user.service.interface';
 
 @Injectable()
 export class UserService implements IUserService {
-  constructor(
-    private readonly userRepository: UserRepository,
-    private readonly jwtService: JwtService,
-  ) {}
+  constructor(private readonly userRepository: UserRepository) {}
 
-  async create() {
-    const user = await this.userRepository.create();
-    const accessToken = await this.jwtService.signAsync({ id: user.id });
+  async get(userId: string): Promise<IUser> {
+    const user = await this.userRepository.get(userId);
 
-    return { accessToken, id: user.id };
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    return user;
   }
 
-  async get(id: string) {
-    return this.userRepository.get(id);
+  async create(): Promise<IUser> {
+    return this.userRepository.create();
   }
 }

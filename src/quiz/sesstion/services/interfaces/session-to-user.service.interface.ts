@@ -1,19 +1,26 @@
-export interface ISessionToUserBase {
+export interface ISessionToUser {
+  id: string;
+  userId: string;
+  sessionId: string;
+  isHost: boolean;
+  userAlias: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface IJoinSession {
+  userId: string;
+  sessionId: string;
+  userAlias: string;
+}
+
+export interface ILeaveSession {
   userId: string;
   sessionId: string;
 }
 
-export interface IJoinSession extends ISessionToUserBase {
-  userAlias: string;
-}
-
-export interface ICheckIsUserAlreadyJoined
-  extends Omit<ISessionToUserBase, 'sessionId'>,
-    Partial<Pick<ISessionToUserBase, 'sessionId'>> {
-  isHost?: boolean;
-}
-
 export interface ISessionToUserService {
-  join(props: IJoinSession): Promise<void>;
-  checkIsUserAlreadyJoined(props: ICheckIsUserAlreadyJoined): Promise<boolean>;
+  getUsers(sessionId: string): Promise<ISessionToUser[]>;
+  join(props: IJoinSession): Promise<ISessionToUser[]>;
+  leave(props: ILeaveSession): Promise<void>;
 }

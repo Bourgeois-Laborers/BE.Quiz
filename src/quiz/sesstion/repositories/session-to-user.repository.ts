@@ -1,26 +1,28 @@
 import { PrismaService } from '@app/prisma';
-import { Inject, Injectable } from '@nestjs/common';
-import { ConfigType } from '@nestjs/config';
-import { Prisma } from 'prisma/prisma';
+import { Injectable } from '@nestjs/common';
 
 import {
-  ICheckIsUserAlreadyJoined,
-  IJoinSession,
   ISessionToUser,
+  IJoinSession,
+  ILeaveSession,
   ISessionToUserRepository,
 } from './interfaces/session-to-user.repository.interface';
-import { appConfig } from '../../../../src/config/app.config';
-import { Status } from '../types/status.type';
 
 @Injectable()
 export class SessionToUserRepository implements ISessionToUserRepository {
-  constructor(
-    private readonly prismaService: PrismaService,
-    @Inject(appConfig.KEY)
-    private config: ConfigType<typeof appConfig>,
-  ) {}
+  constructor(private readonly prismaService: PrismaService) {}
 
-  async join(props: IJoinSession) {
+  async getUsers(sessionId: string): Promise<ISessionToUser[]> {
+    const users = await this.prismaService.sessionToUserTable.findMany({
+      where: {
+        session: { id: sessionId },
+      },
+    });
+
+    return users;
+  }
+
+  async join(props: IJoinSession): Promise<void> {
     await this.prismaService.sessionToUserTable.create({
       data: {
         user: { connect: { id: props.userId } },
@@ -31,56 +33,12 @@ export class SessionToUserRepository implements ISessionToUserRepository {
     });
   }
 
-  async checkIsUserAlreadyJoined({
-    isHost,
-    sessionId,
-    userId,
-  }: ICheckIsUserAlreadyJoined): Promise<boolean> {
-    const where: Prisma.SessionToUserWhereInput = {
-      user: { id: userId },
-      session: {
-        status: {
-          not: Status.Closed,
-        },
-      },
-    };
-
-    if (typeof isHost === 'boolean') {
-      where.isHost = isHost;
-    }
-
-    if (typeof sessionId === 'string') {
-      where.session = {
-        id: sessionId,
-      };
-    }
-
-    const session = await this.prismaService.sessionToUserTable.count({
-      where,
-    });
-
-    return Boolean(session);
-  }
-
-  async getSessionUsers(sessionId: string): Promise<ISessionToUser[]> {
-    const users = await this.prismaService.sessionToUserTable.findMany({
+  async leave(props: ILeaveSession): Promise<void> {
+    await this.prismaService.sessionToUserTable.deleteMany({
       where: {
-        session: { id: sessionId },
+        session: { id: props.sessionId },
+        user: { id: props.userId },
       },
     });
-
-    return users;
-  }
-
-  async checkIsSessionFull(sessionId: string): Promise<boolean> {
-    const userCount = await this.prismaService.sessionToUserTable.count({
-      where: {
-        session: { id: sessionId },
-      },
-    });
-
-    const sessionSize = this.config.sessionSize;
-
-    return userCount === sessionSize;
   }
 }

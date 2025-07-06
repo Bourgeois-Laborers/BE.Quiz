@@ -8,29 +8,20 @@ export interface ISessionToUser {
   updatedAt: Date;
 }
 
-export interface ISessionToUserBase {
+export interface IJoinSession {
   userId: string;
   sessionId: string;
-}
-
-export interface IJoinSession extends ISessionToUserBase {
   userAlias: string;
   isHost: boolean;
 }
-export interface ICheckIsUserAlreadyJoined
-  extends Omit<ISessionToUserBase, 'sessionId'>,
-    Partial<Pick<ISessionToUserBase, 'sessionId'>> {
-  isHost?: boolean;
-}
 
-export interface ICheckIsUserConnectedToSession {
+export interface ILeaveSession {
   userId: string;
   sessionId: string;
-  isHost: boolean[];
 }
 
 export interface ISessionToUserRepository {
+  getUsers(sessionId: string): Promise<ISessionToUser[]>;
   join(props: IJoinSession): Promise<void>;
-  checkIsUserAlreadyJoined(props: ICheckIsUserAlreadyJoined): Promise<boolean>;
-  checkIsSessionFull(sessionId: string): Promise<boolean>;
+  leave(props: ILeaveSession): Promise<void>;
 }

@@ -1,7 +1,6 @@
 import { InjectQueue } from '@nestjs/bullmq';
 import {
   BadRequestException,
-  ForbiddenException,
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
@@ -34,20 +33,11 @@ export class QuizExecutionService implements IQuizExecutionService {
   ) {}
 
   async start({
-    userId,
     sessionId,
     quizConfigurationId,
     shareAnswers,
     timePerQuestion,
   }: IStart) {
-    const isUserHost = await this.sessionToUserService.checkIsUserAlreadyJoined(
-      { userId, sessionId, isHost: true },
-    );
-
-    if (!isUserHost) {
-      throw new ForbiddenException('User have no rules to start session');
-    }
-
     const quizExecution = await this.quizExecutionRepository.startQuiz({
       sessionId,
       quizConfigurationId,
@@ -73,16 +63,7 @@ export class QuizExecutionService implements IQuizExecutionService {
   async startQuestion({
     quizExecutionId,
     sessionId,
-    userId,
   }: IStartQuestion): Promise<IStartQuestionResult> {
-    const isUserHost = await this.sessionToUserService.checkIsUserAlreadyJoined(
-      { userId, sessionId, isHost: true },
-    );
-
-    if (!isUserHost) {
-      throw new ForbiddenException('User have no rules to start session');
-    }
-
     const getQuizExecutionState = await this.cacheService.getQuizExecution(
       sessionId,
       quizExecutionId,
@@ -155,18 +136,7 @@ export class QuizExecutionService implements IQuizExecutionService {
     questionId: string,
     answerId: string,
     userId: string,
-    sessionId: string,
   ) {
-    const isUserJoined =
-      await this.sessionToUserService.checkIsUserAlreadyJoined({
-        userId,
-        sessionId,
-      });
-
-    if (!isUserJoined) {
-      throw new ForbiddenException('User not joined to this session');
-    }
-
     const checkIsUserAnswered =
       await this.quizExecutionRepository.checkIsUserAnswered({
         questionId,
@@ -192,15 +162,7 @@ export class QuizExecutionService implements IQuizExecutionService {
     }
   }
 
-  async finishQuiz({ quizExecutionId, sessionId, userId }: IFinishQuestion) {
-    const isUserHost = await this.sessionToUserService.checkIsUserAlreadyJoined(
-      { userId, sessionId, isHost: true },
-    );
-
-    if (!isUserHost) {
-      throw new ForbiddenException('User have no rules to finish quiz');
-    }
-
+  async finishQuiz({ quizExecutionId, sessionId }: IFinishQuestion) {
     await this.quizExecutionRepository.finishQuiz(quizExecutionId);
 
     await this.cacheService.finishQuiz(sessionId, quizExecutionId);
@@ -210,19 +172,8 @@ export class QuizExecutionService implements IQuizExecutionService {
 
   async getCurrentQuestion({
     quizExecutionId,
-    userId,
     sessionId,
   }: IGetCurrentQuestion) {
-    const isUserJoined =
-      await this.sessionToUserService.checkIsUserAlreadyJoined({
-        userId,
-        sessionId,
-      });
-
-    if (!isUserJoined) {
-      throw new ForbiddenException('User not joined to this session');
-    }
-
     const quizExecutionState = await this.cacheService.getQuizExecution(
       sessionId,
       quizExecutionId,

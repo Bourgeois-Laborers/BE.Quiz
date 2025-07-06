@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { SessionToUserService } from '@quiz/sesstion/services/session-to-user.service';
 
 import {
@@ -19,20 +19,7 @@ export class QuizExecutionResultService implements IQuizExecutionResultService {
     questionId,
     quizExecutionId,
     userId,
-    sessionId,
   }: ISetAnswer) {
-    const isUserExistsInSession =
-      await this.sessionToUserService.checkIsUserAlreadyJoined({
-        userId,
-        sessionId,
-      });
-
-    if (!isUserExistsInSession) {
-      throw new ForbiddenException(
-        'User have no rules to send answer to this session',
-      );
-    }
-
     return this.quizExecutionRepository.setAnswer({
       userId,
       questionId,
