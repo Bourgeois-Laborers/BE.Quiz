@@ -6,9 +6,6 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { plainToInstance } from 'class-transformer';
-import { AuthGuard } from 'src/auth/auth.guard';
-import { ITokenUser } from 'src/auth/interfaces/auth.interface';
-import { User } from 'src/common/decorators/user.decorator';
 
 import {
   CreateQuizConfigurationDto,
@@ -16,6 +13,10 @@ import {
 } from '../dtos/create-quiz-configuration.dto';
 import { GetQuizConfigurationsDto } from '../dtos/get-quiz-configurations.dto';
 import { QuizConfigurationService } from '../services/quiz-configuration.service';
+
+import { User } from '@/modules/auth/decorators/user.decorator';
+import { AuthGuard } from '@/modules/auth/guards/auth.guard';
+import { ITokenUser } from '@/modules/auth/interfaces/token-user.interface';
 
 @Controller('quiz-configuration')
 @ApiTags('Quiz configuration')

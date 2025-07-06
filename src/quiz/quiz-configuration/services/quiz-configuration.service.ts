@@ -1,4 +1,3 @@
-import { SortOrder } from '@common/types/sort-order.enum';
 import { ForbiddenException, Injectable } from '@nestjs/common';
 
 import {
@@ -8,6 +7,8 @@ import {
 } from './interfaces/quiz-configuration.service.interface';
 import { IQuizConfigiration } from '../repositories/interfaces/quiz-configuration.repository.interface';
 import { QuizConfigurationRepository } from '../repositories/quiz-configuration.repository';
+
+import { SortOrder } from '@/common/types/sort-order.enum';
 
 @Injectable()
 export class QuizConfigurationService implements IQuizConfigurationResvice {

@@ -1,7 +1,8 @@
-import { SortOrder } from '@common/types/sort-order.enum';
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose, Transform } from 'class-transformer';
 import { IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
+
+import { SortOrder } from '@/common/types/sort-order.enum';
 
 export class GetQuizConfigurationsDto {
   @ApiProperty({ required: false, default: 1 })

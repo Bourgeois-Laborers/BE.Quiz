@@ -1,4 +1,4 @@
-import { SortOrder } from '@common/types/sort-order.enum';
+import { SortOrder } from '@/common/types/sort-order.enum';
 
 export interface IQuizConfigiration {
   id: string;

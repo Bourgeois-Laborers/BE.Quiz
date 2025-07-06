@@ -6,13 +6,13 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { AuthGuard } from '../../../auth/auth.guard';
 import { CreateSessionToUserDto } from '../dtos/create-session-to-user.dto';
 import { SessionToUserDto } from '../dtos/session-to-user.dto';
 import { SessionToUserService } from '../services/session-to-user.service';
 
-import { ITokenUser } from '~/auth/interfaces/auth.interface';
-import { User } from '~/common/decorators/user.decorator';
+import { User } from '@/modules/auth/decorators/user.decorator';
+import { AuthGuard } from '@/modules/auth/guards/auth.guard';
+import { ITokenUser } from '@/modules/auth/interfaces/token-user.interface';
 
 @Controller('session')
 @ApiTags('Sessions')

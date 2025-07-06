@@ -1,5 +1,3 @@
-import { AuthGuard } from '@auth/auth.guard';
-import { ITokenUser } from '@auth/interfaces/auth.interface';
 import {
   Body,
   ClassSerializerInterceptor,
@@ -12,11 +10,14 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
-import { User } from 'src/common/decorators/user.decorator';
 
 import { StartQuestionResultDto } from '../dtos/start-question.dto';
 import { StartQuizDto, StartQuizResultDto } from '../dtos/start-quiz.dto';
 import { QuizExecutionService } from '../services/quiz-execution.service';
+
+import { User } from '@/modules/auth/decorators/user.decorator';
+import { AuthGuard } from '@/modules/auth/guards/auth.guard';
+import { ITokenUser } from '@/modules/auth/interfaces/token-user.interface';
 
 @Controller('session/:sessionId/quiz-execution')
 @ApiTags('Quiz execution')

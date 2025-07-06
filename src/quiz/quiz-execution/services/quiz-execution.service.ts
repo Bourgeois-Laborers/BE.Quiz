@@ -5,7 +5,6 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { QuizQuestionService } from '@quiz/quiz-question/services/quiz-question.service';
-import { SessionToUserService } from '@quiz/sesstion/services/session-to-user.service';
 import { Queue } from 'bullmq';
 
 import {
@@ -20,6 +19,8 @@ import { QuizExecutionCacheService } from '../cache/cache.service';
 import { QuizExecutionRepository } from '../repositories/quiz-execution.repository';
 import { QueueNames, QuizExecutionJobNames } from '../types/queue.types';
 import { Status } from '../types/status.types';
+
+import { SessionToUserService } from '@/modules/sesstion/services/session-to-user.service';
 
 @Injectable()
 export class QuizExecutionService implements IQuizExecutionService {

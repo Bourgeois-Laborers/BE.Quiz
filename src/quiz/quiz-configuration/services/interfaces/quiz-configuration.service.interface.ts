@@ -1,6 +1,6 @@
-import { SortOrder } from '@common/types/sort-order.enum';
-
 import { IQuizConfigiration } from '../../repositories/interfaces/quiz-configuration.repository.interface';
+
+import { SortOrder } from '@/common/types/sort-order.enum';
 
 export interface ICreateQuizConfiguration {
   name: string;

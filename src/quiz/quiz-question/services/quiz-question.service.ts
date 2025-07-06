@@ -1,6 +1,5 @@
 import { GptService } from '@app/gpt';
 import { Inject, Injectable } from '@nestjs/common';
-import { QuizConfigurationService } from 'src/quiz/quiz-configuration/services/quiz-configuration.service';
 
 import { QuizQuestionRepository } from '../repositories/quiz-question.repository';
 import {
@@ -9,6 +8,8 @@ import {
 } from './interfaces/question.service.interface';
 import { IQuizExecutionCacheServiceCacheService } from '../cache/cache.interface';
 import { IQuestion } from '../repositories/interfaces/question.repository.interface';
+
+import { QuizConfigurationService } from '@/quiz/quiz-configuration/services/quiz-configuration.service';
 
 @Injectable()
 export class QuizQuestionService implements IQuestionService {

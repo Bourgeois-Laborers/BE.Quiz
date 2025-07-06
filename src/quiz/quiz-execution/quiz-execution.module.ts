@@ -3,7 +3,6 @@ import { PrismaModule } from '@app/prisma';
 import { BullModule } from '@nestjs/bullmq';
 import { Module } from '@nestjs/common';
 import { QuizQuestionModule } from '@quiz/quiz-question/quiz-question.module';
-import { SessionModule } from '@quiz/sesstion/session.module';
 
 import { QuizExecutionCacheService } from './cache/cache.service';
 import { QuizExecutionResultController } from './controllers/quiz-execution-result.controller';
@@ -14,6 +13,8 @@ import { QuizExecutionRepository } from './repositories/quiz-execution.repositor
 import { QuizExecutionResultService } from './services/quiz-execution-result.service';
 import { QuizExecutionService } from './services/quiz-execution.service';
 import { QueueNames } from './types/queue.types';
+
+import { SessionModule } from '@/modules/sesstion/session.module';
 
 @Module({
   imports: [

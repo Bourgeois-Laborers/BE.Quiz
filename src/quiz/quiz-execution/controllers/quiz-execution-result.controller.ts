@@ -1,10 +1,11 @@
-import { ITokenUser } from '@auth/interfaces/auth.interface';
 import { Body, Controller, Param, Put } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { User } from 'src/common/decorators/user.decorator';
 
 import { SetQuizExecutionResultAnswerDto } from '../dtos/set-answer.dto';
 import { QuizExecutionResultService } from '../services/quiz-execution-result.service';
+
+import { User } from '@/modules/auth/decorators/user.decorator';
+import { ITokenUser } from '@/modules/auth/interfaces/token-user.interface';
 
 @Controller('session/:sessionId/quiz-execution-result')
 @ApiTags('Quiz execution result')
