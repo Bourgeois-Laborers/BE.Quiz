@@ -1,3 +1,4 @@
+import { QuizExecutionStatus } from '@app/prisma';
 import { InjectQueue } from '@nestjs/bullmq';
 import {
   BadRequestException,
@@ -17,7 +18,7 @@ import {
 import { QuizExecutionCacheService } from '../cache/cache.service';
 import { QuizExecutionRepository } from '../repositories/quiz-execution.repository';
 import { QueueNames, QuizExecutionJobNames } from '../types/queue.types';
-import { getAvailableNextStatuses, Status } from '../types/status.types';
+import { getAvailableNextStatuses } from '../types/status.types';
 
 @Injectable()
 export class QuizExecutionService implements IQuizExecutionService {
@@ -48,12 +49,12 @@ export class QuizExecutionService implements IQuizExecutionService {
       sessionId,
       shareAnswers,
       timePerQuestion,
-      status: Status.EXECUTING,
+      status: QuizExecutionStatus.EXECUTING,
     });
 
     return {
       quizExecutionId: quizExecution.id,
-      status: Status.EXECUTING,
+      status: QuizExecutionStatus.EXECUTING,
       shareAnswers: quizExecution.shareAnswers,
       timePerQuestion: quizExecution.timePerQuestion,
     };
@@ -71,7 +72,7 @@ export class QuizExecutionService implements IQuizExecutionService {
       );
     }
 
-    if (quizExecutionState.status !== Status.EXECUTING) {
+    if (quizExecutionState.status !== QuizExecutionStatus.EXECUTING) {
       throw new BadRequestException('Quiz execution already finished');
     }
 
@@ -136,6 +137,7 @@ export class QuizExecutionService implements IQuizExecutionService {
     questionId: string,
     answerId: string,
     userId: string,
+    sessionId: string,
   ) {
     const checkIsUserAnswered =
       await this.quizExecutionRepository.checkIsUserAnswered({
@@ -192,7 +194,7 @@ export class QuizExecutionService implements IQuizExecutionService {
       throw new BadRequestException('Quiz execution state not found');
     }
 
-    if (quizExecutionState.status !== Status.EXECUTING) {
+    if (quizExecutionState.status !== QuizExecutionStatus.EXECUTING) {
       throw new BadRequestException('Quiz execution already finished');
     }
 
@@ -231,7 +233,7 @@ export class QuizExecutionService implements IQuizExecutionService {
 
   public async updateQuizExecutionStatus(
     quizExecutionId: string,
-    status: Status,
+    status: QuizExecutionStatus,
     userId?: string,
   ) {
     const quizExecution = await this.quizExecutionRepository.getQuizExecution(
@@ -243,9 +245,7 @@ export class QuizExecutionService implements IQuizExecutionService {
       throw new BadRequestException('Quiz execution not found');
     }
 
-    if (
-      !getAvailableNextStatuses(quizExecution.status as Status).includes(status)
-    ) {
+    if (!getAvailableNextStatuses(quizExecution.status).includes(status)) {
       throw new BadRequestException('Invalid status provided');
     }
 

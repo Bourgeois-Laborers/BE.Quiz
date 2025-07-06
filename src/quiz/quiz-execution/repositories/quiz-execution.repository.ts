@@ -1,13 +1,12 @@
 import { PrismaService } from '@app/prisma';
+import { Prisma, QuizExecutionStatus } from '@app/prisma/prisma-client';
 import { Injectable } from '@nestjs/common';
-import { Prisma } from 'prisma/prisma';
 
 import {
   ICheckIsUserAnswered,
   ISetAnswer,
   IStart,
 } from './interfaces/quiz-execution.repository.interface';
-import { Status } from '../types/status.types';
 
 @Injectable()
 export class QuizExecutionRepository {
@@ -28,7 +27,7 @@ export class QuizExecutionRepository {
             id: sessionId,
           },
         },
-        status: Status.EXECUTING,
+        status: QuizExecutionStatus.EXECUTING,
         quizConfiguration: {
           connect: {
             id: quizConfigurationId,
@@ -93,7 +92,10 @@ export class QuizExecutionRepository {
     });
   }
 
-  async updateQuizExecutionStatus(quizExecutionId: string, status: Status) {
+  async updateQuizExecutionStatus(
+    quizExecutionId: string,
+    status: QuizExecutionStatus,
+  ) {
     return this.prismaService.quizExecutionTable.update({
       where: {
         id: quizExecutionId,

@@ -1,6 +1,6 @@
 import { PrismaService } from '@app/prisma';
+import { Prisma } from '@app/prisma';
 import { Injectable } from '@nestjs/common';
-import { Prisma } from 'prisma/prisma';
 
 import { IInsertQuestion } from './interfaces/question.repository.interface';
 

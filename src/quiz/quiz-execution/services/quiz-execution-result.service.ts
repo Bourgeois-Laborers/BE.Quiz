@@ -1,3 +1,4 @@
+import { QuizExecutionStatus } from '@app/prisma';
 import {
   BadRequestException,
   Injectable,
@@ -11,7 +12,6 @@ import {
 } from './interfaces/quiz-execution-result.repository.interface';
 import { QuizExecutionCacheService } from '../cache/cache.service';
 import { QuizExecutionResultRepository } from '../repositories/quiz-execution-result.repository';
-import { Status } from '../types/status.types';
 
 @Injectable()
 export class QuizExecutionResultService implements IQuizExecutionResultService {
@@ -37,7 +37,7 @@ export class QuizExecutionResultService implements IQuizExecutionResultService {
       throw new InternalServerErrorException('Quiz execution state not found');
     }
 
-    if (quizExecutionState.status !== Status.EXECUTING) {
+    if (quizExecutionState.status !== QuizExecutionStatus.EXECUTING) {
       throw new BadRequestException('Quiz execution already finished');
     }
 

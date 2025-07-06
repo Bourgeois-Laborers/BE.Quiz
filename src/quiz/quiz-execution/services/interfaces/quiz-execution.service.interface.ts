@@ -1,4 +1,4 @@
-import { Status } from '@quiz/quiz-execution/types/status.types';
+import { QuizExecutionStatus } from '@app/prisma';
 import { IQuestion } from '@quiz/quiz-question/repositories/interfaces/question.repository.interface';
 
 export interface IStart {
@@ -11,7 +11,7 @@ export interface IStart {
 
 export interface IStartResult {
   quizExecutionId: string;
-  status: Status;
+  status: QuizExecutionStatus;
   shareAnswers: boolean;
   timePerQuestion: number;
 }

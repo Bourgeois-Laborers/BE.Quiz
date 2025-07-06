@@ -1,11 +1,11 @@
-import { Status } from '../types/status.types';
+import { QuizExecutionStatus } from '@app/prisma';
 
 export interface ISetupQuizExecution {
   sessionId: string;
   quizExecutionId: string;
   shareAnswers: boolean;
   timePerQuestion: number;
-  status: Status;
+  status: QuizExecutionStatus;
 }
 
 export interface IQuizExecutionState {
@@ -14,7 +14,7 @@ export interface IQuizExecutionState {
   shareAnswers: boolean;
   timePerQuestion: number;
   quizConfigurationId: string;
-  status: Status;
+  status: QuizExecutionStatus;
   questionsState: {
     [questionId: string]: {
       startedAt: Date;

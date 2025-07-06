@@ -18,8 +18,8 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "generate": "npx prisma generate",
-    "migrate": "npx prisma migrate dev"
+    "generate": "npx prisma generate --schema=libs/prisma/schema.prisma",
+    "migrate": "npx prisma migrate dev --schema=libs/prisma/schema.prisma"
   },
   "dependencies": {
     "@nestjs/bullmq": "^11.0.2",

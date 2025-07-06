@@ -1,4 +1,5 @@
 import { INJECT_CACHE_CLIENT } from '@app/cache/cache.types';
+import { QuizExecutionStatus } from '@app/prisma';
 import { Inject, Injectable } from '@nestjs/common';
 import { RedisClientType } from 'redis';
 
@@ -9,7 +10,6 @@ import {
   ISetupQuizExecution,
   IStartQuestion,
 } from './cache.interface';
-import { Status } from '../types/status.types';
 
 @Injectable()
 export class QuizExecutionCacheService
@@ -87,7 +87,7 @@ export class QuizExecutionCacheService
   async updateQuestionStatus(
     sessionId: string,
     quizExecutionId: string,
-    status: Status,
+    status: QuizExecutionStatus,
   ): Promise<void> {
     const key = this.buildKey(sessionId, quizExecutionId);
 

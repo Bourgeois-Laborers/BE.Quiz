@@ -1,8 +1,8 @@
+import { QuizExecutionStatus } from '@app/prisma';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsBoolean, Min } from 'class-validator';
 
 import { IStartResult } from '../services/interfaces/quiz-execution.service.interface';
-import { Status } from '../types/status.types';
 
 export class StartQuizDto {
   @ApiProperty({ description: 'Time in seconds' })
@@ -23,9 +23,9 @@ export class StartQuizResultDto implements IStartResult {
 
   @ApiProperty({
     description: 'Current status of the quiz execution',
-    enum: Status,
+    enum: QuizExecutionStatus,
   })
-  status: Status;
+  status: QuizExecutionStatus;
 
   @ApiProperty({
     default: false,

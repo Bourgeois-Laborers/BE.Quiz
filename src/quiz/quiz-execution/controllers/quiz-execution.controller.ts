@@ -1,3 +1,4 @@
+import { QuizExecutionStatus } from '@app/prisma';
 import { AuthGuard } from '@auth/auth.guard';
 import { ITokenUser } from '@auth/interfaces/auth.interface';
 import {
@@ -22,7 +23,6 @@ import { User } from 'src/common/decorators/user.decorator';
 
 import { StartQuizDto, StartQuizResultDto } from '../dtos/start-quiz.dto';
 import { QuizExecutionService } from '../services/quiz-execution.service';
-import { Status } from '../types/status.types';
 
 @Controller('session/:sessionId/quiz-execution')
 @ApiTags('Quiz execution')
@@ -91,12 +91,12 @@ export class QuizExecutionController {
   @ApiQuery({
     name: 'status',
     required: true,
-    enum: Status,
+    enum: QuizExecutionStatus,
   })
   async updateQuizExecutionStatus(
     @Param('quizExecutionId') quizExecutionId: string,
     @User() { id: userId }: ITokenUser,
-    @Query('status') status: Status,
+    @Query('status') status: QuizExecutionStatus,
   ) {
     return this.quizExecutionService.updateQuizExecutionStatus(
       quizExecutionId,

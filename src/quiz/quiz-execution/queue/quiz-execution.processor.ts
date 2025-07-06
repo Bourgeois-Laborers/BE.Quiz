@@ -1,3 +1,4 @@
+import { QuizExecutionStatus } from '@app/prisma';
 import { Processor, WorkerHost } from '@nestjs/bullmq';
 import { Logger } from '@nestjs/common';
 import { Job } from 'bullmq';
@@ -6,7 +7,6 @@ import { QuizExecutionCacheService } from '../cache/cache.service';
 import { QueueNames, QuizExecutionJobNames } from '../types/queue.types';
 import { IFinishQuestionJob } from './interfaces/job.interfaces';
 import { QuizExecutionService } from '../services/quiz-execution.service';
-import { Status } from '../types/status.types';
 
 @Processor(QueueNames.QUIZ_EXECUTION, { concurrency: 50 })
 export class QuizExecutionProcessor extends WorkerHost {
@@ -47,7 +47,7 @@ export class QuizExecutionProcessor extends WorkerHost {
         this.cacheService.finishQuiz(sessionId, quizExecutionId),
         this.quizExecutionService.updateQuizExecutionStatus(
           quizExecutionId,
-          Status.COMPLETED,
+          QuizExecutionStatus.COMPLETED,
         ),
       ]);
     }

@@ -1,19 +1,25 @@
-export enum Status {
-  PENDING = 'PENDING',
-  EXECUTING = 'EXECUTING',
-  PAUSED = 'PAUSED',
-  COMPLETED = 'COMPLETED',
-  CANCELED = 'CANCELED',
-}
+import { QuizExecutionStatus } from '@app/prisma';
 
 export const availableNextStatuses = {
-  [Status.PENDING]: [Status.EXECUTING, Status.CANCELED],
-  [Status.EXECUTING]: [Status.PAUSED, Status.COMPLETED, Status.CANCELED],
-  [Status.PAUSED]: [Status.EXECUTING, Status.CANCELED],
-  [Status.COMPLETED]: [],
-  [Status.CANCELED]: [],
+  [QuizExecutionStatus.PENDING]: [
+    QuizExecutionStatus.CANCELED,
+    QuizExecutionStatus.EXECUTING,
+  ],
+  [QuizExecutionStatus.EXECUTING]: [
+    QuizExecutionStatus.CANCELED,
+    QuizExecutionStatus.PAUSED,
+    QuizExecutionStatus.COMPLETED,
+  ],
+  [QuizExecutionStatus.PAUSED]: [
+    QuizExecutionStatus.EXECUTING,
+    QuizExecutionStatus.CANCELED,
+  ],
+  [QuizExecutionStatus.COMPLETED]: [],
+  [QuizExecutionStatus.CANCELED]: [],
 };
 
-export const getAvailableNextStatuses = (status: Status): Status[] => {
+export const getAvailableNextStatuses = (
+  status: QuizExecutionStatus,
+): QuizExecutionStatus[] => {
   return availableNextStatuses[status];
 };
