@@ -1,4 +1,4 @@
-import { Status } from '@quiz/quiz-execution/types/status.types';
+import { QuizExecutionStatus } from '@app/prisma';
 import { IQuestion } from '@quiz/quiz-question/repositories/interfaces/question.repository.interface';
 
 export interface IStart {
@@ -11,7 +11,7 @@ export interface IStart {
 
 export interface IStartResult {
   quizExecutionId: string;
-  status: Status;
+  status: QuizExecutionStatus;
   shareAnswers: boolean;
   timePerQuestion: number;
 }
@@ -20,12 +20,6 @@ export interface IStartQuestion {
   sessionId: string;
   quizExecutionId: string;
   userId: string;
-}
-
-export interface IStartQuestionResult {
-  startedAt: Date;
-  finishedAt: Date;
-  question: IQuestion;
 }
 
 export interface IFinishQuestion {
@@ -49,9 +43,8 @@ export interface IQuizExecutionService {
     userId: string,
     quizExecutionId: string,
   ): Promise<void>;
-  startQuestion(props: IStartQuestion): Promise<IStartQuestionResult>;
-  finishQuiz(props: IFinishQuestion): Promise<{ status: string }>;
+  startQuestion(props: IStartQuestion): Promise<void>;
   getCurrentQuestion(
     props: IGetCurrentQuestion,
-  ): Promise<{ question: IQuestion; startedAt: Date; finishedAt: Date }>;
+  ): Promise<{ question: IQuestion; startedAt: Date; finishedAt: Date } | null>;
 }

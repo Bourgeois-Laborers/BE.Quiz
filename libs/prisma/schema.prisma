@@ -6,7 +6,7 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "./prisma"
+  output   = "./src/prisma-client"
 }
 
 datasource db {
@@ -31,7 +31,7 @@ enum SessionStatus {
 
 model Session {
   id             String          @id @default(uuid())
-  status         SessionStatus
+  status         SessionStatus   
   sessionUsers   SessionToUser[]
   quizExecutions QuizExecution[]
   createdAt      DateTime        @default(now())
@@ -99,10 +99,18 @@ model QuizExecution {
   session             Session               @relation(fields: [sessionId], references: [id])
   sessionId           String
   quizExecutionResult QuizExecutionResult[]
-  status              String                @default("COMPLETED") 
+  status              QuizExecutionStatus   @default(COMPLETED) 
   finishedAt          DateTime?
   createdAt           DateTime              @default(now())
   updatedAt           DateTime              @updatedAt
+}
+
+enum QuizExecutionStatus {
+  PENDING
+  EXECUTING
+  PAUSED
+  COMPLETED
+  CANCELED
 }
 
 model QuizExecutionResult {

@@ -1,10 +1,13 @@
 import { PrismaService } from '@app/prisma';
 import { Injectable } from '@nestjs/common';
 
+import { IQuizExecutionResultRepository } from './interfaces/quiz-execution-result.repository.interface';
 import { ISetAnswer } from './interfaces/quiz-execution.repository.interface';
 
 @Injectable()
-export class QuizExecutionResultRepository {
+export class QuizExecutionResultRepository
+  implements IQuizExecutionResultRepository
+{
   constructor(private readonly prismaService: PrismaService) {}
 
   async setAnswer({

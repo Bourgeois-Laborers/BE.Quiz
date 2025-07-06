@@ -1,3 +1,4 @@
+import { QuizExecutionStatus } from '@app/prisma';
 import { InjectQueue } from '@nestjs/bullmq';
 import {
   BadRequestException,
@@ -9,17 +10,15 @@ import { SessionToUserService } from '@quiz/sesstion/services/session-to-user.se
 import { Queue } from 'bullmq';
 
 import {
-  IFinishQuestion,
   IGetCurrentQuestion,
   IQuizExecutionService,
   IStart,
   IStartQuestion,
-  IStartQuestionResult,
 } from './interfaces/quiz-execution.service.interface';
 import { QuizExecutionCacheService } from '../cache/cache.service';
 import { QuizExecutionRepository } from '../repositories/quiz-execution.repository';
 import { QueueNames, QuizExecutionJobNames } from '../types/queue.types';
-import { Status } from '../types/status.types';
+import { getAvailableNextStatuses } from '../types/status.types';
 
 @Injectable()
 export class QuizExecutionService implements IQuizExecutionService {
@@ -50,47 +49,54 @@ export class QuizExecutionService implements IQuizExecutionService {
       sessionId,
       shareAnswers,
       timePerQuestion,
+      status: QuizExecutionStatus.EXECUTING,
     });
 
     return {
       quizExecutionId: quizExecution.id,
-      status: Status.EXECUTING,
+      status: QuizExecutionStatus.EXECUTING,
       shareAnswers: quizExecution.shareAnswers,
       timePerQuestion: quizExecution.timePerQuestion,
     };
   }
 
-  async startQuestion({
-    quizExecutionId,
-    sessionId,
-  }: IStartQuestion): Promise<IStartQuestionResult> {
-    const getQuizExecutionState = await this.cacheService.getQuizExecution(
+  async startQuestion({ quizExecutionId, sessionId }: IStartQuestion) {
+    const quizExecutionState = await this.cacheService.getQuizExecution(
       sessionId,
       quizExecutionId,
     );
 
-    if (!getQuizExecutionState) {
+    if (!quizExecutionState) {
       throw new BadRequestException(
         'Quiz execution state not found, first start quiz',
       );
     }
 
-    const quizExecution =
-      await this.quizExecutionRepository.getQuizExecution(quizExecutionId);
+    if (quizExecutionState.status !== QuizExecutionStatus.EXECUTING) {
+      throw new BadRequestException('Quiz execution already finished');
+    }
 
-    if (!quizExecution) {
-      throw new BadRequestException('Quiz session not found');
+    const currentQuestion = Object.entries(
+      quizExecutionState.questionsState,
+    ).find(([, question]) => !question.finishedAt);
+
+    if (currentQuestion) {
+      throw new BadRequestException('Current question is not finished');
     }
 
     const quizQuestions = await this.quizQuestionService.getQuestions(
-      quizExecution.quizConfigurationId,
+      quizExecutionState.quizConfigurationId,
     );
 
     const questionsToStart = quizQuestions.filter(
       (question) =>
-        !getQuizExecutionState.questionsState[question.id] ||
-        !getQuizExecutionState.questionsState[question.id].finishedAt,
+        !quizExecutionState.questionsState[question.id] ||
+        !quizExecutionState.questionsState[question.id].finishedAt,
     );
+
+    if (questionsToStart.length === 0) {
+      throw new BadRequestException('No questions to start');
+    }
 
     const randomQuestionIndex = Math.floor(
       Math.random() * questionsToStart.length,
@@ -106,7 +112,7 @@ export class QuizExecutionService implements IQuizExecutionService {
     });
 
     const finishedAt = new Date(
-      new Date().getTime() + getQuizExecutionState.timePerQuestion * 1000,
+      new Date().getTime() + quizExecutionState.timePerQuestion * 1000,
     );
 
     await this.quizExecutionQueue.add(
@@ -116,19 +122,14 @@ export class QuizExecutionService implements IQuizExecutionService {
         quizExecutionId,
         sessionId,
         finishedAt,
+        isLast: questionsToStart.length === 1,
       },
       {
-        delay: getQuizExecutionState.timePerQuestion * 1000,
+        delay: quizExecutionState.timePerQuestion * 1000,
         removeOnComplete: true,
         removeOnFail: true,
       },
     );
-
-    return {
-      question: randomQuestion,
-      finishedAt: finishedAt,
-      startedAt: new Date(),
-    };
   }
 
   async setAnswer(
@@ -136,6 +137,7 @@ export class QuizExecutionService implements IQuizExecutionService {
     questionId: string,
     answerId: string,
     userId: string,
+    sessionId: string,
   ) {
     const checkIsUserAnswered =
       await this.quizExecutionRepository.checkIsUserAnswered({
@@ -146,6 +148,23 @@ export class QuizExecutionService implements IQuizExecutionService {
 
     if (checkIsUserAnswered) {
       throw new BadRequestException('User already answered on this question');
+    }
+
+    const quizExecutionState = await this.cacheService.getQuizExecution(
+      sessionId,
+      quizExecutionId,
+    );
+
+    if (!quizExecutionState) {
+      throw new InternalServerErrorException('Quiz execution state not found');
+    }
+
+    const currentQuestion = Object.entries(
+      quizExecutionState.questionsState,
+    ).find(([, question]) => !question.finishedAt);
+
+    if (!currentQuestion || currentQuestion[0] !== questionId) {
+      throw new BadRequestException('Current question is not started');
     }
 
     const answer = await this.quizExecutionRepository.setAnswer({
@@ -162,14 +181,6 @@ export class QuizExecutionService implements IQuizExecutionService {
     }
   }
 
-  async finishQuiz({ quizExecutionId, sessionId }: IFinishQuestion) {
-    await this.quizExecutionRepository.finishQuiz(quizExecutionId);
-
-    await this.cacheService.finishQuiz(sessionId, quizExecutionId);
-
-    return { status: Status.COMPLETED };
-  }
-
   async getCurrentQuestion({
     quizExecutionId,
     sessionId,
@@ -183,6 +194,10 @@ export class QuizExecutionService implements IQuizExecutionService {
       throw new BadRequestException('Quiz execution state not found');
     }
 
+    if (quizExecutionState.status !== QuizExecutionStatus.EXECUTING) {
+      throw new BadRequestException('Quiz execution already finished');
+    }
+
     console.log('quizExecutionState', quizExecutionState);
 
     const currentQuestion = Object.entries(
@@ -190,7 +205,7 @@ export class QuizExecutionService implements IQuizExecutionService {
     ).find(([, question]) => !question.finishedAt);
 
     if (!currentQuestion) {
-      throw new BadRequestException('Current question not found');
+      return null;
     }
 
     const [questionId, currentQuestionState] = currentQuestion;
@@ -214,5 +229,29 @@ export class QuizExecutionService implements IQuizExecutionService {
       startedAt: currentQuestionState.startedAt,
       finishedAt: estimatedFinishedAt ?? currentQuestionState.finishedAt,
     };
+  }
+
+  public async updateQuizExecutionStatus(
+    quizExecutionId: string,
+    status: QuizExecutionStatus,
+    userId?: string,
+  ) {
+    const quizExecution = await this.quizExecutionRepository.getQuizExecution(
+      quizExecutionId,
+      userId,
+    );
+
+    if (!quizExecution) {
+      throw new BadRequestException('Quiz execution not found');
+    }
+
+    if (!getAvailableNextStatuses(quizExecution.status).includes(status)) {
+      throw new BadRequestException('Invalid status provided');
+    }
+
+    return this.quizExecutionRepository.updateQuizExecutionStatus(
+      quizExecutionId,
+      status,
+    );
   }
 }

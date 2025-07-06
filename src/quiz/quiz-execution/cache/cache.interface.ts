@@ -1,8 +1,11 @@
+import { QuizExecutionStatus } from '@app/prisma';
+
 export interface ISetupQuizExecution {
   sessionId: string;
   quizExecutionId: string;
   shareAnswers: boolean;
   timePerQuestion: number;
+  status: QuizExecutionStatus;
 }
 
 export interface IQuizExecutionState {
@@ -11,6 +14,7 @@ export interface IQuizExecutionState {
   shareAnswers: boolean;
   timePerQuestion: number;
   quizConfigurationId: string;
+  status: QuizExecutionStatus;
   questionsState: {
     [questionId: string]: {
       startedAt: Date;
@@ -30,7 +34,7 @@ export interface IFinishQuestion {
   sessionId: string;
   quizExecutionId: string;
   questionId: string;
-  finishedAt: Date;
+  finishedAt: string;
 }
 
 export interface IQuizExecutionCacheServiceCacheService {

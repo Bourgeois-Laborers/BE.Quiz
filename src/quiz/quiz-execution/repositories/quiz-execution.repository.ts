@@ -1,4 +1,5 @@
 import { PrismaService } from '@app/prisma';
+import { Prisma, QuizExecutionStatus } from '@app/prisma/prisma-client';
 import { Injectable } from '@nestjs/common';
 
 import {
@@ -26,6 +27,7 @@ export class QuizExecutionRepository {
             id: sessionId,
           },
         },
+        status: QuizExecutionStatus.EXECUTING,
         quizConfiguration: {
           connect: {
             id: quizConfigurationId,
@@ -90,23 +92,41 @@ export class QuizExecutionRepository {
     });
   }
 
-  async finishQuiz(quizExecutionId: string) {
+  async updateQuizExecutionStatus(
+    quizExecutionId: string,
+    status: QuizExecutionStatus,
+  ) {
     return this.prismaService.quizExecutionTable.update({
       where: {
         id: quizExecutionId,
       },
       data: {
         finishedAt: new Date(),
-        status: 'COMPLETED',
+        status,
       },
     });
   }
 
-  async getQuizExecution(quizExecutionId: string) {
+  async getQuizExecution(quizExecutionId: string, userId?: string) {
+    const where: Prisma.QuizExecutionWhereUniqueInput = {
+      id: quizExecutionId,
+    };
+
+    if (userId) {
+      where.session = {
+        sessionUsers: {
+          some: {
+            user: {
+              id: userId,
+            },
+            isHost: true,
+          },
+        },
+      };
+    }
+
     return this.prismaService.quizExecutionTable.findUnique({
-      where: {
-        id: quizExecutionId,
-      },
+      where,
       include: {
         quizConfiguration: true,
         session: true,

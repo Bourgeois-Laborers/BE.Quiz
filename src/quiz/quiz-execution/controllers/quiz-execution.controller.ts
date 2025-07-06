@@ -1,3 +1,4 @@
+import { QuizExecutionStatus } from '@app/prisma';
 import { AuthGuard } from '@auth/auth.guard';
 import { ITokenUser } from '@auth/interfaces/auth.interface';
 import {
@@ -8,13 +9,18 @@ import {
   Param,
   Post,
   Put,
+  Query,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
 import { User } from 'src/common/decorators/user.decorator';
 
-import { StartQuestionResultDto } from '../dtos/start-question.dto';
 import { StartQuizDto, StartQuizResultDto } from '../dtos/start-quiz.dto';
 import { QuizExecutionService } from '../services/quiz-execution.service';
 
@@ -50,28 +56,13 @@ export class QuizExecutionController {
   @UseGuards(AuthGuard)
   @ApiCreatedResponse({
     description: 'Question started successfully.',
-    type: StartQuestionResultDto,
   })
   async startQuestion(
     @Param('quizExecutionId') quizExecutionId: string,
     @Param('sessionId') sessionId: string,
     @User() { id: userId }: ITokenUser,
-  ): Promise<StartQuestionResultDto> {
-    return this.quizExecutionService.startQuestion({
-      quizExecutionId,
-      userId,
-      sessionId,
-    });
-  }
-
-  @Put(':quizExecutionId/finish')
-  @UseGuards(AuthGuard)
-  async finishQuiz(
-    @Param('quizExecutionId') quizExecutionId: string,
-    @Param('sessionId') sessionId: string,
-    @User() { id: userId }: ITokenUser,
-  ) {
-    return this.quizExecutionService.finishQuiz({
+  ): Promise<void> {
+    await this.quizExecutionService.startQuestion({
       quizExecutionId,
       userId,
       sessionId,
@@ -90,5 +81,27 @@ export class QuizExecutionController {
       userId,
       sessionId,
     });
+  }
+
+  @Put(':quizExecutionId/status')
+  @UseGuards(AuthGuard)
+  @ApiCreatedResponse({
+    description: 'Quiz execution status updated successfully.',
+  })
+  @ApiQuery({
+    name: 'status',
+    required: true,
+    enum: QuizExecutionStatus,
+  })
+  async updateQuizExecutionStatus(
+    @Param('quizExecutionId') quizExecutionId: string,
+    @User() { id: userId }: ITokenUser,
+    @Query('status') status: QuizExecutionStatus,
+  ) {
+    return this.quizExecutionService.updateQuizExecutionStatus(
+      quizExecutionId,
+      status,
+      userId,
+    );
   }
 }

@@ -1,4 +1,4 @@
-import { SessionStatus } from '../../../../prisma/prisma/client';
+import { SessionStatus } from '../../../../libs/prisma/src/prisma-client/client';
 
 export { SessionStatus };
 
