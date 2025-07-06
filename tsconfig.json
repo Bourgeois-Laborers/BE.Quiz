@@ -24,8 +24,7 @@
       "@app/gpt": ["libs/gpt/src"],
       "@app/gpt/*": ["libs/gpt/src/*"],
       "@app/prisma": ["libs/prisma/src"],
-      "@app/prisma/*": ["libs/prisma/src/*"],
-      "@quiz/*": ["src/quiz/*"]
+      "@app/prisma/*": ["libs/prisma/src/*"]
     }
   }
 }

@@ -7,7 +7,7 @@ import eslintPluginImport from 'eslint-plugin-import';
 
 export default tseslint.config(
   {
-    ignores: ['eslint.config.mjs'],
+    ignores: ['eslint.config.mjs', 'libs/prisma/src/prisma-client/**'],
   },
   eslint.configs.recommended,
   ...tseslint.configs.recommendedTypeChecked,

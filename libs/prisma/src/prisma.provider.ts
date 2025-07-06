@@ -1,4 +1,4 @@
-import { PrismaClient } from '../../../prisma/prisma';
+import { PrismaClient } from './prisma-client';
 
 export const PRISMA_PROVIDER = 'PRISMA_PROVIDER';
 
