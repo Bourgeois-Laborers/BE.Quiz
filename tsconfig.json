@@ -6,32 +6,25 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
-    "target": "ES2021",
+    "target": "ES2023",
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
     "incremental": true,
     "skipLibCheck": true,
-    "strictNullChecks": false,
+    "strictNullChecks": true,
+    "forceConsistentCasingInFileNames": true,
     "noImplicitAny": false,
     "strictBindCallApply": false,
-    "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "paths": {
-      "@config/*": ["src/config/*"],
-      "@common/*": ["src/common/*"],
-      "@database/*": ["src/database/*"],
-      "@auth/*": ["src/auth/*"],
-      "@session/*": ["src/session/*"],
-      "@users/*": ["src/users/*"],
-      "@event/*": ["src/event/*"],
-      "@health/*": ["src/health/*"],
-      "@prometheus/*": ["src/prometheus/*"],
-      "@libs/gpt": ["libs/gpt/src"],
-      "@libs/gpt/*": ["libs/gpt/src/*"]
+      "@/*": ["src/*"],
+      "@app/cache": ["libs/cache/src"],
+      "@app/cache/*": ["libs/cache/src/*"],
+      "@app/gpt": ["libs/gpt/src"],
+      "@app/gpt/*": ["libs/gpt/src/*"],
+      "@app/prisma": ["libs/prisma/src"],
+      "@app/prisma/*": ["libs/prisma/src/*"]
     }
-  },
-  "watchOptions": {
-    "watchFile": "fixedPollingInterval"
   }
 }

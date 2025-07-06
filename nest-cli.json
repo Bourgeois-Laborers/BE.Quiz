@@ -7,6 +7,15 @@
     "webpack": true
   },
   "projects": {
+    "cache": {
+      "type": "library",
+      "root": "libs/cache",
+      "entryFile": "index",
+      "sourceRoot": "libs/cache/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/cache/tsconfig.lib.json"
+      }
+    },
     "gpt": {
       "type": "library",
       "root": "libs/gpt",
@@ -14,6 +23,15 @@
       "sourceRoot": "libs/gpt/src",
       "compilerOptions": {
         "tsConfigPath": "libs/gpt/tsconfig.lib.json"
+      }
+    },
+    "prisma": {
+      "type": "library",
+      "root": "libs/prisma",
+      "entryFile": "index",
+      "sourceRoot": "libs/prisma/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/prisma/tsconfig.lib.json"
       }
     }
   }

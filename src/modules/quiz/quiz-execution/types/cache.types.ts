@@ -1,0 +1,1 @@
+export const QUIZ_EXECUTION_CACHE_DURATION = 43200000; // 12 hours;

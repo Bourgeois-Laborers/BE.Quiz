@@ -1,29 +1,30 @@
+import { BullModule } from '@nestjs/bullmq';
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule, ConfigType } from '@nestjs/config';
 
-import { UsersModule } from '@users/users.module';
-import { SessionModule } from '@session/session.module';
-import { AuthModule } from '@auth/auth.module';
-import { EventsModule } from '@event/event.module';
-import { HealthModule } from '@health/health.module';
-import { PrometheusModule } from '@prometheus/prometheus.module';
+import { appConfig } from './config/app.config';
+import { jwtConfig } from './config/jwt.config';
 
-import { getDatabaseConfig } from '@config/database.config';
-
-import { GptModule } from '@libs/gpt';
+import { AuthModule } from '@/modules/auth/auth.module';
+import { QuizModule } from '@/modules/quiz/quiz.module';
+import { SessionModule } from '@/modules/sesstion/session.module';
+import { UserModule } from '@/modules/user/user.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
-    TypeOrmModule.forRootAsync(getDatabaseConfig()),
-    UsersModule,
-    SessionModule,
+    ConfigModule.forRoot({ load: [appConfig, jwtConfig], isGlobal: true }),
     AuthModule,
-    EventsModule,
-    HealthModule,
-    PrometheusModule,
-    GptModule,
+    UserModule,
+    SessionModule,
+    QuizModule,
+    BullModule.forRootAsync({
+      useFactory: (config: ConfigType<typeof appConfig>) => ({
+        connection: {
+          url: config.redisUrl,
+        },
+      }),
+      inject: [appConfig.KEY],
+    }),
   ],
 })
 export class AppModule {}
