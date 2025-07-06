@@ -1,6 +1,5 @@
 import {
   BadRequestException,
-  ForbiddenException,
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
@@ -29,18 +28,6 @@ export class QuizExecutionResultService implements IQuizExecutionResultService {
     userId,
     sessionId,
   }: ISetAnswer) {
-    const isUserExistsInSession =
-      await this.sessionToUserService.checkIsUserAlreadyJoined({
-        userId,
-        sessionId,
-      });
-
-    if (!isUserExistsInSession) {
-      throw new ForbiddenException(
-        'User have no rules to send answer to this session',
-      );
-    }
-
     const quizExecutionState = await this.cacheService.getQuizExecution(
       sessionId,
       quizExecutionId,

@@ -3,13 +3,7 @@ import { IsString, IsEnum, IsDateString } from 'class-validator';
 
 import { SessionStatus } from '../types/session-status.type';
 
-export class CreateSessionDto {
-  @ApiProperty()
-  @IsString()
-  userAlias: string;
-}
-
-export class CreateSessionResponseDto {
+export class SessionDto {
   @ApiProperty()
   @IsString()
   id: string;

@@ -7,7 +7,8 @@ import { SessionToUserRepository } from './repositories/session-to-user.reposito
 import { SessionRepository } from './repositories/session.repository';
 import { SessionToUserService } from './services/session-to-user.service';
 import { SessionService } from './services/session.service';
-import { UserModule } from '../user/user.module';
+
+import { UserModule } from '~/quiz/user/user.module';
 
 @Module({
   imports: [PrismaModule, UserModule],

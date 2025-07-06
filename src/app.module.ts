@@ -3,8 +3,6 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigType } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { appConfig } from './config/app.config';
 import { jwtConfig } from './config/jwt.config';
 import { QuizModule } from './quiz/quiz.module';
@@ -32,7 +30,5 @@ import { QuizModule } from './quiz/quiz.module';
       inject: [appConfig.KEY],
     }),
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}

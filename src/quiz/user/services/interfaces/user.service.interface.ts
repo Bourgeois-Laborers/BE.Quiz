@@ -1,11 +1,10 @@
-import { IUser } from '../../repositories/interfaces/user.repository.interface';
-
-export interface ICreateUser {
+export interface IUser {
   id: string;
-  accessToken: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface IUserService {
-  create(): Promise<ICreateUser>;
-  get(id: string): Promise<IUser | null>;
+  get(id: string): Promise<IUser>;
+  create(): Promise<IUser>;
 }

@@ -1,129 +1,66 @@
 import {
   BadRequestException,
-  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { UserService } from 'src/quiz/user/services/user.service';
 
 import {
-  ICreateSession,
   ISession,
+  ICreateSession,
+  IUpdateSession,
   ISessionService,
 } from './interfaces/session.service.interface';
-import { SessionToUserService } from './session-to-user.service';
 import { SessionRepository } from '../repositories/session.repository';
-import { getAvailableNextStatuses, Status } from '../types/status.type';
+import {
+  getAvailableNextStatuses,
+  SessionStatus,
+} from '../types/session-status.type';
 
 @Injectable()
 export class SessionService implements ISessionService {
-  constructor(
-    private readonly sessionRepository: SessionRepository,
-    private readonly sessionToUserService: SessionToUserService,
-    private readonly userService: UserService,
-  ) {}
+  constructor(private readonly sessionRepository: SessionRepository) {}
 
-  async create({ userAlias, userId }: ICreateSession): Promise<ISession> {
-    const user = await this.userService.get(userId);
+  async get(sessionId: string, userId: string): Promise<ISession> {
+    const session = await this.sessionRepository.get(sessionId, userId);
 
-    if (!user) {
-      throw new NotFoundException('User not found');
+    if (!session) {
+      throw new NotFoundException('Session not found');
     }
-
-    const isUserAlreadyHaveActiveSession =
-      await this.sessionToUserService.checkIsUserAlreadyJoined({ userId });
-
-    if (isUserAlreadyHaveActiveSession) {
-      throw new BadRequestException('User has active session');
-    }
-
-    const session = await this.sessionRepository.create({ userAlias, userId });
 
     return session;
   }
 
-  async start(sessionId: string, userId: string): Promise<ISession> {
-    await this._validateUserAndPermissions(sessionId, userId, {
-      requiresHost: true,
-    });
+  async create(userId: string, props: ICreateSession): Promise<ISession> {
+    const session = await this.sessionRepository.create(userId, props);
 
-    const session = await this.sessionRepository.get(sessionId, userId);
-
-    if (!session) {
-      throw new NotFoundException('Session not found');
-    }
-
-    this._checkIsChangeStatusAllowed(session.status as Status);
-
-    const startedSession = await this.sessionRepository.updateStatus(
-      sessionId,
-      Status.Live,
-    );
-
-    return startedSession;
+    return session;
   }
 
-  async close(sessionId: string, userId: string) {
-    await this._validateUserAndPermissions(sessionId, userId, {
-      requiresHost: true,
-    });
-
+  async update(
+    sessionId: string,
+    userId: string,
+    props: IUpdateSession,
+  ): Promise<ISession> {
     const session = await this.sessionRepository.get(sessionId, userId);
 
     if (!session) {
       throw new NotFoundException('Session not found');
     }
 
-    this._checkIsChangeStatusAllowed(session.status as Status);
+    if (props.status) {
+      this._validateStatusChange(props.status);
+    }
 
-    const updatedSession = await this.sessionRepository.updateStatus(
+    const updatedSession = await this.sessionRepository.update(
       sessionId,
-      Status.Closed,
+      userId,
+      props,
     );
 
     return updatedSession;
   }
 
-  async get(sessionId: string, userId: string) {
-    await this._validateUserAndPermissions(sessionId, userId);
-
-    const session = await this.sessionRepository.get(sessionId, userId);
-
-    if (!session) {
-      throw new NotFoundException('Session not found');
-    }
-
-    return session;
-  }
-
-  private async _validateUserAndPermissions(
-    sessionId: string,
-    userId: string,
-    { requiresHost = false } = {},
-  ) {
-    const user = await this.userService.get(userId);
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-
-    const isPermitted =
-      await this.sessionToUserService.checkIsUserAlreadyJoined({
-        sessionId,
-        userId,
-        isHost: requiresHost || undefined,
-      });
-
-    if (!isPermitted) {
-      if (requiresHost) {
-        throw new ForbiddenException(
-          'User must be a host to perform this action.',
-        );
-      }
-      throw new ForbiddenException('User is not part of this session.');
-    }
-  }
-
-  private _checkIsChangeStatusAllowed(status: Status): void {
+  private _validateStatusChange(status: SessionStatus): void {
     if (!getAvailableNextStatuses(status).includes(status)) {
       throw new BadRequestException(
         `Status ${status} is not allowed for this operation.`,
