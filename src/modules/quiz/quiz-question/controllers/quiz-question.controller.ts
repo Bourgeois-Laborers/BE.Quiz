@@ -11,7 +11,7 @@ import { QuizQuestionService } from '../services/quiz-question.service';
 
 import { User } from '@/modules/auth/decorators/user.decorator';
 import { AuthGuard } from '@/modules/auth/guards/auth.guard';
-import { ITokenUser } from '@/modules/auth/interfaces/token-user.interface';
+import { ITokenPayload } from '@/modules/auth/services/interfaces/auth.interface';
 
 @Controller('quiz-configuration')
 @ApiTags('Quiz configuration')
@@ -29,7 +29,7 @@ export class QuizQuestionController {
   @UseGuards(AuthGuard)
   async create(
     @Body() dto: InsertQuestionDto,
-    @User() user: ITokenUser,
+    @User() user: ITokenPayload,
     @Param('quizConfigurationId') quizConfigurationId: string,
   ) {
     return this.quizQuestionService.insertQuestions({

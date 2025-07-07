@@ -9,7 +9,7 @@ import { ConfigType } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 
-import { ITokenUser } from '../interfaces/token-user.interface';
+import { ITokenPayload } from '../services/interfaces/auth.interface';
 
 import { jwtConfig } from '@/config/jwt.config';
 
@@ -28,8 +28,9 @@ export class AuthGuard implements CanActivate {
     if (!token) {
       throw new UnauthorizedException();
     }
+
     try {
-      const payload = await this.jwtService.verifyAsync<ITokenUser>(token, {
+      const payload = await this.jwtService.verifyAsync<ITokenPayload>(token, {
         secret: this.config.secret,
       });
 

@@ -1,9 +1,9 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 
-import { ITokenUser } from '../interfaces/token-user.interface';
+import { ITokenPayload } from '../services/interfaces/auth.interface';
 
 interface RequestWithUser {
-  user: ITokenUser;
+  user: ITokenPayload;
 }
 
 export const User = createParamDecorator(

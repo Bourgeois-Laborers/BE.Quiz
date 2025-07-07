@@ -3,6 +3,7 @@ import { ConfigType } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 
 import { AuthGuard } from './guards/auth.guard';
+import { AuthService } from './services/auth.service';
 
 import { jwtConfig } from '@/config/jwt.config';
 
@@ -19,7 +20,7 @@ import { jwtConfig } from '@/config/jwt.config';
       inject: [jwtConfig.KEY],
     }),
   ],
-  providers: [AuthGuard],
-  exports: [AuthGuard],
+  providers: [AuthGuard, AuthService],
+  exports: [AuthGuard, AuthService],
 })
 export class AuthModule {}

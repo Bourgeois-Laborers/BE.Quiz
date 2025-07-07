@@ -12,7 +12,7 @@ import { SessionToUserService } from '../services/session-to-user.service';
 
 import { User } from '@/modules/auth/decorators/user.decorator';
 import { AuthGuard } from '@/modules/auth/guards/auth.guard';
-import { ITokenUser } from '@/modules/auth/interfaces/token-user.interface';
+import { ITokenPayload } from '@/modules/auth/services/interfaces/auth.interface';
 
 @Controller('session')
 @ApiTags('Sessions')
@@ -43,7 +43,7 @@ export class SessionToUserController {
   @ApiResponse({ status: 404, description: 'Session not found.' })
   async join(
     @Body() { userAlias }: CreateSessionToUserDto,
-    @User() { id: userId }: ITokenUser,
+    @User() { id: userId }: ITokenPayload,
     @Param('sessionId') sessionId: string,
   ): Promise<SessionToUserDto[]> {
     return this.sessionToUserService.join({ sessionId, userId, userAlias });
@@ -56,7 +56,7 @@ export class SessionToUserController {
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @ApiResponse({ status: 404, description: 'Session not found.' })
   async leave(
-    @User() { id: userId }: ITokenUser,
+    @User() { id: userId }: ITokenPayload,
     @Param('sessionId') sessionId: string,
   ): Promise<void> {
     return this.sessionToUserService.leave({ sessionId, userId });

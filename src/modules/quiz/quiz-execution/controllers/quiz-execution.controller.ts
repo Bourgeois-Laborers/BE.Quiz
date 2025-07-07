@@ -23,7 +23,7 @@ import { QuizExecutionService } from '../services/quiz-execution.service';
 
 import { User } from '@/modules/auth/decorators/user.decorator';
 import { AuthGuard } from '@/modules/auth/guards/auth.guard';
-import { ITokenUser } from '@/modules/auth/interfaces/token-user.interface';
+import { ITokenPayload } from '@/modules/auth/services/interfaces/auth.interface';
 
 @Controller('session/:sessionId/quiz-execution')
 @ApiTags('Quiz execution')
@@ -40,7 +40,7 @@ export class QuizExecutionController {
   async startQuiz(
     @Param('quizConfigurationId') quizConfigurationId: string,
     @Param('sessionId') sessionId: string,
-    @User() { id: userId }: ITokenUser,
+    @User() { id: userId }: ITokenPayload,
     @Body() { shareAnswers, timePerQuestion }: StartQuizDto,
   ): Promise<StartQuizResultDto> {
     return this.quizExecutionService.start({
@@ -61,7 +61,7 @@ export class QuizExecutionController {
   async startQuestion(
     @Param('quizExecutionId') quizExecutionId: string,
     @Param('sessionId') sessionId: string,
-    @User() { id: userId }: ITokenUser,
+    @User() { id: userId }: ITokenPayload,
   ): Promise<void> {
     await this.quizExecutionService.startQuestion({
       quizExecutionId,
@@ -75,7 +75,7 @@ export class QuizExecutionController {
   async getCurrentQuestion(
     @Param('quizExecutionId') quizExecutionId: string,
     @Param('sessionId') sessionId: string,
-    @User() { id: userId }: ITokenUser,
+    @User() { id: userId }: ITokenPayload,
   ) {
     return this.quizExecutionService.getCurrentQuestion({
       quizExecutionId,
@@ -96,7 +96,7 @@ export class QuizExecutionController {
   })
   async updateQuizExecutionStatus(
     @Param('quizExecutionId') quizExecutionId: string,
-    @User() { id: userId }: ITokenUser,
+    @User() { id: userId }: ITokenPayload,
     @Query('status') status: QuizExecutionStatus,
   ) {
     return this.quizExecutionService.updateQuizExecutionStatus(

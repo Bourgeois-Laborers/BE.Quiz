@@ -27,7 +27,7 @@ import { SessionService } from '../services/session.service';
 
 import { User } from '@/modules/auth/decorators/user.decorator';
 import { AuthGuard } from '@/modules/auth/guards/auth.guard';
-import { ITokenUser } from '@/modules/auth/interfaces/token-user.interface';
+import { ITokenPayload } from '@/modules/auth/services/interfaces/auth.interface';
 
 @Controller('session')
 @ApiTags('Sessions')
@@ -47,7 +47,7 @@ export class SessionController {
   @ApiResponse({ status: 404, description: 'Session not found.' })
   async getSession(
     @Param('sessionId') sessionId: string,
-    @User() { id: userId }: ITokenUser,
+    @User() { id: userId }: ITokenPayload,
   ): Promise<SessionDto> {
     return this.sessionService.get(sessionId, userId);
   }
@@ -63,7 +63,7 @@ export class SessionController {
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   async create(
     @Body() { userAlias }: CreateSessionDto,
-    @User() { id: userId }: ITokenUser,
+    @User() { id: userId }: ITokenPayload,
   ): Promise<CreateSessionResponseDto> {
     return this.sessionService.create(userId, { userAlias });
   }
@@ -80,7 +80,7 @@ export class SessionController {
   async update(
     @Param('sessionId') sessionId: string,
     @Body() updateSessionDto: UpdateSessionDto,
-    @User() { id: userId }: ITokenUser,
+    @User() { id: userId }: ITokenPayload,
   ): Promise<UpdateSessionResponseDto> {
     return this.sessionService.update(sessionId, userId, updateSessionDto);
   }

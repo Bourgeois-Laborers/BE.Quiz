@@ -6,7 +6,7 @@ import { QuizExecutionResultService } from '../services/quiz-execution-result.se
 
 import { User } from '@/modules/auth/decorators/user.decorator';
 import { AuthGuard } from '@/modules/auth/guards/auth.guard';
-import { ITokenUser } from '@/modules/auth/interfaces/token-user.interface';
+import { ITokenPayload } from '@/modules/auth/services/interfaces/auth.interface';
 
 @Controller('session/:sessionId/quiz-execution-result')
 @ApiTags('Quiz execution result')
@@ -21,7 +21,7 @@ export class QuizExecutionResultController {
   async setAnswer(
     @Param('quizExecutionId') quizExecutionId: string,
     @Param('sessionId') sessionId: string,
-    @User() { id: userId }: ITokenUser,
+    @User() { id: userId }: ITokenPayload,
     @Body() { answerId, questionId }: SetQuizExecutionResultAnswerDto,
   ) {
     return this.quizExecutionResultService.setAnswer({
