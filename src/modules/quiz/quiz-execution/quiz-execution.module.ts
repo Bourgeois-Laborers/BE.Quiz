@@ -7,7 +7,7 @@ import { QuizExecutionCacheService } from './cache/cache.service';
 import { QuizExecutionResultController } from './controllers/quiz-execution-result.controller';
 import { QuizExecutionController } from './controllers/quiz-execution.controller';
 import { QuizExecutionGateway } from './gateway/quiz-execution.gateway';
-import { IQuizExecutionGatewayInterface } from './gateway/quiz-execution.gateway.interface';
+import { IQuizExecutionGateway } from './gateway/quiz-execution.gateway.interface';
 import { QuizExecutionProcessor } from './queue/quiz-execution.processor';
 import { QuizExecutionResultRepository } from './repositories/quiz-execution-result.repository';
 import { QuizExecutionRepository } from './repositories/quiz-execution.repository';
@@ -37,7 +37,7 @@ import { SocketModule } from '@/modules/socket/socket.module';
     QuizExecutionCacheService,
     QuizExecutionProcessor,
     {
-      provide: IQuizExecutionGatewayInterface,
+      provide: IQuizExecutionGateway,
       useClass: QuizExecutionGateway,
     },
   ],

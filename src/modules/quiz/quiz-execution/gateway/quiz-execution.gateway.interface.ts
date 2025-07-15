@@ -1,9 +1,7 @@
 import { OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
 
-export const IQuizExecutionGatewayInterface = Symbol(
-  'IQuizExecutionGatewayInterface',
-);
+export const IQuizExecutionGateway = Symbol('IQuizExecutionGateway');
 
-export interface IQuizExecutionGatewayInterface
+export interface IQuizExecutionGateway
   extends OnGatewayConnection,
     OnGatewayDisconnect {}

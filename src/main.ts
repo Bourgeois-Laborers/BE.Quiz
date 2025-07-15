@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory, Reflector } from '@nestjs/core';
+import { JwtService } from '@nestjs/jwt';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 import { AppModule } from './app.module';
@@ -36,6 +37,13 @@ async function bootstrap(): Promise<void> {
 
   const configService = app.get(ConfigService);
   const redisIoAdapter = new RedisIoAdapter(app);
+
+  const jwtService = app.get(JwtService);
+
+  redisIoAdapter.setJwt(
+    jwtService,
+    configService.get<string>('JWT_SECRET') ?? '',
+  );
 
   await redisIoAdapter.connectToRedis(
     configService.get<string>('REDIS_URL') ?? '',

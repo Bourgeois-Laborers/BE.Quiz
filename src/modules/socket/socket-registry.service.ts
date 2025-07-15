@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
+import { Socket } from 'socket.io';
 
 @Injectable()
 export class SocketRegistryService {
-  private readonly clients = new Map<string, Record<string, any>>();
+  private readonly clients = new Map<string, Socket>();
 
-  addClient(socketId: string, meta: Record<string, any>) {
-    this.clients.set(socketId, meta);
+  addClient(socketId: string, socket: Socket) {
+    this.clients.set(socketId, socket);
   }
 
   removeClient(socketId: string) {

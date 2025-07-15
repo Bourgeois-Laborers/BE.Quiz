@@ -2,22 +2,27 @@ import { QuizExecutionStatus } from '@app/prisma';
 import { InjectQueue } from '@nestjs/bullmq';
 import {
   BadRequestException,
+  Inject,
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
 import { Queue } from 'bullmq';
 
+import { QuizExecutionCacheService } from '@/modules/quiz/quiz-execution/cache/cache.service';
+import { QuizExecutionGateway } from '@/modules/quiz/quiz-execution/gateway/quiz-execution.gateway';
+import { IQuizExecutionGateway } from '@/modules/quiz/quiz-execution/gateway/quiz-execution.gateway.interface';
+import { QuizExecutionRepository } from '@/modules/quiz/quiz-execution/repositories/quiz-execution.repository';
 import {
   IGetCurrentQuestion,
   IQuizExecutionService,
   IStart,
   IStartQuestion,
-} from './interfaces/quiz-execution.service.interface';
-import { QuizExecutionCacheService } from '../cache/cache.service';
-import { QuizExecutionRepository } from '../repositories/quiz-execution.repository';
-import { QueueNames, QuizExecutionJobNames } from '../types/queue.types';
-import { getAvailableNextStatuses } from '../types/quiz-execution-status.types';
-
+} from '@/modules/quiz/quiz-execution/services/interfaces/quiz-execution.service.interface';
+import {
+  QueueNames,
+  QuizExecutionJobNames,
+} from '@/modules/quiz/quiz-execution/types/queue.types';
+import { getAvailableNextStatuses } from '@/modules/quiz/quiz-execution/types/quiz-execution-status.types';
 import { QuizQuestionService } from '@/modules/quiz/quiz-question/services/quiz-question.service';
 
 @Injectable()
@@ -27,7 +32,9 @@ export class QuizExecutionService implements IQuizExecutionService {
     private readonly cacheService: QuizExecutionCacheService,
     private readonly quizQuestionService: QuizQuestionService,
     @InjectQueue(QueueNames.QUIZ_EXECUTION)
-    private readonly quizExecutionQueue: Queue, // Replace 'any' with the actual type if available
+    private readonly quizExecutionQueue: Queue,
+    @Inject(IQuizExecutionGateway)
+    private readonly quizExecutionGateway: QuizExecutionGateway,
   ) {}
 
   async start({
@@ -35,6 +42,7 @@ export class QuizExecutionService implements IQuizExecutionService {
     quizConfigurationId,
     shareAnswers,
     timePerQuestion,
+    userId,
   }: IStart) {
     const quizExecution = await this.quizExecutionRepository.startQuiz({
       sessionId,
@@ -50,6 +58,8 @@ export class QuizExecutionService implements IQuizExecutionService {
       timePerQuestion,
       status: QuizExecutionStatus.EXECUTING,
     });
+
+    this.quizExecutionGateway.sendMessageToUser(userId, 'Quiz started');
 
     return {
       quizExecutionId: quizExecution.id,
