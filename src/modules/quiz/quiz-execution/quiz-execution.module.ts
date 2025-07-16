@@ -6,6 +6,8 @@ import { Module } from '@nestjs/common';
 import { QuizExecutionCacheService } from './cache/cache.service';
 import { QuizExecutionResultController } from './controllers/quiz-execution-result.controller';
 import { QuizExecutionController } from './controllers/quiz-execution.controller';
+import { QuizExecutionGateway } from './gateway/quiz-execution.gateway';
+import { IQuizExecutionGateway } from './gateway/quiz-execution.gateway.interface';
 import { QuizExecutionProcessor } from './queue/quiz-execution.processor';
 import { QuizExecutionResultRepository } from './repositories/quiz-execution-result.repository';
 import { QuizExecutionRepository } from './repositories/quiz-execution.repository';
@@ -14,6 +16,7 @@ import { QuizExecutionService } from './services/quiz-execution.service';
 import { QueueNames } from './types/queue.types';
 
 import { QuizQuestionModule } from '@/modules/quiz/quiz-question/quiz-question.module';
+import { SocketModule } from '@/modules/socket/socket.module';
 
 @Module({
   imports: [
@@ -21,6 +24,7 @@ import { QuizQuestionModule } from '@/modules/quiz/quiz-question/quiz-question.m
     QuizQuestionModule,
     PrismaModule,
     QuizQuestionModule,
+    SocketModule,
     BullModule.registerQueue({
       name: QueueNames.QUIZ_EXECUTION,
     }),
@@ -32,6 +36,10 @@ import { QuizQuestionModule } from '@/modules/quiz/quiz-question/quiz-question.m
     QuizExecutionResultRepository,
     QuizExecutionCacheService,
     QuizExecutionProcessor,
+    {
+      provide: IQuizExecutionGateway,
+      useClass: QuizExecutionGateway,
+    },
   ],
   controllers: [QuizExecutionController, QuizExecutionResultController],
 })

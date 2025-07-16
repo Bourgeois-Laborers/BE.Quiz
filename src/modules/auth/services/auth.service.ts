@@ -27,12 +27,16 @@ export class AuthService implements IAuthService {
 
     const payload: ITokenPayload = { id: userId };
     const accessToken = await this.jwtService.signAsync(payload, {
-      secret: this.configService.get<string>('jwt.accessToken.secret'),
-      expiresIn: this.configService.get<string>('jwt.accessToken.expiresIn'),
+      secret: this.configService.getOrThrow<string>('jwt.accessToken.secret'),
+      expiresIn: this.configService.getOrThrow<string>(
+        'jwt.accessToken.expiresIn',
+      ),
     });
     const refreshToken = await this.jwtService.signAsync(payload, {
-      secret: this.configService.get<string>('jwt.refreshToken.secret'),
-      expiresIn: this.configService.get<string>('jwt.refreshToken.expiresIn'),
+      secret: this.configService.getOrThrow<string>('jwt.refreshToken.secret'),
+      expiresIn: this.configService.getOrThrow<string>(
+        'jwt.refreshToken.expiresIn',
+      ),
     });
 
     return { accessToken, refreshToken };
@@ -40,7 +44,7 @@ export class AuthService implements IAuthService {
 
   async verifyAccessToken(token: string): Promise<{ id: string }> {
     return this.jwtService.verifyAsync<{ id: string }>(token, {
-      secret: this.configService.get<string>('jwt.accessToken.secret'),
+      secret: this.configService.getOrThrow<string>('jwt.accessToken.secret'),
     });
   }
 

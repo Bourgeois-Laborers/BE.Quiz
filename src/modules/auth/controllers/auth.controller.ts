@@ -1,9 +1,10 @@
-import { Body, Controller, Post, Res } from '@nestjs/common';
+import { Body, Controller, Post, Res, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 
 import { Public } from '../decorators/public.decorator';
 import { LoginDto } from '../dtos/login.dto';
+import { NotAuthGuard } from '../guards/not-auth.guard';
 import { AuthService } from '../services/auth.service';
 
 import { UserDto } from '@/modules/user/dtos/user.dto';
@@ -13,6 +14,7 @@ import { UserDto } from '@/modules/user/dtos/user.dto';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @UseGuards(NotAuthGuard)
   @Public()
   @Post('/login')
   @ApiOperation({ summary: 'Authenticate a user' })
@@ -43,6 +45,7 @@ export class AuthController {
     res.status(201);
   }
 
+  @UseGuards(NotAuthGuard)
   @Public()
   @Post('/register')
   @ApiOperation({ summary: 'Register a new user' })
@@ -68,6 +71,8 @@ export class AuthController {
       sameSite: 'strict',
       path: '/',
     });
+
+    res.status(201).json(user);
 
     return user;
   }
