@@ -1,6 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import * as ms from 'ms';
+import { StringValue } from 'ms';
 
 import {
   IAuth,
@@ -42,8 +44,8 @@ export class AuthService implements IAuthService {
     return { accessToken, refreshToken };
   }
 
-  async verifyAccessToken(token: string): Promise<{ id: string }> {
-    return this.jwtService.verifyAsync<{ id: string }>(token, {
+  async verifyAccessToken(token: string): Promise<ITokenPayload> {
+    return this.jwtService.verifyAsync<ITokenPayload>(token, {
       secret: this.configService.getOrThrow<string>('jwt.accessToken.secret'),
     });
   }
@@ -53,5 +55,19 @@ export class AuthService implements IAuthService {
     const { accessToken, refreshToken } = await this.login(user.id);
 
     return { user, accessToken, refreshToken };
+  }
+
+  getAccessTokenMaxAgeMs(): number {
+    const accessTokenExpiresIn = this.configService.getOrThrow<StringValue>(
+      'jwt.accessToken.expiresIn',
+    );
+    return ms(accessTokenExpiresIn);
+  }
+
+  getRefreshTokenMaxAgeMs(): number {
+    const refreshTokenExpiresIn = this.configService.getOrThrow<StringValue>(
+      'jwt.refreshToken.expiresIn',
+    );
+    return ms(refreshTokenExpiresIn);
   }
 }

@@ -28,21 +28,24 @@ export class AuthController {
       loginDto.userId,
     );
 
+    const accessTokenMaxAgeMs = this.authService.getAccessTokenMaxAgeMs();
+    const refreshTokenMaxAgeMs = this.authService.getRefreshTokenMaxAgeMs();
+
     res.cookie('accessToken', accessToken, {
       httpOnly: true,
-      maxAge: 15 * 60 * 1000, // 15 minutes
+      maxAge: accessTokenMaxAgeMs,
       sameSite: 'strict',
       path: '/',
     });
 
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
-      maxAge: 24 * 60 * 60 * 1000, // 1 day
+      maxAge: refreshTokenMaxAgeMs,
       sameSite: 'strict',
       path: '/',
     });
 
-    res.status(201);
+    res.status(201).json({ message: 'The user has been authenticated.' });
   }
 
   @UseGuards(NotAuthGuard)
@@ -54,26 +57,38 @@ export class AuthController {
     description: 'The user has been registered.',
     type: UserDto,
   })
-  async register(@Res() res: Response): Promise<UserDto> {
+  async register(@Res() res: Response): Promise<void> {
     const { user, accessToken, refreshToken } =
       await this.authService.register();
 
+    const accessTokenMaxAgeMs = this.authService.getAccessTokenMaxAgeMs();
+    const refreshTokenMaxAgeMs = this.authService.getRefreshTokenMaxAgeMs();
+
     res.cookie('accessToken', accessToken, {
       httpOnly: true,
-      maxAge: 15 * 60 * 1000, // 15 minutes
+      maxAge: accessTokenMaxAgeMs,
       sameSite: 'strict',
       path: '/',
     });
 
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
-      maxAge: 24 * 60 * 60 * 1000, // 1 day
+      maxAge: refreshTokenMaxAgeMs,
       sameSite: 'strict',
       path: '/',
     });
 
-    res.status(201).json(user);
+    res.status(201).json({ message: 'The user has been registered.', data: user });
+  }
 
-    return user;
+  @Public()
+  @Post('/logout')
+  @ApiOperation({ summary: 'Logout user' })
+  @ApiResponse({ status: 200, description: 'User logged out.' })
+  async logout(@Res() res: Response): Promise<void> {
+    res.clearCookie('accessToken', { httpOnly: true, path: '/' });
+    res.clearCookie('refreshToken', { httpOnly: true, path: '/' });
+
+    res.status(200).json({ message: 'User logged out.' });
   }
 }
