@@ -1,7 +1,3 @@
-export interface ILoginProps {
-  userId: string;
-}
-
 export interface ITokenPayload {
   id: string;
 }

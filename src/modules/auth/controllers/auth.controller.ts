@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiOperation,
@@ -12,7 +12,7 @@ import { AuthService } from '../services/auth.service';
 @Controller('session')
 @ApiTags('Sessions')
 @ApiBearerAuth()
-export class SessionController {
+export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('/login')
@@ -24,6 +24,6 @@ export class SessionController {
   })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   async login(@Body() loginDto: LoginDto): Promise<LoginResponseDto> {
-    return this.authService.login(loginDto);
+    return this.authService.login(loginDto.userId);
   }
 }

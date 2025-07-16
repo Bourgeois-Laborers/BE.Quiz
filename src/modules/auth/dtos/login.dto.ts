@@ -10,5 +10,5 @@ export class LoginDto {
 export class LoginResponseDto {
   @ApiProperty()
   @IsString()
-  userId: string;
+  id: string;
 }
