@@ -6,9 +6,3 @@ export class LoginDto {
   @IsString()
   userId: string;
 }
-
-export class LoginResponseDto {
-  @ApiProperty()
-  @IsString()
-  id: string;
-}

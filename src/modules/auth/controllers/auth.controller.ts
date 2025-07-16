@@ -1,29 +1,74 @@
-import { Body, Controller, Post } from '@nestjs/common';
-import {
-  ApiBearerAuth,
-  ApiOperation,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
+import { Body, Controller, Post, Res } from '@nestjs/common';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Response } from 'express';
 
-import { LoginDto, LoginResponseDto } from '../dtos/login.dto';
+import { Public } from '../decorators/public.decorator';
+import { LoginDto } from '../dtos/login.dto';
 import { AuthService } from '../services/auth.service';
 
-@Controller('session')
-@ApiTags('Sessions')
-@ApiBearerAuth()
+import { UserDto } from '@/modules/user/dtos/user.dto';
+
+@Controller('auth')
+@ApiTags('Auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @Public()
   @Post('/login')
   @ApiOperation({ summary: 'Authenticate a user' })
   @ApiResponse({
     status: 201,
     description: 'The user has been authenticated.',
-    type: LoginResponseDto,
   })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
-  async login(@Body() loginDto: LoginDto): Promise<LoginResponseDto> {
-    return this.authService.login(loginDto.userId);
+  async login(@Body() loginDto: LoginDto, @Res() res: Response): Promise<void> {
+    const { accessToken, refreshToken } = await this.authService.login(
+      loginDto.userId,
+    );
+
+    res.cookie('accessToken', accessToken, {
+      httpOnly: true,
+      maxAge: 15 * 60 * 1000, // 15 minutes
+      sameSite: 'strict',
+      path: '/',
+    });
+
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000, // 1 day
+      sameSite: 'strict',
+      path: '/',
+    });
+
+    res.status(201);
+  }
+
+  @Public()
+  @Post('/register')
+  @ApiOperation({ summary: 'Register a new user' })
+  @ApiResponse({
+    status: 201,
+    description: 'The user has been registered.',
+    type: UserDto,
+  })
+  async register(@Res() res: Response): Promise<UserDto> {
+    const { user, accessToken, refreshToken } =
+      await this.authService.register();
+
+    res.cookie('accessToken', accessToken, {
+      httpOnly: true,
+      maxAge: 15 * 60 * 1000, // 15 minutes
+      sameSite: 'strict',
+      path: '/',
+    });
+
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000, // 1 day
+      sameSite: 'strict',
+      path: '/',
+    });
+
+    return user;
   }
 }

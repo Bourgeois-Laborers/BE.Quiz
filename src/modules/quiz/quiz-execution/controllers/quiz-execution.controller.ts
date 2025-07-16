@@ -8,12 +8,11 @@ import {
   Post,
   Put,
   Query,
-  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import {
-  ApiBearerAuth,
   ApiCreatedResponse,
+  ApiCookieAuth,
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
@@ -22,17 +21,15 @@ import { StartQuizDto, StartQuizResultDto } from '../dtos/start-quiz.dto';
 import { QuizExecutionService } from '../services/quiz-execution.service';
 
 import { User } from '@/modules/auth/decorators/user.decorator';
-import { AuthGuard } from '@/modules/auth/guards/auth.guard';
 import { ITokenPayload } from '@/modules/auth/services/interfaces/auth.interface';
 
 @Controller('session/:sessionId/quiz-execution')
 @ApiTags('Quiz execution')
-@ApiBearerAuth()
 export class QuizExecutionController {
   constructor(private readonly quizExecutionService: QuizExecutionService) {}
 
   @Post(':quizConfigurationId/start-quiz')
-  @UseGuards(AuthGuard)
+  @ApiCookieAuth('accessToken')
   @ApiCreatedResponse({
     description: 'Quiz started successfully.',
     type: StartQuizResultDto,
@@ -54,7 +51,6 @@ export class QuizExecutionController {
 
   @Post(':quizExecutionId/start-question')
   @UseInterceptors(ClassSerializerInterceptor)
-  @UseGuards(AuthGuard)
   @ApiCreatedResponse({
     description: 'Question started successfully.',
   })
@@ -71,7 +67,6 @@ export class QuizExecutionController {
   }
 
   @Get(':quizExecutionId/question')
-  @UseGuards(AuthGuard)
   async getCurrentQuestion(
     @Param('quizExecutionId') quizExecutionId: string,
     @Param('sessionId') sessionId: string,
@@ -85,7 +80,6 @@ export class QuizExecutionController {
   }
 
   @Put(':quizExecutionId/status')
-  @UseGuards(AuthGuard)
   @ApiCreatedResponse({
     description: 'Quiz execution status updated successfully.',
   })
