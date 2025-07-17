@@ -16,10 +16,10 @@ export class NotAuthGuard implements CanActivate {
     const req = context.switchToHttp().getRequest<Request>();
 
     const accessToken = req.cookies?.accessToken as string;
-    if (
-      accessToken &&
-      (await this.authService.verifyAccessToken(accessToken))
-    ) {
+    const isValidAccessToken =
+      accessToken && (await this.authService.verifyAccessToken(accessToken));
+
+    if (isValidAccessToken) {
       throw new ConflictException('Already authenticated');
     }
 
