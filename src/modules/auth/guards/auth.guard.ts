@@ -1,58 +1,56 @@
 import {
   CanActivate,
   ExecutionContext,
-  Inject,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { ConfigType } from '@nestjs/config';
-import { JwtService } from '@nestjs/jwt';
+import { Reflector } from '@nestjs/core';
 import { Request } from 'express';
 
-import { ITokenUser } from '../interfaces/token-user.interface';
-
-import { jwtConfig } from '@/config/jwt.config';
+import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
+import { AuthService } from '../services/auth.service';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
-    private jwtService: JwtService,
-    @Inject(jwtConfig.KEY)
-    private readonly config: ConfigType<typeof jwtConfig>,
+    private readonly reflector: Reflector,
+    private readonly authService: AuthService,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request: Request = context.switchToHttp().getRequest();
-
-    if (process.env.SKIP_AUTH && process.env.NODE_ENV === 'development') {
-      request['user'] = {
-        id: '21ca5037-f766-453d-8c7d-e36adaf68881',
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
-
+    const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
+    if (isPublic) {
       return true;
     }
 
-    const token = this.extractTokenFromHeader(request);
+    const request: Request = context.switchToHttp().getRequest();
 
+    const token = this.extractToken(request);
     if (!token) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('No access token provided');
     }
-    try {
-      const payload = await this.jwtService.verifyAsync<ITokenUser>(token, {
-        secret: this.config.secret,
-      });
 
+    try {
+      const payload = await this.authService.verifyAccessToken(token);
       request['user'] = payload;
     } catch {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('Invalid or expired access token');
     }
+
     return true;
   }
 
-  private extractTokenFromHeader(request: Request): string | undefined {
+  private extractToken(request: Request): string | undefined {
+    const cookies = request.cookies as Record<string, string> | undefined;
+    if (cookies && cookies.accessToken) {
+      return cookies.accessToken;
+    }
+
     const [type, token] = request.headers.authorization?.split(' ') ?? [];
+
     return type === 'Bearer' ? token : undefined;
   }
 }

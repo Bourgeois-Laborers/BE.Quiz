@@ -1,9 +1,9 @@
-import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import {
-  ApiBearerAuth,
   ApiOperation,
   ApiResponse,
   ApiTags,
+  ApiCookieAuth,
 } from '@nestjs/swagger';
 import { plainToInstance } from 'class-transformer';
 
@@ -15,12 +15,10 @@ import { GetQuizConfigurationsDto } from '../dtos/get-quiz-configurations.dto';
 import { QuizConfigurationService } from '../services/quiz-configuration.service';
 
 import { User } from '@/modules/auth/decorators/user.decorator';
-import { AuthGuard } from '@/modules/auth/guards/auth.guard';
-import { ITokenUser } from '@/modules/auth/interfaces/token-user.interface';
+import { ITokenPayload } from '@/modules/auth/services/interfaces/auth.interface';
 
 @Controller('quiz-configuration')
 @ApiTags('Quiz configuration')
-@ApiBearerAuth()
 export class QuizConfigurationController {
   constructor(
     private readonly quizConfigurationService: QuizConfigurationService,
@@ -28,32 +26,32 @@ export class QuizConfigurationController {
 
   @Post()
   @ApiOperation({ summary: 'Create quiz configuration' })
+  @ApiCookieAuth('accessToken')
   @ApiResponse({
     status: 201,
     description: 'The record has been successfully created.',
     type: CreateQuizConfigurationResponseDto,
   })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
-  @UseGuards(AuthGuard)
   async create(
     @Body() dto: CreateQuizConfigurationDto,
-    @User() user: ITokenUser,
+    @User() user: ITokenPayload,
   ) {
     return this.quizConfigurationService.create({ ...dto, userId: user.id });
   }
 
   @Get()
   @ApiOperation({ summary: 'Get all quiz configurations' })
+  @ApiCookieAuth('accessToken')
   @ApiResponse({
     status: 200,
     description: 'Successfully retrieved quiz configurations.',
     type: [CreateQuizConfigurationResponseDto],
   })
   @ApiResponse({ status: 404, description: 'No quiz configurations found.' })
-  @UseGuards(AuthGuard)
   async getAll(
     @Query() dto: GetQuizConfigurationsDto,
-    @User() user: ITokenUser,
+    @User() user: ITokenPayload,
   ) {
     return this.quizConfigurationService.getQuizConfigurations({
       ...plainToInstance(GetQuizConfigurationsDto, dto),

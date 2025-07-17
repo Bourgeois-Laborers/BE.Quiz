@@ -1,35 +1,33 @@
-import { Body, Controller, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Param, Post } from '@nestjs/common';
 import {
-  ApiBearerAuth,
   ApiOperation,
   ApiResponse,
   ApiTags,
+  ApiCookieAuth,
 } from '@nestjs/swagger';
 
 import { InsertQuestionDto } from '../dtos/insert-question.dto';
 import { QuizQuestionService } from '../services/quiz-question.service';
 
 import { User } from '@/modules/auth/decorators/user.decorator';
-import { AuthGuard } from '@/modules/auth/guards/auth.guard';
-import { ITokenUser } from '@/modules/auth/interfaces/token-user.interface';
+import { ITokenPayload } from '@/modules/auth/services/interfaces/auth.interface';
 
 @Controller('quiz-configuration')
 @ApiTags('Quiz configuration')
-@ApiBearerAuth()
 export class QuizQuestionController {
   constructor(private readonly quizQuestionService: QuizQuestionService) {}
 
   @Post(':quizConfigurationId/generate-questions')
   @ApiOperation({ summary: 'Generate and insert questions for a quiz' })
+  @ApiCookieAuth('accessToken')
   @ApiResponse({
     status: 201,
     description: 'The questions has been successfully generated.',
   })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
-  @UseGuards(AuthGuard)
   async create(
     @Body() dto: InsertQuestionDto,
-    @User() user: ITokenUser,
+    @User() user: ITokenPayload,
     @Param('quizConfigurationId') quizConfigurationId: string,
   ) {
     return this.quizQuestionService.insertQuestions({

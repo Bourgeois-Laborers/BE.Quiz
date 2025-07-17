@@ -7,6 +7,7 @@ import { ConfigService } from '@nestjs/config';
 import { NestFactory, Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import * as cookieParser from 'cookie-parser';
 
 import { AppModule } from './app.module';
 import { RedisIoAdapter } from './modules/socket/redis-io-adapter';
@@ -15,6 +16,8 @@ async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule, {
     logger: ['error', 'warn', 'log'],
   });
+
+  app.use(cookieParser());
 
   const config = new DocumentBuilder()
     .setTitle('Quiz swagger')

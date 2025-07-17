@@ -1,17 +1,9 @@
+import { Body, Controller, Param, Get, Post, Put } from '@nestjs/common';
 import {
-  Body,
-  Controller,
-  Param,
-  Get,
-  Post,
-  Put,
-  UseGuards,
-} from '@nestjs/common';
-import {
-  ApiBearerAuth,
   ApiOperation,
   ApiResponse,
   ApiTags,
+  ApiCookieAuth,
 } from '@nestjs/swagger';
 
 import {
@@ -26,18 +18,16 @@ import {
 import { SessionService } from '../services/session.service';
 
 import { User } from '@/modules/auth/decorators/user.decorator';
-import { AuthGuard } from '@/modules/auth/guards/auth.guard';
-import { ITokenUser } from '@/modules/auth/interfaces/token-user.interface';
+import { ITokenPayload } from '@/modules/auth/services/interfaces/auth.interface';
 
 @Controller('session')
 @ApiTags('Sessions')
-@ApiBearerAuth()
 export class SessionController {
   constructor(private readonly sessionService: SessionService) {}
 
   @Get(':sessionId')
-  @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Get session details' })
+  @ApiCookieAuth('accessToken')
   @ApiResponse({
     status: 200,
     description: 'Successfully retrieved session details.',
@@ -47,14 +37,14 @@ export class SessionController {
   @ApiResponse({ status: 404, description: 'Session not found.' })
   async getSession(
     @Param('sessionId') sessionId: string,
-    @User() { id: userId }: ITokenUser,
+    @User() { id: userId }: ITokenPayload,
   ): Promise<SessionDto> {
     return this.sessionService.get(sessionId, userId);
   }
 
   @Post()
-  @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Create a new session' })
+  @ApiCookieAuth('accessToken')
   @ApiResponse({
     status: 201,
     description: 'The session has been successfully created.',
@@ -63,14 +53,14 @@ export class SessionController {
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   async create(
     @Body() { userAlias }: CreateSessionDto,
-    @User() { id: userId }: ITokenUser,
+    @User() { id: userId }: ITokenPayload,
   ): Promise<CreateSessionResponseDto> {
     return this.sessionService.create(userId, { userAlias });
   }
 
   @Put(':sessionId')
-  @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Update session details' })
+  @ApiCookieAuth('accessToken')
   @ApiResponse({
     status: 200,
     description: 'The session has been successfully updated.',
@@ -80,7 +70,7 @@ export class SessionController {
   async update(
     @Param('sessionId') sessionId: string,
     @Body() updateSessionDto: UpdateSessionDto,
-    @User() { id: userId }: ITokenUser,
+    @User() { id: userId }: ITokenPayload,
   ): Promise<UpdateSessionResponseDto> {
     return this.sessionService.update(sessionId, userId, updateSessionDto);
   }

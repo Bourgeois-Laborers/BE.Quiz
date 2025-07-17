@@ -1,11 +1,11 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 import { WsException } from '@nestjs/websockets';
 
-import { ITokenUser } from '@/modules/auth/interfaces/token-user.interface';
+import { ITokenPayload } from '@/modules/auth/services/interfaces/auth.interface';
 
 interface RequestWithUser {
   data: {
-    user: ITokenUser;
+    user: ITokenPayload;
   };
 }
 

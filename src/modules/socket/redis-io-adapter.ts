@@ -6,7 +6,7 @@ import { createAdapter } from '@socket.io/redis-adapter';
 import { createClient } from 'redis';
 import { Server, ServerOptions, Socket } from 'socket.io';
 
-import { ITokenUser } from '@/modules/auth/interfaces/token-user.interface';
+import { ITokenPayload } from '@/modules/auth/services/interfaces/auth.interface';
 
 const namespaces = ['/quiz-execution'];
 
@@ -48,7 +48,7 @@ export class RedisIoAdapter extends IoAdapter {
   private jwtNamespaceMiddleware(socket: Socket, next: (err?: Error) => void) {
     try {
       if (process.env.SKIP_AUTH && process.env.NODE_ENV === 'development') {
-        (socket.data as { user?: ITokenUser }).user = {
+        (socket.data as { user?: ITokenPayload }).user = {
           id: '21ca5037-f766-453d-8c7d-e36adaf68881',
         };
 
@@ -62,7 +62,7 @@ export class RedisIoAdapter extends IoAdapter {
         return next(new WsException('Authentication error: No token provided'));
       }
 
-      const user = this.jwtService.verify<ITokenUser>(token, {
+      const user = this.jwtService.verify<ITokenPayload>(token, {
         secret: this.jwtSecret,
       });
 
@@ -70,7 +70,7 @@ export class RedisIoAdapter extends IoAdapter {
         return next(new WsException('Authentication error: Invalid token'));
       }
 
-      (socket.data as { user?: ITokenUser }).user = user;
+      (socket.data as { user?: ITokenPayload }).user = user;
       next();
     } catch {
       next(new WsException('Authentication error: Invalid token'));
