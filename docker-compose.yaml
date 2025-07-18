@@ -1,5 +1,14 @@
 version: '3.9'
 services:
+  app:
+    build:
+      context: .
+      dockerfile: dockerfile.dev
+    ports:
+      - "3000:3000"
+    depends_on:
+      - redis
+
   postgres:
     image: postgres:latest
     container_name: quiz_postgres
