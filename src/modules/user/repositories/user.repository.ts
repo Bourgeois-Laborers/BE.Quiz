@@ -17,7 +17,7 @@ export class UserRepository implements IUserRepository {
   }
 
   async get(userId: string): Promise<IUser | null> {
-    return await this.prismaService.userTable.findFirst({
+    return this.prismaService.userTable.findFirst({
       where: { id: userId },
     });
   }

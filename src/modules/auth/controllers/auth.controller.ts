@@ -78,14 +78,16 @@ export class AuthController {
       path: '/',
     });
 
-    res.status(201).json({ message: 'The user has been registered.', data: user });
+    res
+      .status(201)
+      .json({ message: 'The user has been registered.', data: user });
   }
 
   @Public()
   @Post('/logout')
   @ApiOperation({ summary: 'Logout user' })
   @ApiResponse({ status: 200, description: 'User logged out.' })
-  async logout(@Res() res: Response): Promise<void> {
+  logout(@Res() res: Response): void {
     res.clearCookie('accessToken', { httpOnly: true, path: '/' });
     res.clearCookie('refreshToken', { httpOnly: true, path: '/' });
 
