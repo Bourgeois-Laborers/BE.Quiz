@@ -33,7 +33,7 @@ export class QuizQuestionService implements IQuestionService {
 
     const result = await this.gptService.generateQuiz(prompt);
 
-    return this.questionRepository.insertQuestion({
+    const questions = await this.questionRepository.insertQuestion({
       quizConfigurationId: quizConfigurationId,
       questions: result.map(
         ({ complexity, question, questionAnswers, order }) => ({
@@ -44,6 +44,10 @@ export class QuizQuestionService implements IQuestionService {
         }),
       ),
     });
+
+    await this.cacheService.setQuestions(quizConfigurationId, questions);
+
+    return questions;
   }
 
   async getQuestions(quizConfigurationId: string): Promise<IQuestion[]> {
