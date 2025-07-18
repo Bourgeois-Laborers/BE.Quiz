@@ -57,6 +57,7 @@ export class QuizExecutionService implements IQuizExecutionService {
       shareAnswers,
       timePerQuestion,
       status: QuizExecutionStatus.EXECUTING,
+      quizConfigurationId,
     });
 
     this.quizExecutionGateway.sendMessageToUser(userId, 'Quiz started');

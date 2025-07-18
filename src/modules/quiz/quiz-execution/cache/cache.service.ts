@@ -25,6 +25,7 @@ export class QuizExecutionCacheService
     shareAnswers,
     timePerQuestion,
     status,
+    quizConfigurationId,
   }: ISetupQuizExecution): Promise<void> {
     await this.cacheManager.json.set(
       this.buildKey(sessionId, quizExecutionId),
@@ -36,6 +37,7 @@ export class QuizExecutionCacheService
         shareAnswers,
         timePerQuestion,
         status,
+        quizConfigurationId,
       },
     );
   }

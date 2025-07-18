@@ -44,6 +44,7 @@ export class QuizQuestionCacheService
     quizConfigurationId: string,
     questions: IQuestion[],
   ): Promise<void> {
+    console.log('setQuestions', quizConfigurationId, questions);
     await this.cacheManager.set(
       this.buildKey(quizConfigurationId),
       JSON.stringify(questions),

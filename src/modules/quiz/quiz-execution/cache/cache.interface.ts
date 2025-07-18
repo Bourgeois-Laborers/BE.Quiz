@@ -6,6 +6,7 @@ export interface ISetupQuizExecution {
   shareAnswers: boolean;
   timePerQuestion: number;
   status: QuizExecutionStatus;
+  quizConfigurationId: string;
 }
 
 export interface IQuizExecutionState {
