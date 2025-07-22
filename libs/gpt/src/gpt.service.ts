@@ -1,12 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import OpenAI from 'openai';
-import { ChatCompletionTool } from 'openai/resources/chat/completions';
 import { ChatModel } from 'openai/resources/shared';
 
+import { generateQuizResponseSchema } from './constants/generate-quiz-response.schema';
 import { GPT_CLIENT_PROVIDER } from './constants/gpt.constants';
 import { QuizQuestion } from './interfaces/quiz.interface';
-import { generateQuiz } from './utils/generate-quiz';
 
 @Injectable()
 export class GptService {
@@ -18,7 +17,10 @@ export class GptService {
   public async generateQuiz(prompt: string): Promise<QuizQuestion[]> {
     const response = await this.gptClient.chat.completions.create({
       model: this.configService.get('GPT_MODEL') as ChatModel,
-      response_format: { type: 'json_object' },
+      response_format: {
+        type: 'json_schema',
+        json_schema: generateQuizResponseSchema,
+      },
       messages: [
         {
           role: 'system',
@@ -27,17 +29,11 @@ export class GptService {
         },
         { role: 'user', content: prompt },
       ],
-      tools: [generateQuiz as ChatCompletionTool],
-      tool_choice: { type: 'function', function: { name: 'generate_quiz' } },
     });
 
-    const toolCall = response.choices[0]?.message?.tool_calls?.[0];
-
-    if (!toolCall || toolCall.function.name !== 'generate_quiz') {
-      throw new Error('No valid tool call received');
-    }
-
-    const parsed = JSON.parse(toolCall.function.arguments) as {
+    const parsed = JSON.parse(
+      response.choices[0]?.message?.content as string,
+    ) as {
       quiz: QuizQuestion[];
     };
 
