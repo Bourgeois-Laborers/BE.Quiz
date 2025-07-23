@@ -1,0 +1,4 @@
+dist/
+node_modules/
+.git/
+libs/prisma/src/prisma-client/
