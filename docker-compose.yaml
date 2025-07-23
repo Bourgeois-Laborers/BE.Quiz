@@ -9,7 +9,7 @@ services:
       - /app/node_modules
     ports:
       - "3000:3000"
-    command: yarn start:dev
+    command: sh -c "rm -rf dist && yarn start:dev"
     depends_on:
       - redis
       - postgres
