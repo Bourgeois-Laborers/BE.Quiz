@@ -21,7 +21,7 @@ export class AuthService implements IAuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async login(userId: string): Promise<IAuth> {
+  async login(userId: string): Promise<{ user: IUser } & IAuth> {
     const user = await this.userService.get(userId);
     if (!user) {
       throw new NotFoundException('User not found');
@@ -41,7 +41,7 @@ export class AuthService implements IAuthService {
       ),
     });
 
-    return { accessToken, refreshToken };
+    return { user, accessToken, refreshToken };
   }
 
   async verifyAccessToken(token: string): Promise<ITokenPayload> {

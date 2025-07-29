@@ -24,7 +24,7 @@ export class AuthController {
   })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   async login(@Body() loginDto: LoginDto, @Res() res: Response): Promise<void> {
-    const { accessToken, refreshToken } = await this.authService.login(
+    const { user, accessToken, refreshToken } = await this.authService.login(
       loginDto.userId,
     );
 
@@ -45,7 +45,9 @@ export class AuthController {
       path: '/',
     });
 
-    res.status(201).json({ message: 'The user has been authenticated.' });
+    res
+      .status(201)
+      .json({ message: 'The user has been authenticated.', data: user });
   }
 
   @UseGuards(NotAuthGuard)
