@@ -10,7 +10,7 @@ export interface ITokenPayload {
 }
 
 export interface IAuthService {
-  login(userId: string): Promise<IAuth>;
+  login(userId: string): Promise<{ user: IUser } & IAuth>;
   register(): Promise<{ user: IUser } & IAuth>;
   verifyAccessToken(token: string): Promise<ITokenPayload>;
   getAccessTokenMaxAgeMs(): number;
