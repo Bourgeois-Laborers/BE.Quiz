@@ -10,7 +10,8 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as cookieParser from 'cookie-parser';
 
 import { AppModule } from './app.module';
-import { RedisIoAdapter } from './modules/socket/redis-io-adapter';
+import { WsAuthService } from './modules/auth/services/ws-auth.service';
+import { RedisIoAdapter } from './modules/socket/redis-io.adapter';
 
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule, {
@@ -41,12 +42,8 @@ async function bootstrap(): Promise<void> {
   const configService = app.get(ConfigService);
   const redisIoAdapter = new RedisIoAdapter(app);
 
-  const jwtService = app.get(JwtService);
-
-  redisIoAdapter.setJwt(
-    jwtService,
-    configService.get<string>('JWT_SECRET') ?? '',
-  );
+  const wsAuthService = app.get(WsAuthService);
+  redisIoAdapter.setAuthService(wsAuthService);
 
   await redisIoAdapter.connectToRedis(
     configService.get<string>('REDIS_URL') ?? '',
