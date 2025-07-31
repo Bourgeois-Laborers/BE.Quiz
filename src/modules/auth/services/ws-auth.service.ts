@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Injectable, Inject } from '@nestjs/common';
+import { ConfigType } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { WsException } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
@@ -7,11 +7,14 @@ import { Socket } from 'socket.io';
 import { ITokenPayload } from './interfaces/auth.interface';
 import { IWsAuthService } from './interfaces/ws-auth.service.interface';
 
+import { jwtConfig } from '@/config/jwt.config';
+
 @Injectable()
 export class WsAuthService implements IWsAuthService {
   constructor(
     private readonly jwtService: JwtService,
-    private readonly configService: ConfigService,
+    @Inject(jwtConfig.KEY)
+    private readonly jwtConfigService: ConfigType<typeof jwtConfig>,
   ) {}
 
   validateSocketConnection(socket: Socket): void {
@@ -22,12 +25,8 @@ export class WsAuthService implements IWsAuthService {
         throw new WsException('Authentication error: No token provided');
       }
 
-      const jwtSecret = this.configService.getOrThrow<string>(
-        'jwt.accessToken.secret',
-      );
-
       const user = this.jwtService.verify<ITokenPayload>(token, {
-        secret: jwtSecret,
+        secret: this.jwtConfigService.accessToken.secret,
       });
 
       if (!user) {

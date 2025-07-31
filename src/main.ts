@@ -17,6 +17,8 @@ async function bootstrap(): Promise<void> {
     logger: ['error', 'warn', 'log'],
   });
 
+  app.setGlobalPrefix('api');
+
   app.use(cookieParser());
 
   const config = new DocumentBuilder()

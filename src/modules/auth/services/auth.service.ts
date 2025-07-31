@@ -1,5 +1,5 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Injectable, NotFoundException, Inject } from '@nestjs/common';
+import { ConfigType } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as ms from 'ms';
 import { StringValue } from 'ms';
@@ -10,15 +10,17 @@ import {
   IAuthService,
 } from './interfaces/auth.interface';
 
+import { jwtConfig } from '@/config/jwt.config';
 import { IUser } from '@/modules/user/services/interfaces/user.service.interface';
 import { UserService } from '@/modules/user/services/user.service';
 
 @Injectable()
 export class AuthService implements IAuthService {
   constructor(
-    private readonly configService: ConfigService,
     private readonly userService: UserService,
     private readonly jwtService: JwtService,
+    @Inject(jwtConfig.KEY)
+    private readonly jwtConfigService: ConfigType<typeof jwtConfig>,
   ) {}
 
   async login(userId: string): Promise<{ user: IUser } & IAuth> {
@@ -29,16 +31,12 @@ export class AuthService implements IAuthService {
 
     const payload: ITokenPayload = { id: userId };
     const accessToken = await this.jwtService.signAsync(payload, {
-      secret: this.configService.getOrThrow<string>('jwt.accessToken.secret'),
-      expiresIn: this.configService.getOrThrow<string>(
-        'jwt.accessToken.expiresIn',
-      ),
+      secret: this.jwtConfigService.accessToken.secret,
+      expiresIn: this.jwtConfigService.accessToken.expiresIn,
     });
     const refreshToken = await this.jwtService.signAsync(payload, {
-      secret: this.configService.getOrThrow<string>('jwt.refreshToken.secret'),
-      expiresIn: this.configService.getOrThrow<string>(
-        'jwt.refreshToken.expiresIn',
-      ),
+      secret: this.jwtConfigService.refreshToken.secret,
+      expiresIn: this.jwtConfigService.refreshToken.expiresIn,
     });
 
     return { user, accessToken, refreshToken };
@@ -46,7 +44,7 @@ export class AuthService implements IAuthService {
 
   async verifyAccessToken(token: string): Promise<ITokenPayload> {
     return this.jwtService.verifyAsync<ITokenPayload>(token, {
-      secret: this.configService.getOrThrow<string>('jwt.accessToken.secret'),
+      secret: this.jwtConfigService.accessToken.secret,
     });
   }
 
@@ -58,16 +56,10 @@ export class AuthService implements IAuthService {
   }
 
   getAccessTokenMaxAgeMs(): number {
-    const accessTokenExpiresIn = this.configService.getOrThrow<StringValue>(
-      'jwt.accessToken.expiresIn',
-    );
-    return ms(accessTokenExpiresIn);
+    return ms(this.jwtConfigService.accessToken.expiresIn as StringValue);
   }
 
   getRefreshTokenMaxAgeMs(): number {
-    const refreshTokenExpiresIn = this.configService.getOrThrow<StringValue>(
-      'jwt.refreshToken.expiresIn',
-    );
-    return ms(refreshTokenExpiresIn);
+    return ms(this.jwtConfigService.refreshToken.expiresIn as StringValue);
   }
 }

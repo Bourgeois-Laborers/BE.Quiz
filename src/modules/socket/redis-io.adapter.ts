@@ -50,8 +50,8 @@ export class RedisIoAdapter extends IoAdapter {
     try {
       this.wsAuthService.validateSocketConnection(socket);
       next();
-    } catch (error) {
-      next(error);
+    } catch (error: unknown) {
+      next(error instanceof Error ? error : new Error(String(error)));
     }
   }
 }
