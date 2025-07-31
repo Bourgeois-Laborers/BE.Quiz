@@ -53,7 +53,7 @@ export class SessionGateway
   }
 
   broadcastToSession(sessionId: string, event: string, data: unknown): void {
-    this.server.to(sessionId).emit(event, data);
+    this.server.in(sessionId).emit(event, data);
     this.logger.log(`Broadcasting event '${event}' to session ${sessionId}`);
   }
 }
