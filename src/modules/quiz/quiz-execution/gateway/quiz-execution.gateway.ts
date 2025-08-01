@@ -5,7 +5,7 @@ import { IQuizExecutionGateway } from '@/modules/quiz/quiz-execution/gateway/qui
 import { SOCKET_NAMESPACES } from '@/modules/socket/constants/socket.constants';
 import { SocketRegistryService } from '@/modules/socket/services/socket-registry.service';
 
-@WebSocketGateway(80, { namespace: SOCKET_NAMESPACES.QUIZ_EXECUTION })
+@WebSocketGateway({ namespace: SOCKET_NAMESPACES.QUIZ_EXECUTION })
 export class QuizExecutionGateway implements IQuizExecutionGateway {
   constructor(private readonly socketRegistry: SocketRegistryService) {}
 

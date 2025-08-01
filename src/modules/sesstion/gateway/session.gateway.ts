@@ -14,7 +14,7 @@ import { SOCKET_NAMESPACES } from '@/modules/socket/constants/socket.constants';
 import { SocketRegistryService } from '@/modules/socket/services/socket-registry.service';
 
 @Injectable()
-@WebSocketGateway(80, {
+@WebSocketGateway({
   namespace: SOCKET_NAMESPACES.SESSION,
   cors: {
     origin: true,
