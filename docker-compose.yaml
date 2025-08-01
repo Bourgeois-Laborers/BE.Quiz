@@ -1,50 +1,86 @@
 version: '3.9'
+
+networks:
+  quiz-network:
+    driver: bridge
+
 services:
   app:
     build:
       context: .
-      dockerfile: dockerfile.dev
+      dockerfile: Dockerfile.dev
+    container_name: quiz_app_dev
+    restart: unless-stopped
+    ports:
+      - 3000:3000
     volumes:
       - .:/app
       - /app/node_modules
-    ports:
-      - "3000:3000"
     command: sh -c "yarn prisma:generate && yarn start:dev"
     depends_on:
-      - redis
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - quiz-network
 
   postgres:
-    image: postgres:latest
-    container_name: quiz_postgres
-    restart: always
+    image: postgres:15-alpine
+    container_name: quiz_postgres_dev
+    restart: unless-stopped
     ports:
       - 5432:5432
     volumes:
-      - local_pgdata:/var/lib/postgresql/data
+      - postgres_dev_data:/var/lib/postgresql/data
     environment:
       - POSTGRES_PASSWORD=password
       - POSTGRES_USER=user
       - POSTGRES_DB=quiz
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U user -d quiz']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - quiz-network
 
   pgadmin:
-    image: dpage/pgadmin4
-    container_name: pgadmin4_container
-    restart: always
+    image: dpage/pgadmin4:latest
+    container_name: quiz_pgadmin_dev
+    restart: unless-stopped
     ports:
-      - '8888:80'
-    environment:
-      PGADMIN_DEFAULT_EMAIL: user-name@domain-name.com
-      PGADMIN_DEFAULT_PASSWORD: strong-password
+      - 8888:80
     volumes:
-      - pgadmin-data:/var/lib/pgadmin
+      - pgadmin_dev_data:/var/lib/pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - quiz-network
 
   redis:
-    image: redis:latest
-    container_name: quiz_redis
-    restart: always
+    image: redis:7-alpine
+    container_name: quiz_redis_dev
+    restart: unless-stopped
     ports:
       - 6379:6379
+    volumes:
+      - redis_dev_data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    networks:
+      - quiz-network
 
 volumes:
-  local_pgdata:
-  pgadmin-data:
+  postgres_dev_data:
+  pgadmin_dev_data:
+  redis_dev_data:

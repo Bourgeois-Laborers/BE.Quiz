@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 
-import { SocketRegistryService } from './socket-registry.service';
+import { SocketRegistryService } from './services/socket-registry.service';
 
 @Module({
   providers: [SocketRegistryService],

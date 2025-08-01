@@ -5,17 +5,27 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory, Reflector } from '@nestjs/core';
-import { JwtService } from '@nestjs/jwt';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as cookieParser from 'cookie-parser';
 
 import { AppModule } from './app.module';
-import { RedisIoAdapter } from './modules/socket/redis-io-adapter';
+import { WsAuthService } from './modules/auth/services/ws-auth.service';
+import { RedisIoAdapter } from './modules/socket/redis-io.adapter';
 
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule, {
     logger: ['error', 'warn', 'log'],
   });
+
+  const configService = app.get(ConfigService);
+  const corsOrigins = configService.get<string>('CORS_ORIGINS');
+
+  app.enableCors({
+    origin: corsOrigins ? corsOrigins.split(',') : ['http://localhost:8080'],
+    credentials: true,
+  });
+
+  app.setGlobalPrefix('api');
 
   app.use(cookieParser());
 
@@ -38,15 +48,10 @@ async function bootstrap(): Promise<void> {
     new ClassSerializerInterceptor(app.get(Reflector), serializerOptions),
   );
 
-  const configService = app.get(ConfigService);
   const redisIoAdapter = new RedisIoAdapter(app);
 
-  const jwtService = app.get(JwtService);
-
-  redisIoAdapter.setJwt(
-    jwtService,
-    configService.get<string>('JWT_SECRET') ?? '',
-  );
+  const wsAuthService = app.get(WsAuthService);
+  redisIoAdapter.setAuthService(wsAuthService);
 
   await redisIoAdapter.connectToRedis(
     configService.get<string>('REDIS_URL') ?? '',
