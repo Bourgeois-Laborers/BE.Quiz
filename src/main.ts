@@ -17,6 +17,14 @@ async function bootstrap(): Promise<void> {
     logger: ['error', 'warn', 'log'],
   });
 
+  const configService = app.get(ConfigService);
+  const corsOrigins = configService.get<string>('CORS_ORIGINS');
+
+  app.enableCors({
+    origin: corsOrigins ? corsOrigins.split(',') : ['http://localhost:8080'],
+    credentials: true,
+  });
+
   app.setGlobalPrefix('api');
 
   app.use(cookieParser());
@@ -40,7 +48,6 @@ async function bootstrap(): Promise<void> {
     new ClassSerializerInterceptor(app.get(Reflector), serializerOptions),
   );
 
-  const configService = app.get(ConfigService);
   const redisIoAdapter = new RedisIoAdapter(app);
 
   const wsAuthService = app.get(WsAuthService);
