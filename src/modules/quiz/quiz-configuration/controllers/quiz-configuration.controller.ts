@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Post, Query } from '@nestjs/common';
 import {
   ApiOperation,
   ApiResponse,
@@ -7,15 +7,15 @@ import {
 } from '@nestjs/swagger';
 import { plainToInstance } from 'class-transformer';
 
+import { ApiResponseWrapper } from '@/common/decorators/api-response.decorator';
+import { User } from '@/modules/auth/decorators/user.decorator';
+import { ITokenPayload } from '@/modules/auth/services/interfaces/auth.interface';
 import {
   CreateQuizConfigurationDto,
   CreateQuizConfigurationResponseDto,
-} from '../dtos/create-quiz-configuration.dto';
-import { GetQuizConfigurationsDto } from '../dtos/get-quiz-configurations.dto';
-import { QuizConfigurationService } from '../services/quiz-configuration.service';
-
-import { User } from '@/modules/auth/decorators/user.decorator';
-import { ITokenPayload } from '@/modules/auth/services/interfaces/auth.interface';
+} from '@/modules/quiz/quiz-configuration/dtos/create-quiz-configuration.dto';
+import { GetQuizConfigurationsDto } from '@/modules/quiz/quiz-configuration/dtos/get-quiz-configurations.dto';
+import { QuizConfigurationService } from '@/modules/quiz/quiz-configuration/services/quiz-configuration.service';
 
 @Controller('quiz-configuration')
 @ApiTags('Quiz configuration')
@@ -27,11 +27,11 @@ export class QuizConfigurationController {
   @Post()
   @ApiOperation({ summary: 'Create quiz configuration' })
   @ApiCookieAuth('accessToken')
-  @ApiResponse({
-    status: 201,
-    description: 'The record has been successfully created.',
-    type: CreateQuizConfigurationResponseDto,
-  })
+  @ApiResponseWrapper(
+    CreateQuizConfigurationResponseDto,
+    'Quiz configuration created successfully',
+    HttpStatus.CREATED,
+  )
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   async create(
     @Body() dto: CreateQuizConfigurationDto,

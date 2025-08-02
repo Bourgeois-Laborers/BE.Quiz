@@ -1,40 +1,46 @@
-import { Body, Controller, Param, Get, Post, Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Param,
+  Get,
+  Post,
+  Put,
+  HttpStatus,
+} from '@nestjs/common';
 import {
   ApiOperation,
   ApiResponse,
   ApiTags,
   ApiCookieAuth,
+  ApiExtraModels,
 } from '@nestjs/swagger';
 
+import { ApiResponseWrapper } from '@/common/decorators/api-response.decorator';
+import { User } from '@/modules/auth/decorators/user.decorator';
+import { ITokenPayload } from '@/modules/auth/services/interfaces/auth.interface';
 import {
   CreateSessionDto,
   CreateSessionResponseDto,
-} from '../dtos/create-session.dto';
-import { SessionDto } from '../dtos/session.dto';
+} from '@/modules/sesstion/dtos/create-session.dto';
+import { SessionDto } from '@/modules/sesstion/dtos/session.dto';
 import {
   UpdateSessionDto,
   UpdateSessionResponseDto,
-} from '../dtos/update-session.dto';
-import { SessionService } from '../services/session.service';
-
-import { User } from '@/modules/auth/decorators/user.decorator';
-import { ITokenPayload } from '@/modules/auth/services/interfaces/auth.interface';
+} from '@/modules/sesstion/dtos/update-session.dto';
+import { SessionService } from '@/modules/sesstion/services/session.service';
 
 @Controller('session')
 @ApiTags('Sessions')
+@ApiExtraModels(CreateSessionResponseDto, UpdateSessionResponseDto)
 export class SessionController {
   constructor(private readonly sessionService: SessionService) {}
 
   @Get(':sessionId')
   @ApiOperation({ summary: 'Get session details' })
   @ApiCookieAuth('accessToken')
-  @ApiResponse({
-    status: 200,
-    description: 'Successfully retrieved session details.',
-    type: SessionDto,
-  })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @ApiResponse({ status: 404, description: 'Session not found.' })
+  @ApiResponseWrapper(SessionDto, 'Session retrieved successfully')
   async getSession(
     @Param('sessionId') sessionId: string,
     @User() { id: userId }: ITokenPayload,
@@ -45,12 +51,12 @@ export class SessionController {
   @Post()
   @ApiOperation({ summary: 'Create a new session' })
   @ApiCookieAuth('accessToken')
-  @ApiResponse({
-    status: 201,
-    description: 'The session has been successfully created.',
-    type: CreateSessionResponseDto,
-  })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @ApiResponseWrapper(
+    CreateSessionResponseDto,
+    'Session created successfully',
+    HttpStatus.CREATED,
+  )
   async create(
     @Body() { userAlias }: CreateSessionDto,
     @User() { id: userId }: ITokenPayload,
@@ -61,12 +67,9 @@ export class SessionController {
   @Put(':sessionId')
   @ApiOperation({ summary: 'Update session details' })
   @ApiCookieAuth('accessToken')
-  @ApiResponse({
-    status: 200,
-    description: 'The session has been successfully updated.',
-  })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @ApiResponse({ status: 404, description: 'Session not found.' })
+  @ApiResponseWrapper(UpdateSessionResponseDto, 'Session updated successfully')
   async update(
     @Param('sessionId') sessionId: string,
     @Body() updateSessionDto: UpdateSessionDto,
