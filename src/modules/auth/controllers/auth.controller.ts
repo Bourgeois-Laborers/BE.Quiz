@@ -1,12 +1,23 @@
-import { Body, Controller, Post, Res, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpStatus,
+  Post,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 
 import { Public } from '../decorators/public.decorator';
 import { LoginDto } from '../dtos/login.dto';
+import { UserResponseDto } from '../dtos/user.dto';
 import { NotAuthGuard } from '../guards/not-auth.guard';
 import { AuthService } from '../services/auth.service';
 
+import { Cookies } from '@/common/decorators/cookies.decorator';
+import { ResponseWrapper } from '@/common/decorators/response.decorator';
 import { UserDto } from '@/modules/user/dtos/user.dto';
 
 @Controller('auth')
@@ -94,5 +105,17 @@ export class AuthController {
     res.clearCookie('refreshToken', { httpOnly: true, path: '/' });
 
     res.status(200).json({ message: 'User logged out.' });
+  }
+
+  @Public()
+  @Get('user')
+  @ApiOperation({ summary: 'Extract user from token' })
+  @ApiResponse({ status: 200, description: 'User found.' })
+  @ApiResponse({ status: 404, description: 'User not found.' })
+  @ResponseWrapper(UserResponseDto, 'User found.', HttpStatus.OK)
+  async getUser(
+    @Cookies('accessToken') accessToken: string,
+  ): Promise<UserResponseDto> {
+    return this.authService.verifyAccessToken(accessToken);
   }
 }
