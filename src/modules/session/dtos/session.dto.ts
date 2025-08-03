@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 import { IsString, IsEnum, IsDateString } from 'class-validator';
 
-import { SessionStatus } from '@/modules/sesstion/types/session-status.type';
+import { SessionStatus } from '../types/session-status.type';
 
 export class SessionDto {
   @ApiProperty()

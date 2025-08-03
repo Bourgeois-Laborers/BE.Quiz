@@ -4,7 +4,7 @@ import { ApiResponse, getSchemaPath } from '@nestjs/swagger';
 
 import { TransformConditional } from './transform-conditional.decorator';
 
-export const ApiResponseWrapper = <T extends Type<any>>(
+export const ResponseWrapper = <T extends Type<unknown>>(
   model: T,
   message: string = 'Success',
   code: number = 200,

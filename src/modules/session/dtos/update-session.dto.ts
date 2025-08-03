@@ -1,16 +1,16 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
-import { IsString } from 'class-validator';
+import { IsEnum } from 'class-validator';
 
-import { SessionStatus } from '@/modules/sesstion/types/session-status.type';
+import { SessionStatus } from '../types/session-status.type';
 
-export class CreateSessionDto {
+export class UpdateSessionDto {
   @ApiProperty()
-  @IsString()
-  userAlias: string;
+  @IsEnum(SessionStatus)
+  status: SessionStatus;
 }
 
-export class CreateSessionResponseDto {
+export class UpdateSessionResponseDto {
   @ApiProperty({
     description: 'The ID of the session',
     example: '123e4567-e89b-12d3-a456-426614174000',

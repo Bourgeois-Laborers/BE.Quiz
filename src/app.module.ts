@@ -9,7 +9,7 @@ import { jwtConfig } from './config/jwt.config';
 
 import { AuthModule } from '@/modules/auth/auth.module';
 import { QuizModule } from '@/modules/quiz/quiz.module';
-import { SessionModule } from '@/modules/sesstion/session.module';
+import { SessionModule } from '@/modules/session/session.module';
 import { UserModule } from '@/modules/user/user.module';
 
 @Module({

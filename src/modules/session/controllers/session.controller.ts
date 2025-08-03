@@ -15,19 +15,19 @@ import {
   ApiExtraModels,
 } from '@nestjs/swagger';
 
-import { ApiResponseWrapper } from '@/common/decorators/api-response.decorator';
+import { ResponseWrapper } from '@/common/decorators/api-response.decorator';
 import { User } from '@/modules/auth/decorators/user.decorator';
 import { ITokenPayload } from '@/modules/auth/services/interfaces/auth.interface';
 import {
   CreateSessionDto,
   CreateSessionResponseDto,
-} from '@/modules/sesstion/dtos/create-session.dto';
-import { SessionDto } from '@/modules/sesstion/dtos/session.dto';
+} from '@/modules/session/dtos/create-session.dto';
+import { SessionDto } from '@/modules/session/dtos/session.dto';
 import {
   UpdateSessionDto,
   UpdateSessionResponseDto,
-} from '@/modules/sesstion/dtos/update-session.dto';
-import { SessionService } from '@/modules/sesstion/services/session.service';
+} from '@/modules/session/dtos/update-session.dto';
+import { SessionService } from '@/modules/session/services/session.service';
 
 @Controller('session')
 @ApiTags('Sessions')
@@ -40,7 +40,7 @@ export class SessionController {
   @ApiCookieAuth('accessToken')
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @ApiResponse({ status: 404, description: 'Session not found.' })
-  @ApiResponseWrapper(SessionDto, 'Session retrieved successfully')
+  @ResponseWrapper(SessionDto, 'Session retrieved successfully')
   async getSession(
     @Param('sessionId') sessionId: string,
     @User() { id: userId }: ITokenPayload,
@@ -52,7 +52,7 @@ export class SessionController {
   @ApiOperation({ summary: 'Create a new session' })
   @ApiCookieAuth('accessToken')
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
-  @ApiResponseWrapper(
+  @ResponseWrapper(
     CreateSessionResponseDto,
     'Session created successfully',
     HttpStatus.CREATED,
@@ -69,7 +69,7 @@ export class SessionController {
   @ApiCookieAuth('accessToken')
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @ApiResponse({ status: 404, description: 'Session not found.' })
-  @ApiResponseWrapper(UpdateSessionResponseDto, 'Session updated successfully')
+  @ResponseWrapper(UpdateSessionResponseDto, 'Session updated successfully')
   async update(
     @Param('sessionId') sessionId: string,
     @Body() updateSessionDto: UpdateSessionDto,
