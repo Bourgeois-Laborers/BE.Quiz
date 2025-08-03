@@ -7,7 +7,7 @@ import {
 } from '@nestjs/swagger';
 import { plainToInstance } from 'class-transformer';
 
-import { ResponseWrapper } from '@/common/decorators/api-response.decorator';
+import { ResponseWrapper } from '@/common/decorators/response.decorator';
 import { User } from '@/modules/auth/decorators/user.decorator';
 import { ITokenPayload } from '@/modules/auth/services/interfaces/auth.interface';
 import {
