@@ -1,22 +1,20 @@
+import { Body, Controller, Get, Post, Res, UseGuards } from '@nestjs/common';
 import {
-  Body,
-  Controller,
-  Get,
-  HttpStatus,
-  Post,
-  Res,
-  UseGuards,
-} from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+  ApiCookieAuth,
+} from '@nestjs/swagger';
 import { Response } from 'express';
 
 import { Public } from '../decorators/public.decorator';
+import { User } from '../decorators/user.decorator';
 import { LoginDto } from '../dtos/login.dto';
 import { UserResponseDto } from '../dtos/user.dto';
 import { NotAuthGuard } from '../guards/not-auth.guard';
 import { AuthService } from '../services/auth.service';
+import { ITokenPayload } from '../services/interfaces/auth.interface';
 
-import { Cookies } from '@/common/decorators/cookies.decorator';
 import { ResponseWrapper } from '@/common/decorators/response.decorator';
 import { UserDto } from '@/modules/user/dtos/user.dto';
 
@@ -24,6 +22,18 @@ import { UserDto } from '@/modules/user/dtos/user.dto';
 @ApiTags('Auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
+
+  @Get('/user')
+  @ApiOperation({ summary: 'Get authenticated user' })
+  @ApiCookieAuth('accessToken')
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @ApiResponse({ status: 404, description: 'User not found.' })
+  @ResponseWrapper(UserResponseDto, 'User retrieved successfully')
+  async getUser(
+    @User() { id: userId }: ITokenPayload,
+  ): Promise<UserResponseDto> {
+    return this.authService.getUser(userId);
+  }
 
   @UseGuards(NotAuthGuard)
   @Public()
@@ -105,17 +115,5 @@ export class AuthController {
     res.clearCookie('refreshToken', { httpOnly: true, path: '/' });
 
     res.status(200).json({ message: 'User logged out.' });
-  }
-
-  @Public()
-  @Get('user')
-  @ApiOperation({ summary: 'Extract user from token' })
-  @ApiResponse({ status: 200, description: 'User found.' })
-  @ApiResponse({ status: 404, description: 'User not found.' })
-  @ResponseWrapper(UserResponseDto, 'User found.', HttpStatus.OK)
-  async getUser(
-    @Cookies('accessToken') accessToken: string,
-  ): Promise<UserResponseDto> {
-    return this.authService.verifyAccessToken(accessToken);
   }
 }
