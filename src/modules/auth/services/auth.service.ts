@@ -55,6 +55,15 @@ export class AuthService implements IAuthService {
     return { user, accessToken, refreshToken };
   }
 
+  async getUser(userId: string): Promise<IUser> {
+    const user = await this.userService.get(userId);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    return user;
+  }
+
   getAccessTokenMaxAgeMs(): number {
     return ms(this.jwtConfigService.accessToken.expiresIn as StringValue);
   }

@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Expose } from 'class-transformer';
 import { IsBoolean, IsNumber, IsString } from 'class-validator';
 
 export class CreateQuizConfigurationDto {
@@ -24,25 +25,34 @@ export class CreateQuizConfigurationDto {
 
 export class CreateQuizConfigurationResponseDto {
   @ApiProperty()
+  @Expose()
   id: string;
+
   @ApiProperty()
+  @Expose()
   name: string;
 
   @ApiProperty()
+  @Expose()
   prompt: string;
 
   @ApiProperty()
+  @Expose()
   questionsCount: number;
 
   @ApiProperty()
+  @Expose()
   userId: string;
 
   @ApiProperty()
+  @Expose()
   isPrivate: boolean;
 
   @ApiProperty()
+  @Expose()
   createdAt: Date;
 
   @ApiProperty()
+  @Expose()
   updatedAt: Date;
 }
